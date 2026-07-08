@@ -10,30 +10,30 @@
 :root{
   color-scheme: light dark;
   --bg-page:#F7F4EC;
-  --bg-alt:#FFFFFF;
+  --bg-alt:#FBF9F1;
   --bg-dark:#1D3F2E;
-  --text-body:#24352C;
-  --text-heading:#1D3F2E;
-  --text-on-dark:#F7F4EC;
-  --heading-on-dark:#E3CE9A;
-  --accent:#C9A24B;
-  --border:rgba(36,53,44,.15);
+  --text-body:#463710;        /* deep readable gold on light */
+  --text-heading:#7A5C10;     /* rich gold */
+  --accent:#9A7A1E;
+  --text-on-dark:#EAD9A6;     /* gold-cream on the dark bands */
+  --heading-on-dark:#E7D6A6;
+  --border:rgba(122,92,16,.24);
   --icon-bg:#1D3F2E;
-  --icon-fg:#F7F4EC;
+  --icon-fg:#EAD9A6;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg-page:#171F19;
-    --bg-alt:#1E2820;
+    --bg-page:#161C15;
+    --bg-alt:#1D2419;
     --bg-dark:#0C110E;
-    --text-body:#DCD8CB;
-    --text-heading:#C7D9C7;
-    --text-on-dark:#F2EEE2;
-    --heading-on-dark:#E7D6A6;
-    --accent:#D2AF56;
-    --border:rgba(220,216,203,.16);
+    --text-body:#E7D6A6;      /* light gold on dark */
+    --text-heading:#EFCF7E;   /* bright gold */
+    --accent:#E3C065;
+    --text-on-dark:#EAD9A6;
+    --heading-on-dark:#EFD79A;
+    --border:rgba(231,214,166,.20);
     --icon-bg:#2C4A38;
-    --icon-fg:#F2EEE2;
+    --icon-fg:#EAD9A6;
   }
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -45,7 +45,7 @@ img{display:block;max-width:100%}
 /* ---------- HERO ---------- */
 .hero{padding:72px 0 64px;background:var(--bg-page)}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-.eyebrow{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--text-heading);margin-bottom:18px}
+.eyebrow{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:18px}
 .script{font-family:'Caveat',cursive;color:var(--accent);font-weight:700}
 .hero h1{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--text-heading);font-size:64px;line-height:1.02}
 .hero h1 .script{display:block;font-size:56px;line-height:.9;margin-bottom:2px}
@@ -54,15 +54,15 @@ img{display:block;max-width:100%}
 .hero p.lede strong{color:var(--text-heading)}
 .hero-photo{position:relative}
 .hero-photo img{border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.28);aspect-ratio:4/3;object-fit:cover}
-.hero-photo figcaption{position:absolute;left:18px;bottom:18px;background:rgba(13,25,18,.9);color:#F7F4EC;font-size:13.5px;padding:8px 14px;border-radius:8px;letter-spacing:.02em}
+.hero-photo figcaption{position:absolute;left:18px;bottom:18px;background:rgba(13,25,18,.9);color:#EAD9A6;font-size:13.5px;padding:8px 14px;border-radius:8px;letter-spacing:.02em}
 
-/* ---------- VENUE BAND (always dark) ---------- */
+/* ---------- VENUE BAND (dark in both modes) ---------- */
 .venue{background:var(--bg-dark);color:var(--text-on-dark);padding:56px 0}
 .venue-grid{display:grid;grid-template-columns:280px 1fr;gap:48px;align-items:center}
-.venue h2{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;line-height:1.15}
+.venue h2{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;line-height:1.15;color:var(--text-on-dark)}
 .venue h2 span{color:var(--heading-on-dark)}
-.venue-divider{border-left:1px solid rgba(247,244,236,.25);padding-left:48px}
-.venue-lead{font-size:15.5px;color:rgba(247,244,236,.85);margin-bottom:26px}
+.venue-divider{border-left:1px solid rgba(234,217,166,.30);padding-left:48px}
+.venue-lead{font-size:15.5px;color:rgba(234,217,166,.82);margin-bottom:26px}
 .venue-items{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
 .venue-item{text-align:center}
 .venue-item svg{width:44px;height:44px;stroke:var(--heading-on-dark);margin:0 auto 12px}
@@ -77,45 +77,44 @@ img{display:block;max-width:100%}
 .pillar:nth-child(2) .pillar-icon{background:var(--accent)}
 .pillar-icon svg{width:28px;height:28px;stroke:var(--icon-fg)}
 .pillar h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--text-heading);margin-bottom:12px}
-.pillar:nth-child(2) h3{color:var(--accent)}
 .pillar p{font-size:15px;margin-bottom:12px;color:var(--text-body)}
 
 /* ---------- QUOTE ---------- */
 .pull{padding:20px 0 74px;text-align:center;background:var(--bg-page)}
 .pull blockquote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:31px;line-height:1.35;color:var(--text-heading);max-width:24em;margin:0 auto}
-.pull blockquote .script{font-style:normal;font-size:36px}
+.pull blockquote .script{font-style:normal;font-size:36px;color:var(--accent)}
 
 /* ---------- COMMUNITY ---------- */
 .community{background:var(--bg-alt);padding:76px 0}
 .community-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
 .community h2{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--text-heading);line-height:1.1;margin-bottom:20px}
-.community h2 .script{font-size:40px}
+.community h2 .script{font-size:40px;color:var(--accent)}
 .community p{margin-bottom:16px;color:var(--text-body)}
 .photo-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .photo-duo figure{position:relative}
 .photo-duo img{border-radius:12px;aspect-ratio:3/4;object-fit:cover;box-shadow:0 16px 40px rgba(0,0,0,.22)}
 .photo-duo figure:nth-child(2){margin-top:34px}
-.photo-duo figcaption{font-size:13px;color:var(--text-body);opacity:.78;margin-top:10px;text-align:center}
+.photo-duo figcaption{font-size:13px;color:var(--text-body);opacity:.85;margin-top:10px;text-align:center}
 .tick-list{list-style:none;margin:18px 0 0}
 .tick-list li{position:relative;padding-left:30px;margin-bottom:10px;font-size:15.5px;color:var(--text-body)}
 .tick-list li::before{content:"";position:absolute;left:0;top:7px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
 
-/* ---------- CTA (always dark) ---------- */
+/* ---------- CTA (dark in both modes) ---------- */
 .cta{background:var(--bg-dark);color:var(--text-on-dark);padding:70px 0;text-align:center}
-.cta h2{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.15}
+.cta h2{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.15;color:var(--text-on-dark)}
 .cta h2 .script{display:block;font-size:52px;color:var(--heading-on-dark)}
-.cta p{max-width:56ch;margin:20px auto 30px;color:rgba(247,244,236,.88)}
+.cta p{max-width:56ch;margin:20px auto 30px;color:rgba(234,217,166,.85)}
 .socials{display:flex;gap:34px;justify-content:center;flex-wrap:wrap}
 .socials a{color:var(--text-on-dark);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;letter-spacing:.06em}
 .socials svg{width:40px;height:40px;stroke:var(--heading-on-dark)}
-.socials a:hover svg{stroke:var(--text-on-dark)}
+.socials a:hover svg{stroke:#FFFFFF}
 
 /* ---------- FOOTER ---------- */
 .foot{padding:34px 0;background:var(--bg-page)}
 .foot .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
 .foot .name{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--text-heading);font-size:19px;letter-spacing:.04em}
 .foot .motto{font-size:15px;color:var(--text-body)}
-.foot .motto .script{font-size:21px}
+.foot .motto .script{font-size:21px;color:var(--accent)}
 
 @media (max-width:880px){
   .hero-grid,.venue-grid,.community-grid{grid-template-columns:1fr;gap:36px}
@@ -127,9 +126,10 @@ img{display:block;max-width:100%}
   .pillar{border-left:none;padding:0}
   .pull blockquote{font-size:25px}
 }
+/* Animation is progressive enhancement ONLY. Content is fully visible without JS. */
 @media (prefers-reduced-motion:no-preference){
-  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
-  .reveal.in{opacity:1;transform:none}
+  .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .js .reveal.in{opacity:1;transform:none}
 }
 </style>
 </head>
@@ -267,6 +267,8 @@ img{display:block;max-width:100%}
 </footer>
 
 <script>
+// Turn on animations only once JS is confirmed running; otherwise content stays visible.
+document.documentElement.classList.add('js');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
