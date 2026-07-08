@@ -5,128 +5,153 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shared Kitchen — North Shore Presbyterian Church</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Caveat:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme: light dark;
-  --bg-page:#F7F4EC;
-  --bg-alt:#FBF9F1;
-  --bg-dark:#1D3F2E;
-  --text-body:#463710;        /* deep readable gold on light */
-  --text-heading:#7A5C10;     /* rich gold */
-  --accent:#9A7A1E;
-  --text-on-dark:#EAD9A6;     /* gold-cream on the dark bands */
-  --heading-on-dark:#E7D6A6;
-  --border:rgba(122,92,16,.24);
-  --icon-bg:#1D3F2E;
-  --icon-fg:#EAD9A6;
+  --navy:#1C3F6E; --coral:#E1793A; --teal:#4EA58D; --blue:#3E93CE; --gold:#CB9A45;
+  --bg-page:#FBFAF7; --bg-alt:#FFFFFF; --bg-dark:#1C3F6E;
+  --text-body:#4B5560; --text-heading:#1C3F6E;
+  --accent:#CB9A45;
+  --text-on-dark:#F4F2EA; --heading-on-dark:#ECD79E; --muted-on-dark:rgba(244,242,234,.82);
+  --border:rgba(28,63,110,.14);
+  --card:#FFFFFF; --card-shadow:0 18px 44px rgba(28,45,70,.10);
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg-page:#161C15;
-    --bg-alt:#1D2419;
-    --bg-dark:#0C110E;
-    --text-body:#E7D6A6;      /* light gold on dark */
-    --text-heading:#EFCF7E;   /* bright gold */
-    --accent:#E3C065;
-    --text-on-dark:#EAD9A6;
-    --heading-on-dark:#EFD79A;
-    --border:rgba(231,214,166,.20);
-    --icon-bg:#2C4A38;
-    --icon-fg:#EAD9A6;
+    --navy:#8FBCE8; --coral:#ED8A4E; --teal:#64BBA2; --blue:#63ABE2; --gold:#E3C069;
+    --bg-page:#131A24; --bg-alt:#1A222E; --bg-dark:#0E141C;
+    --text-body:#D3D9E0; --text-heading:#E9EFF6;
+    --accent:#E3C069;
+    --text-on-dark:#F4F2EA; --heading-on-dark:#EFD79A; --muted-on-dark:rgba(244,242,234,.80);
+    --border:rgba(211,217,224,.16);
+    --card:#1F2835; --card-shadow:0 18px 44px rgba(0,0,0,.38);
   }
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Figtree',sans-serif;color:var(--text-body);background:var(--bg-page);line-height:1.65;font-size:17px}
+body{font-family:'Mulish',sans-serif;color:var(--text-body);background:var(--bg-page);line-height:1.65;font-size:17px}
 img{display:block;max-width:100%}
-.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 26px}
+h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
+.btn{display:inline-block;background:var(--coral);color:#fff;font-family:'Poppins';font-weight:600;font-size:14px;letter-spacing:.02em;padding:12px 24px;border-radius:999px;text-decoration:none;transition:transform .15s ease,filter .15s ease}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+
+/* ---------- HEADER ---------- */
+.top{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1120px;margin:0 auto}
+.logo-chip{background:#fff;border-radius:12px;padding:9px 14px;box-shadow:0 6px 18px rgba(28,45,70,.12);display:inline-flex}
+.logo-chip img{height:38px;width:auto}
 
 /* ---------- HERO ---------- */
-.hero{padding:72px 0 64px;background:var(--bg-page)}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-.eyebrow{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:18px}
-.script{font-family:'Caveat',cursive;color:var(--accent);font-weight:700}
-.hero h1{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--text-heading);font-size:64px;line-height:1.02}
-.hero h1 .script{display:block;font-size:56px;line-height:.9;margin-bottom:2px}
-.gold-rule{width:88px;height:4px;background:var(--accent);margin:26px 0}
-.hero p.lede{font-size:19px;max-width:46ch;color:var(--text-body)}
-.hero p.lede strong{color:var(--text-heading)}
-.hero-photo{position:relative}
-.hero-photo img{border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.28);aspect-ratio:4/3;object-fit:cover}
-.hero-photo figcaption{position:absolute;left:18px;bottom:18px;background:rgba(13,25,18,.9);color:#EAD9A6;font-size:13.5px;padding:8px 14px;border-radius:8px;letter-spacing:.02em}
+.hero{position:relative;overflow:hidden;background:#20242a}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,28,40,.62),rgba(20,28,40,.42) 45%,rgba(20,28,40,.66))}
+.hero-inner{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:96px 26px 104px;text-align:center;color:#fff}
+.circles{position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-46%);width:520px;height:340px;pointer-events:none;opacity:.9}
+.circles .c{position:absolute;border-radius:50%;border:2px solid #fff;top:50%;transform:translateY(-50%)}
+.circles .c1{width:250px;height:250px;left:70px;border-color:rgba(225,121,58,.85)}
+.circles .c2{width:250px;height:250px;left:150px;border-color:rgba(255,255,255,.55)}
+.circles .c3{width:250px;height:250px;left:230px;border-color:rgba(78,165,141,.85)}
+.circles .plus{position:absolute;top:50%;left:calc(150px + 125px);transform:translate(-50%,-50%);color:#fff;font-family:'Poppins';font-weight:400;font-size:42px;line-height:1}
+.hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#F4E6C4;margin-bottom:20px}
+.hero h1{font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.01em;text-shadow:0 2px 18px rgba(0,0,0,.28)}
+.hero .sub{max-width:44ch;margin:20px auto 30px;font-size:19px;color:rgba(255,255,255,.92)}
+.hero .sub strong{color:#F4E6C4;font-weight:700}
 
-/* ---------- VENUE BAND (dark in both modes) ---------- */
-.venue{background:var(--bg-dark);color:var(--text-on-dark);padding:56px 0}
-.venue-grid{display:grid;grid-template-columns:280px 1fr;gap:48px;align-items:center}
-.venue h2{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;line-height:1.15;color:var(--text-on-dark)}
+/* ---------- VENUE BAND ---------- */
+.venue{background:var(--bg-dark);color:var(--text-on-dark);padding:58px 0}
+.venue-grid{display:grid;grid-template-columns:300px 1fr;gap:50px;align-items:center}
+.venue h2{font-size:30px;font-weight:600;line-height:1.18;color:var(--text-on-dark)}
 .venue h2 span{color:var(--heading-on-dark)}
-.venue-divider{border-left:1px solid rgba(234,217,166,.30);padding-left:48px}
-.venue-lead{font-size:15.5px;color:rgba(234,217,166,.82);margin-bottom:26px}
-.venue-items{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.venue-r{border-left:1px solid rgba(244,242,234,.28);padding-left:50px}
+.venue-lead{font-size:15px;color:var(--muted-on-dark);margin-bottom:24px}
+.venue-items{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .venue-item{text-align:center}
-.venue-item svg{width:44px;height:44px;stroke:var(--heading-on-dark);margin:0 auto 12px}
-.venue-item span{display:block;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.venue-item svg{width:42px;height:42px;stroke:var(--heading-on-dark);margin:0 auto 12px}
+.venue-item span{display:block;font-family:'Poppins';font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+
+/* ---------- INTRO ---------- */
+.intro{padding:74px 0 26px;text-align:center}
+.intro .eyebrow{font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--coral);margin-bottom:14px}
+.intro h2{font-size:clamp(30px,4.4vw,44px);font-weight:700;color:var(--text-heading);line-height:1.12;max-width:16ch;margin:0 auto 18px}
+.intro p{max-width:60ch;margin:0 auto;font-size:18px}
+.rule{width:74px;height:4px;background:var(--gold);border-radius:2px;margin:22px auto 0}
 
 /* ---------- PILLARS ---------- */
-.pillars{padding:76px 0;background:var(--bg-page)}
-.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
-.pillar{padding:0 36px;border-left:1px solid var(--border)}
-.pillar:first-child{border-left:none;padding-left:0}
-.pillar-icon{width:58px;height:58px;border-radius:50%;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-.pillar:nth-child(2) .pillar-icon{background:var(--accent)}
-.pillar-icon svg{width:28px;height:28px;stroke:var(--icon-fg)}
-.pillar h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--text-heading);margin-bottom:12px}
-.pillar p{font-size:15px;margin-bottom:12px;color:var(--text-body)}
+.pillars{padding:44px 0 74px}
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.pillar{background:var(--card);border-radius:16px;padding:32px 28px;box-shadow:var(--card-shadow)}
+.pillar-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.p1 .pillar-icon{background:var(--coral)} .p2 .pillar-icon{background:var(--teal)} .p3 .pillar-icon{background:var(--blue)}
+.pillar-icon svg{width:27px;height:27px;stroke:#fff}
+.pillar h3{font-size:21px;font-weight:600;margin-bottom:10px}
+.p1 h3{color:var(--coral)} .p2 h3{color:var(--teal)} .p3 h3{color:var(--blue)}
+.pillar p{font-size:15px;margin-bottom:11px;color:var(--text-body)}
+.pillar p:last-child{margin-bottom:0}
+
+/* ---------- PHOTO STRIP ---------- */
+.strip{background:var(--bg-alt);padding:70px 0}
+.strip .head{text-align:center;margin-bottom:38px}
+.strip h2{font-size:clamp(26px,3.6vw,36px);font-weight:700;color:var(--text-heading);margin-bottom:10px}
+.strip .head p{max-width:56ch;margin:0 auto;font-size:16px}
+.strip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.shot figure{margin:0;position:relative;overflow:hidden;border-radius:14px;box-shadow:var(--card-shadow)}
+.shot img{width:100%;aspect-ratio:3/2;object-fit:cover;transition:transform .5s ease}
+.shot figure:hover img{transform:scale(1.04)}
+.shot figcaption{font-family:'Poppins';font-size:13.5px;font-weight:500;color:var(--text-heading);margin-top:12px;text-align:center}
 
 /* ---------- QUOTE ---------- */
-.pull{padding:20px 0 74px;text-align:center;background:var(--bg-page)}
-.pull blockquote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:31px;line-height:1.35;color:var(--text-heading);max-width:24em;margin:0 auto}
-.pull blockquote .script{font-style:normal;font-size:36px;color:var(--accent)}
+.quote{padding:78px 0;text-align:center}
+.quote .plus{font-family:'Poppins';color:var(--gold);font-size:34px;margin-bottom:14px}
+.quote blockquote{font-family:'Poppins';font-weight:500;font-size:clamp(24px,3.4vw,33px);line-height:1.32;color:var(--text-heading);max-width:22ch;margin:0 auto}
+.quote cite{display:block;margin-top:18px;font-family:'Mulish';font-style:normal;font-size:14px;letter-spacing:.06em;color:var(--coral);font-weight:700}
 
 /* ---------- COMMUNITY ---------- */
-.community{background:var(--bg-alt);padding:76px 0}
+.community{background:var(--bg-alt);padding:78px 0}
 .community-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.community h2{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--text-heading);line-height:1.1;margin-bottom:20px}
-.community h2 .script{font-size:40px;color:var(--accent)}
+.community h2{font-size:clamp(30px,4.2vw,42px);font-weight:700;color:var(--text-heading);line-height:1.12;margin-bottom:18px}
 .community p{margin-bottom:16px;color:var(--text-body)}
 .photo-duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.photo-duo figure{position:relative}
-.photo-duo img{border-radius:12px;aspect-ratio:3/4;object-fit:cover;box-shadow:0 16px 40px rgba(0,0,0,.22)}
+.photo-duo figure{margin:0;position:relative}
+.photo-duo img{border-radius:14px;aspect-ratio:3/4;object-fit:cover;box-shadow:var(--card-shadow)}
 .photo-duo figure:nth-child(2){margin-top:34px}
-.photo-duo figcaption{font-size:13px;color:var(--text-body);opacity:.85;margin-top:10px;text-align:center}
-.tick-list{list-style:none;margin:18px 0 0}
-.tick-list li{position:relative;padding-left:30px;margin-bottom:10px;font-size:15.5px;color:var(--text-body)}
-.tick-list li::before{content:"";position:absolute;left:0;top:7px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.photo-duo figcaption{font-family:'Poppins';font-size:12.5px;font-weight:500;color:var(--text-body);opacity:.85;margin-top:10px;text-align:center}
+.tick{list-style:none;margin:16px 0 0}
+.tick li{position:relative;padding-left:28px;margin-bottom:11px;font-size:15.5px;color:var(--text-body)}
+.tick li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;background:var(--coral)}
+.tick li:nth-child(2)::before{background:var(--teal)} .tick li:nth-child(3)::before{background:var(--blue)} .tick li:nth-child(4)::before{background:var(--gold)}
 
-/* ---------- CTA (dark in both modes) ---------- */
-.cta{background:var(--bg-dark);color:var(--text-on-dark);padding:70px 0;text-align:center}
-.cta h2{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.15;color:var(--text-on-dark)}
-.cta h2 .script{display:block;font-size:52px;color:var(--heading-on-dark)}
-.cta p{max-width:56ch;margin:20px auto 30px;color:rgba(234,217,166,.85)}
-.socials{display:flex;gap:34px;justify-content:center;flex-wrap:wrap}
-.socials a{color:var(--text-on-dark);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;letter-spacing:.06em}
-.socials svg{width:40px;height:40px;stroke:var(--heading-on-dark)}
-.socials a:hover svg{stroke:#FFFFFF}
+/* ---------- CTA ---------- */
+.cta{background:var(--bg-dark);color:var(--text-on-dark);padding:74px 0;text-align:center}
+.cta h2{font-size:clamp(30px,4.4vw,42px);font-weight:700;line-height:1.14;color:var(--text-on-dark)}
+.cta h2 span{color:var(--heading-on-dark)}
+.cta p{max-width:58ch;margin:18px auto 24px;color:var(--muted-on-dark)}
+.cta .btn{background:var(--coral)}
+.socials{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.socials a{color:var(--text-on-dark);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Poppins';font-size:12.5px;font-weight:500;letter-spacing:.03em}
+.socials svg{width:38px;height:38px;stroke:var(--heading-on-dark);transition:stroke .15s ease}
+.socials a:hover svg{stroke:#fff}
 
 /* ---------- FOOTER ---------- */
-.foot{padding:34px 0;background:var(--bg-page)}
-.foot .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
-.foot .name{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--text-heading);font-size:19px;letter-spacing:.04em}
-.foot .motto{font-size:15px;color:var(--text-body)}
-.foot .motto .script{font-size:21px;color:var(--accent)}
+.foot{padding:44px 0 40px;background:var(--bg-page);text-align:center}
+.foot .logo-chip{margin:0 auto 18px}
+.foot .tagline{font-family:'Poppins';font-weight:600;font-size:20px;color:var(--text-heading);margin-bottom:16px}
+.foot .contact{font-size:14.5px;color:var(--text-body);line-height:1.9}
+.foot .contact a{color:var(--text-body);text-decoration:none}
+.foot .contact a:hover{color:var(--coral)}
+.foot .sep{color:var(--gold);margin:0 6px;font-weight:700}
+.foot .motto{margin-top:20px;font-size:14px;color:var(--text-body)}
+.foot .motto em{font-style:italic;color:var(--coral)}
 
-@media (max-width:880px){
-  .hero-grid,.venue-grid,.community-grid{grid-template-columns:1fr;gap:36px}
-  .hero h1{font-size:48px}
-  .hero h1 .script{font-size:44px}
-  .venue-divider{border-left:none;padding-left:0}
-  .venue-items{grid-template-columns:repeat(2,1fr);gap:28px}
-  .pillars-grid{grid-template-columns:1fr;gap:36px}
-  .pillar{border-left:none;padding:0}
-  .pull blockquote{font-size:25px}
+@media (max-width:860px){
+  .venue-grid,.community-grid{grid-template-columns:1fr;gap:34px}
+  .venue-r{border-left:none;padding-left:0}
+  .venue-items{grid-template-columns:repeat(2,1fr);gap:26px}
+  .pillars-grid,.strip-grid{grid-template-columns:1fr;gap:20px}
+  .circles{width:360px;transform:translate(-50%,-42%) scale(.8)}
 }
-/* Animation is progressive enhancement ONLY. Content is fully visible without JS. */
 @media (prefers-reduced-motion:no-preference){
   .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
   .js .reveal.in{opacity:1;transform:none}
@@ -135,19 +160,21 @@ img{display:block;max-width:100%}
 </head>
 <body>
 
+<!-- HEADER -->
+<header class="top">
+  <span class="logo-chip"><img src="images/nspc-logo.png" alt="North Shore Presbyterian Church"></span>
+  <a class="btn" href="https://www.northshorepres.org">Give Now</a>
+</header>
+
 <!-- HERO -->
 <section class="hero">
-  <div class="wrap hero-grid">
-    <div class="reveal">
-      <div class="eyebrow">Nourishing Our Neighbors</div>
-      <h1><span class="script">Transforming</span> Lives Together.</h1>
-      <div class="gold-rule"></div>
-      <p class="lede">The North Shore Presbyterian Church <strong>Shared Kitchen</strong> is a ministry delivering unique community partnerships that build on our long-standing food ministry — for the nourishment of <strong>mind, body, and spirit</strong>.</p>
-    </div>
-    <figure class="hero-photo reveal">
-      <img src="images/hero.jpg" alt="Neighbors gathered for outdoor worship in the courtyard at North Shore Presbyterian Church">
-      <figcaption>Gathered together in the courtyard</figcaption>
-    </figure>
+  <div class="hero-bg"><img src="images/hero.jpg" alt="Hands kneading bread dough on a floured table"></div>
+  <div class="circles"><span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="plus">+</span></div>
+  <div class="hero-inner reveal">
+    <div class="eyebrow">North Shore Presbyterian Church · Shared Kitchen</div>
+    <h1>Transforming Lives Together</h1>
+    <p class="sub">A community kitchen that builds on our long-standing food ministry — nourishing <strong>mind, body, and spirit</strong> across the North Shore.</p>
+    <a class="btn" href="#join">Join the Mission</a>
   </div>
 </section>
 
@@ -155,78 +182,87 @@ img{display:block;max-width:100%}
 <section class="venue">
   <div class="wrap venue-grid">
     <h2 class="reveal">The Perfect Venue for <span>Your Next Event</span></h2>
-    <div class="venue-divider reveal">
-      <p class="venue-lead">Our kitchen would be the perfect venue for your next function, such as:</p>
+    <div class="venue-r reveal">
+      <p class="venue-lead">Our kitchen is a welcoming venue for your next function, such as:</p>
       <div class="venue-items">
-        <div class="venue-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M12 21c-4.5-3.4-8-6.4-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 3.6-3.5 6.6-8 10z"/></svg>
-          <span>Fundraisers</span>
-        </div>
-        <div class="venue-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2.5 20c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5M12.8 15.4c1-.3 2.1-.4 3.2-.4 2.6 0 4.9 1.8 5.5 5"/></svg>
-          <span>Family Reunions</span>
-        </div>
-        <div class="venue-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M4 12h16v2a8 8 0 0 1-16 0v-2zM12 12V5a3 3 0 0 0-3-3"/><circle cx="12" cy="12" r="0.5"/></svg>
-          <span>Baby Showers</span>
-        </div>
-        <div class="venue-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M12 21s-7-4.5-7-9.5C5 8 7 6 9.5 6c1.1 0 2 .5 2.5 1 .5-.5 1.4-1 2.5-1C17 6 19 8 19 11.5c0 5-7 9.5-7 9.5z"/><path d="M3 14c1.5.8 2.5 2 3 3.5M21 14c-1.5.8-2.5 2-3 3.5"/></svg>
-          <span>Community Outreach</span>
-        </div>
+        <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M12 21c-4.5-3.4-8-6.4-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 3.6-3.5 6.6-8 10z"/></svg><span>Fundraisers</span></div>
+        <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2.5 20c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5M12.8 15.4c1-.3 2.1-.4 3.2-.4 2.6 0 4.9 1.8 5.5 5"/></svg><span>Family Reunions</span></div>
+        <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M4 12h16v2a8 8 0 0 1-16 0v-2zM12 12V5a3 3 0 0 0-3-3"/></svg><span>Baby Showers</span></div>
+        <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M12 21s-7-4.5-7-9.5C5 8 7 6 9.5 6c1.1 0 2 .5 2.5 1 .5-.5 1.4-1 2.5-1C17 6 19 8 19 11.5c0 5-7 9.5-7 9.5z"/><path d="M3 14c1.5.8 2.5 2 3 3.5M21 14c-1.5.8-2.5 2-3 3.5"/></svg><span>Community Outreach</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- THREE PILLARS -->
+<!-- INTRO -->
+<section class="intro">
+  <div class="wrap reveal">
+    <div class="eyebrow">Multiplying Our Mission</div>
+    <h2>More than a kitchen — a gathering place.</h2>
+    <p>The Shared Kitchen extends our communion table into the neighborhood: a place where relationships are strengthened, hospitality is practiced, and neighbors are cared for — embodying the spirit of the Loaves and Fishes story by sharing our resources for the good of all.</p>
+    <div class="rule"></div>
+  </div>
+</section>
+
+<!-- PILLARS -->
 <section class="pillars">
   <div class="wrap pillars-grid">
-    <div class="pillar reveal">
+    <div class="pillar p1 reveal">
       <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6M12 4v3M10.5 5.5h3"/></svg></div>
       <h3>Building on Our Legacy</h3>
-      <p>For more than 100 years, North Shore Presbyterian Church has served as a place of welcome, faith, and community. This project continues that legacy — creating a welcoming space for hospitality and spiritual bonding as we nourish the mind, body, and spirit of our neighbors.</p>
-      <p>Ultimately, the shared kitchen serves as an extension of our communion table, allowing us to be "good neighbors" through meaningful partnerships that embody a "Loaves and Fishes" mission.</p>
+      <p>For more than 100 years, North Shore Presbyterian Church has been a place of welcome, faith, and community. This project continues that legacy — a welcoming space for hospitality and spiritual bonding.</p>
+      <p>The shared kitchen serves as an extension of our communion table, letting us be "good neighbors" through partnerships that embody a "Loaves and Fishes" mission.</p>
     </div>
-    <div class="pillar reveal">
+    <div class="pillar p2 reveal">
       <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 21V9M12 9c0-4 3-6 7-6 0 4-3 6-7 6zM12 13c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/></svg></div>
       <h3>Being Good Stewards</h3>
-      <p>The Shared Kitchen is a unique initiative to transform an underutilized area of our building into a thriving community hub while expanding our long-standing food ministry.</p>
-      <p>By partnering with local food entrepreneurs and community groups, we are thoughtfully stewarding our building and financial resources to increase the church's viability and visibility in the neighborhood.</p>
+      <p>The Shared Kitchen transforms an underutilized area of our building into a thriving community hub while expanding our long-standing food ministry.</p>
+      <p>By partnering with local food entrepreneurs, we steward our building and financial resources to strengthen the church's viability and visibility in the neighborhood.</p>
     </div>
-    <div class="pillar reveal">
+    <div class="pillar p3 reveal">
       <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="5" cy="10" r="2.2"/><circle cx="19" cy="10" r="2.2"/><path d="M7.5 21c.4-3 2.2-5 4.5-5s4.1 2 4.5 5M1.8 17.5c.3-2 1.5-3.3 3.2-3.3M22.2 17.5c-.3-2-1.5-3.3-3.2-3.3"/></svg></div>
       <h3>Enlivens the Building</h3>
-      <p>This project provides bridges within groups that use the church space for other activities, strengthening the church's presence in the neighborhood and creating new opportunities for service, connection, and outreach.</p>
-      <p>Our shared kitchen also creates a center for daily activity — after-school programs, intergenerational cooking classes, community meals, and more.</p>
+      <p>The project builds bridges among the groups that use our space, strengthening the church's presence and creating new opportunities for service and connection.</p>
+      <p>It also creates a center for daily activity — after-school programs, intergenerational cooking classes, community meals, and more.</p>
     </div>
   </div>
 </section>
 
-<!-- PULL QUOTE -->
-<section class="pull">
-  <div class="wrap reveal">
-    <blockquote>"More than a kitchen, this space is a <span class="script">gathering place</span> — where neighbors connect, learn, celebrate, and care for one another."</blockquote>
+<!-- PHOTO STRIP -->
+<section class="strip">
+  <div class="wrap">
+    <div class="head reveal">
+      <h2>Life in the Kitchen</h2>
+      <p>From bakers launching a business to neighbors sharing a meal, the kitchen is a place to gather, learn, and grow together.</p>
+    </div>
+    <div class="strip-grid">
+      <div class="shot reveal"><figure><img src="images/kitchen-bake.jpg" alt="Two bakers working together at a kitchen counter"></figure><figcaption>Learning &amp; making together</figcaption></div>
+      <div class="shot reveal"><figure><img src="images/kitchen-team.jpg" alt="Two cooks smiling while working in a commercial kitchen"></figure><figcaption>Local food entrepreneurs</figcaption></div>
+      <div class="shot reveal"><figure><img src="images/kitchen-pots.jpg" alt="Large pots simmering on a stove with steam rising"></figure><figcaption>Meals for the community</figcaption></div>
+    </div>
   </div>
 </section>
 
-<!-- A PLACE FOR COMMUNITY -->
-<section class="community">
+<!-- QUOTE -->
+<section class="quote">
+  <div class="wrap reveal">
+    <div class="plus">+</div>
+    <blockquote>It is always a good day to be a neighbor.</blockquote>
+    <cite>North Shore Presbyterian Church</cite>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section class="community" id="join">
   <div class="wrap community-grid">
     <div class="photo-duo reveal">
-      <figure>
-        <img src="images/worship.jpg" alt="Pastor leading outdoor worship beside a decorated communion table">
-        <figcaption>Worship in the courtyard</figcaption>
-      </figure>
-      <figure>
-        <img src="images/fellowship.jpg" alt="Two neighbors shaking hands during the passing of the peace">
-        <figcaption>Neighbors greeting neighbors</figcaption>
-      </figure>
+      <figure><img src="images/handshake.jpg" alt="Two neighbors shaking hands during worship"><figcaption>Neighbors greeting neighbors</figcaption></figure>
+      <figure><img src="images/hands.jpg" alt="A diverse group joining hands together"><figcaption>Stronger together</figcaption></figure>
     </div>
     <div class="reveal">
-      <h2>A Place for <span class="script">Community</span></h2>
-      <p>Our vision is for the Shared Kitchen to become a center of daily life and activity — a place where people of all ages and backgrounds gather, learn, and grow together.</p>
-      <ul class="tick-list">
+      <h2>A Place for Community</h2>
+      <p>As this ministry grows, we invite you to be part of the story — through volunteering, participating in events, partnering with us, or simply sharing a meal. Together we build a stronger, more connected community.</p>
+      <ul class="tick">
         <li>After-school programs &amp; intergenerational cooking classes</li>
         <li>Community meals and outreach events</li>
         <li>Fundraisers, family reunions, and baby showers</li>
@@ -239,20 +275,21 @@ img{display:block;max-width:100%}
 <!-- CTA -->
 <section class="cta">
   <div class="wrap reveal">
-    <h2>Together, we can <span class="script">make a difference.</span></h2>
-    <p>As this ministry grows, we invite you to be part of the story — through volunteering, participating in events, partnering with us, or simply sharing a meal. Join us for worship on Sundays and follow our journey on social media.</p>
+    <h2>Together, we can <span>make a difference.</span></h2>
+    <p>Join us for worship on Sundays, partner with the Shared Kitchen, or follow our journey on social media as we create new ways to nourish minds, bodies, and spirits.</p>
+    <a class="btn" href="https://www.northshorepres.org">Contribute Today</a>
     <div class="socials">
-      <a href="https://instagram.com/NSPCChurch" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6"/></svg>
-        @NSPCChurch
+      <a href="https://www.instagram.com/northshorepres?igsh=MWhyZzFsMjY5YXhpYQ==" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+        Instagram
       </a>
-      <a href="https://facebook.com/NSPCChurch" aria-label="Facebook">
+      <a href="https://www.facebook.com/share/196nEEHWTy/?mibextid=wwXIfr" aria-label="Facebook">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V9H6.5v3.5H9V21h3.5v-8.5H15L15.8 9h-3.3V6.8c0-.7.5-1.3 1.3-1.3H15V3z"/></svg>
-        @NSPCChurch
+        Facebook
       </a>
-      <a href="https://youtube.com/@NSPCChurch" aria-label="YouTube">
+      <a href="https://youtube.com/@northshorepresbyterianchur3484?si=sMjTiiy8PhioCkVf" aria-label="YouTube">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5z"/></svg>
-        @NSPCChurch
+        YouTube
       </a>
     </div>
   </div>
@@ -261,15 +298,19 @@ img{display:block;max-width:100%}
 <!-- FOOTER -->
 <footer class="foot">
   <div class="wrap">
-    <div class="name">✝ NORTH SHORE PRESBYTERIAN CHURCH</div>
-    <div class="motto">Nourishing the <span class="script">mind.</span>&nbsp; Nourishing the <span class="script">body.</span>&nbsp; Nourishing the <span class="script">spirit.</span></div>
+    <span class="logo-chip"><img src="images/nspc-logo.png" alt="North Shore Presbyterian Church"></span>
+    <div class="tagline">It is always a good day to be a neighbor.</div>
+    <div class="contact">
+      North Shore Presbyterian Church <span class="sep">|</span> 4048 North Bartlett Avenue <span class="sep">|</span> Shorewood, WI 53211<br>
+      <a href="tel:+14143328130">414-332-8130</a> <span class="sep">|</span> <a href="mailto:office@northshorepres.org">office@northshorepres.org</a>
+    </div>
+    <div class="motto">Nourishing the <em>mind</em>. Nourishing the <em>body</em>. Nourishing the <em>spirit</em>.</div>
   </div>
 </footer>
 
 <script>
-// Turn on animations only once JS is confirmed running; otherwise content stays visible.
 document.documentElement.classList.add('js');
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
 </body>
