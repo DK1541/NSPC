@@ -36,6 +36,8 @@ img{display:block;max-width:100%}
 .wrap{max-width:1120px;margin:0 auto;padding:0 26px}
 h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .btn{display:inline-block;background:var(--coral);color:#fff;font-family:'Poppins';font-weight:600;font-size:14px;letter-spacing:.02em;padding:12px 24px;border-radius:999px;text-decoration:none;transition:transform .15s ease,filter .15s ease}
+.btn-outline{display:inline-block;background:transparent;color:var(--text-heading);border:2px solid var(--text-heading);font-family:'Poppins';font-weight:600;font-size:14px;letter-spacing:.02em;padding:10px 22px;border-radius:999px;text-decoration:none;margin-top:22px;transition:background .15s ease,color .15s ease}
+.btn-outline:hover{background:var(--text-heading);color:var(--bg-alt)}
 .btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
 
 /* ---------- HEADER ---------- */
@@ -47,16 +49,16 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .hero{position:relative;overflow:hidden;background:#20242a}
 .hero-bg{position:absolute;inset:0}
 .hero-bg img{width:100%;height:100%;object-fit:cover}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,28,40,.62),rgba(20,28,40,.42) 45%,rgba(20,28,40,.66))}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,26,38,.70),rgba(18,26,38,.50) 45%,rgba(18,26,38,.72))}
 .hero-inner{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:96px 26px 104px;text-align:center;color:#fff}
-.circles{position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-46%);width:520px;height:340px;pointer-events:none;opacity:.9}
-.circles .c{position:absolute;border-radius:50%;border:2px solid #fff;top:50%;transform:translateY(-50%)}
-.circles .c1{width:250px;height:250px;left:70px;border-color:rgba(225,121,58,.85)}
-.circles .c2{width:250px;height:250px;left:150px;border-color:rgba(255,255,255,.55)}
-.circles .c3{width:250px;height:250px;left:230px;border-color:rgba(78,165,141,.85)}
-.circles .plus{position:absolute;top:50%;left:calc(150px + 125px);transform:translate(-50%,-50%);color:#fff;font-family:'Poppins';font-weight:400;font-size:42px;line-height:1}
+.circles{--d:clamp(168px,42vw,250px);position:absolute;z-index:1;top:50%;left:50%;width:0;height:0;transform:translate(-50%,-50%);pointer-events:none;opacity:.5}
+.circles .c{position:absolute;top:0;left:0;width:var(--d);height:var(--d);border-radius:50%;border:2px solid #fff}
+.circles .c1{transform:translate(calc(-50% - var(--d) * .30),-50%);border-color:rgba(225,121,58,.9)}
+.circles .c2{transform:translate(-50%,-50%);border-color:rgba(255,255,255,.6)}
+.circles .c3{transform:translate(calc(-50% + var(--d) * .30),-50%);border-color:rgba(78,165,141,.9)}
+.circles .plus{position:absolute;top:0;left:0;transform:translate(-50%,-50%);color:#fff;font-family:'Poppins';font-weight:400;font-size:42px;line-height:1}
 .hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#F4E6C4;margin-bottom:20px}
-.hero h1{font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.01em;text-shadow:0 2px 18px rgba(0,0,0,.28)}
+.hero h1{font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.01em;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.55),0 3px 24px rgba(0,0,0,.4)}
 .hero .sub{max-width:44ch;margin:20px auto 30px;font-size:19px;color:rgba(255,255,255,.92)}
 .hero .sub strong{color:#F4E6C4;font-weight:700}
 
@@ -152,12 +154,27 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
   .venue-r{border-left:none;padding-left:0}
   .venue-items{grid-template-columns:repeat(2,1fr);gap:26px}
   .pillars-grid,.strip-grid{grid-template-columns:1fr;gap:20px}
-  .circles{width:360px;transform:translate(-50%,-42%) scale(.8)}
 }
 @media (prefers-reduced-motion:no-preference){
   .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
   .js .reveal.in{opacity:1;transform:none}
 }
+
+/* Re-assert brand colors so the host theme cannot override them */
+.hero h1{color:#fff!important}
+.hero .eyebrow{color:#F4E6C4!important}
+.hero .sub{color:rgba(255,255,255,.92)!important}
+.hero .sub strong{color:#F4E6C4!important}
+.intro .eyebrow{color:var(--coral)!important}
+.intro h2 .l1{color:var(--text-body)!important}
+.intro h2 .l2{color:var(--text-heading)!important}
+.p1 h3{color:var(--coral)!important}.p2 h3{color:var(--teal)!important}.p3 h3{color:var(--blue)!important}
+.strip h2,.community h2{color:var(--text-heading)!important}
+.quote blockquote{color:var(--text-heading)!important}.quote cite{color:var(--coral)!important}
+.venue h2,.cta h2{color:var(--text-on-dark)!important}
+.venue h2 span{color:var(--heading-on-dark)!important}
+.btn{color:#fff!important}
+.btn-outline{color:var(--text-heading)!important}
 </style>
 </head>
 <body>
@@ -168,9 +185,9 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
   <div class="circles"><span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="plus">+</span></div>
   <div class="hero-inner reveal">
     <div class="eyebrow">North Shore Presbyterian Church · Shared Kitchen</div>
-    <h1>Transforming Lives Together</h1>
-    <p class="sub">A community kitchen that builds on our long-standing food ministry — nourishing <strong>mind, body, and spirit</strong> across the North Shore.</p>
-    <a class="btn" href="https://www.northshorepres.org">Join the Mission</a>
+    <h1>Multiplying Our Mission</h1>
+    <p class="sub">Our Shared Kitchen builds on our long-standing food ministry — nourishing <strong>mind, body, and spirit</strong> across the North Shore.</p>
+    <a class="btn" href="https://secure.myvanco.com/L-ZMZZ/campaign/C-16EHE">Contribute Today</a>
   </div>
 </section>
 
@@ -179,7 +196,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
   <div class="wrap venue-grid">
     <h2 class="reveal">The Perfect Venue for <span>Your Next Event</span></h2>
     <div class="venue-r reveal">
-      <p class="venue-lead">Our kitchen is a welcoming venue for your next function, such as:</p>
+      <p class="venue-lead">Our Shared Kitchen is a welcoming venue for your next function, such as:</p>
       <div class="venue-items">
         <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M12 21c-4.5-3.4-8-6.4-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 3.6-3.5 6.6-8 10z"/></svg><span>Fundraisers</span></div>
         <div class="venue-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2.5 20c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5M12.8 15.4c1-.3 2.1-.4 3.2-.4 2.6 0 4.9 1.8 5.5 5"/></svg><span>Family Reunions</span></div>
@@ -207,7 +224,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
       <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6M12 4v3M10.5 5.5h3"/></svg></div>
       <h3>Building on Our Legacy</h3>
       <p>For more than 100 years, North Shore Presbyterian Church has been a place of welcome, faith, and community. This project continues that legacy — a welcoming space for hospitality and spiritual bonding.</p>
-      <p>The shared kitchen serves as an extension of our communion table, letting us be "good neighbors" through partnerships that embody a "Loaves and Fishes" mission.</p>
+      <p>The Shared Kitchen serves as an extension of our communion table, letting us be "good neighbors" through partnerships that embody a "Loaves and Fishes" mission.</p>
     </div>
     <div class="pillar p2 reveal">
       <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 21V9M12 9c0-4 3-6 7-6 0 4-3 6-7 6zM12 13c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/></svg></div>
@@ -228,8 +245,8 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 <section class="strip">
   <div class="wrap">
     <div class="head reveal">
-      <h2>Life in the Kitchen</h2>
-      <p>From bakers launching a business to neighbors sharing a meal, the kitchen is a place to gather, learn, and grow together.</p>
+      <h2>Life in the Shared Kitchen</h2>
+      <p>From bakers launching a business to neighbors sharing a meal, the Shared Kitchen is a place to gather, learn, and grow together.</p>
     </div>
     <div class="strip-grid">
       <div class="shot reveal"><figure><img src="images/kitchen-bake.jpg" alt="Two bakers working together at a kitchen counter"></figure><figcaption>Learning &amp; making together</figcaption></div>
@@ -264,6 +281,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
         <li>Fundraisers, family reunions, and baby showers</li>
         <li>Nonprofit gatherings and educational workshops</li>
       </ul>
+      <a class="btn-outline" href="https://www.northshorepres.org">Learn About Us</a>
     </div>
   </div>
 </section>
