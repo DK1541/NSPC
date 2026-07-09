@@ -6,32 +6,21 @@
 <title>Shared Kitchen — North Shore Presbyterian Church</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Mulish:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  color-scheme: light dark;
+  color-scheme: light;
   --navy:#1C3F6E; --coral:#E1793A; --teal:#4EA58D; --blue:#3E93CE; --gold:#CB9A45;
   --bg-page:#FBFAF7; --bg-alt:#FFFFFF; --bg-dark:#1C3F6E;
-  --text-body:#4B5560; --text-heading:#1C3F6E;
+  --text-body:#374049; --text-heading:#1C3F6E;
   --accent:#CB9A45;
   --text-on-dark:#F4F2EA; --heading-on-dark:#ECD79E; --muted-on-dark:rgba(244,242,234,.82);
   --border:rgba(28,63,110,.14);
   --card:#FFFFFF; --card-shadow:0 18px 44px rgba(28,45,70,.10);
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --navy:#8FBCE8; --coral:#ED8A4E; --teal:#64BBA2; --blue:#63ABE2; --gold:#E3C069;
-    --bg-page:#131A24; --bg-alt:#1A222E; --bg-dark:#0E141C;
-    --text-body:#D3D9E0; --text-heading:#E9EFF6;
-    --accent:#E3C069;
-    --text-on-dark:#F4F2EA; --heading-on-dark:#EFD79A; --muted-on-dark:rgba(244,242,234,.80);
-    --border:rgba(211,217,224,.16);
-    --card:#1F2835; --card-shadow:0 18px 44px rgba(0,0,0,.38);
-  }
-}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Mulish',sans-serif;color:var(--text-body);background:var(--bg-page);line-height:1.65;font-size:17px}
+body{font-family:'Mulish',sans-serif;font-weight:500;color:var(--text-body);background:var(--bg-page);line-height:1.65;font-size:17px}
 img{display:block;max-width:100%}
 .wrap{max-width:1120px;margin:0 auto;padding:0 26px}
 h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
@@ -56,10 +45,13 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .circles .c1{transform:translate(calc(-50% - var(--d) * .30),-50%);border-color:rgba(225,121,58,.9)}
 .circles .c2{transform:translate(-50%,-50%);border-color:rgba(255,255,255,.6)}
 .circles .c3{transform:translate(calc(-50% + var(--d) * .30),-50%);border-color:rgba(78,165,141,.9)}
-.circles .plus{position:absolute;top:0;left:0;transform:translate(-50%,-50%);color:#fff;font-family:'Poppins';font-weight:400;font-size:42px;line-height:1}
+.hero-plus{--cd:clamp(24px,6.3vw,37px);position:absolute;z-index:1;top:50%;left:50%;width:var(--cd);height:var(--cd);transform:translate(-50%,-50%);pointer-events:none}
+.hero-plus::before,.hero-plus::after{content:"";position:absolute;top:50%;left:50%;background:#fff;border-radius:2px;transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(0,0,0,.55)}
+.hero-plus::before{width:var(--cd);height:4px}
+.hero-plus::after{width:4px;height:var(--cd)}
 .hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#F4E6C4;margin-bottom:20px}
 .hero h1{font-weight:700;font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.01em;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.55),0 3px 24px rgba(0,0,0,.4)}
-.hero .sub{max-width:44ch;margin:20px auto 30px;font-size:19px;color:rgba(255,255,255,.92)}
+.hero .sub{max-width:44ch;margin:20px auto 30px;font-size:19px;font-weight:500;color:#fff}
 .hero .sub strong{color:#F4E6C4;font-weight:700}
 
 /* ---------- VENUE BAND ---------- */
@@ -163,7 +155,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 /* Re-assert brand colors so the host theme cannot override them */
 .hero h1{color:#fff!important}
 .hero .eyebrow{color:#F4E6C4!important}
-.hero .sub{color:rgba(255,255,255,.92)!important}
+.hero .sub{color:#fff!important;font-weight:500!important}
 .hero .sub strong{color:#F4E6C4!important}
 .intro .eyebrow{color:var(--coral)!important}
 .intro h2 .l1{color:var(--text-body)!important}
@@ -182,7 +174,8 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg"><img src="images/hero.jpg" alt="Hands kneading bread dough on a floured table"></div>
-  <div class="circles"><span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="plus">+</span></div>
+  <div class="circles"><span class="c c1"></span><span class="c c2"></span><span class="c c3"></span></div>
+  <span class="hero-plus"></span>
   <div class="hero-inner reveal">
     <div class="eyebrow">North Shore Presbyterian Church · Shared Kitchen</div>
     <h1>Multiplying Our Mission</h1>
