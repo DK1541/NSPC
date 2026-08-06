@@ -1,42 +1,73 @@
-# northshorepres.org refresh
+# northshorepres.org rebuild
 
-## Setup — do this once
+## How this works
 
-1. Squarespace → **Design → Custom CSS**
-2. Paste the entire contents of `nspc-custom-css.css`
-3. Save
+```
+shared/nspc-base.css        design system — paste ONCE into Design → Custom CSS
+pages/<section>/index.html  one code block per nav section
+pages/<section>/reference/  ← drop your reference designs, photos, notes here
+```
 
-Every rule is scoped under `.nspc`, so it cannot affect pages that don't use these blocks. Do this before pasting any page, or the pages will render unstyled.
+Each `pages/<section>/index.html` is a **section landing page** covering everything
+in that nav folder, rather than a page per sub-page. That's the pattern your
+reference sites use — Cedarcrest avoids submenus by linking to landing pages —
+and it means eight pages to maintain instead of twenty-six.
 
-## Pages ready to paste
+Drop anything into `reference/` and I'll build against it: screenshots of sites you
+like, photographs, a scan of the bulletin, notes. Filenames don't matter.
 
-Each file goes into its page as a **Code Block** (Squarespace: `+` → Code). Paste the whole file including the comments — HTML comments aren't visible to visitors and they carry the edit instructions.
+## Build order
 
-| File | Page | Needs from you before publishing |
-|---|---|---|
-| `page-leadership.html` | Leadership | Verify the five staff bios read the way your people want them to |
-| `page-calendar.html` | Calendar & Special Events | Your Google Calendar embed URL (replaces `CALENDAR_ID_HERE`) |
-| `page-good-neighbour-exchange.html` | Good Neighbour Exchange | Next year's dates, when known |
-| `compassion_camp.html` | Compassion Camp | Nothing — ready as-is |
+| # | Section | Covers | Status |
+|---|---|---|---|
+| 1 | Home | — | ✅ approved |
+| 2 | Covenant Family | Mission & Values, Neighboring Initiative, Leadership, History | ✅ built |
+| 3 | Ministries | Worship, Education, Garden, Congregational Life, Music, Shared Kitchen | ⚠️ needs content |
+| 4 | Community Programs | Compassion Camp, After School, Good Neighbour Exchange | ready to build |
+| 5 | Partnerships | Mission Partners, Community Partners | ready to build |
+| 6 | Calendar | Calendar & Special Events, Neighboring Initiative Events | needs calendar URL |
+| 7 | Welcome / Contact | Contact | ⚠️ needs content |
+| 8 | Giving / Donate | Donations, Capital Campaign | ⚠️ needs content |
 
-## Fix that isn't code
+## Three placeholders are live on the public site right now
 
-**News page.** The three posts dated 5/28/2019 by "Allan Haas" are Squarespace's demo content — *"It all begins with an idea"* is the stock template text. Delete all three in the blog editor. If you have no posts to replace them with, remove the News page from the navigation entirely rather than leave it empty; an empty blog reads worse than no blog.
+These are visible to visitors today. All three are fixed by the pages above, but
+worth knowing they're out there:
 
-## What I still need to build the rest
+- **Leadership** — "session and deacons will look the same but I still need to get content"
+- **Calendar & Special Events** — the page is a heading and the words "Link to google calendar"
+- **Donations** — displays `*LINK Copy Here`
 
-These pages need real information I have no source for. Tell me and I'll build them the same way.
+Separately, the **News** page still runs Squarespace's demo posts: three entries dated
+5/28/2019 by "Allan Haas", each beginning *"It all begins with an idea."* Delete them in
+the blog editor, or drop News from the nav.
 
-**Garden** (`/education-1`) and **Music** (`/education-1-1-1`) — both currently show the Education page's text word for word. Nothing on either page is about its actual subject.
-- Garden: what is it, who tends it, where does the produce go, can neighbors participate, when?
-- Music: I know Sean DeBoth directs music, Jeff Peterson is organist, Becky Schuppman runs children's choir. What ensembles exist, when do they rehearse, how does someone join?
+## What I still need
 
-**Shared Kitchen** — the page is a photo and nothing else. What is the shared kitchen, who can use it, is there a fee or application, and what's Jobea Bakes' role as kitchen manager?
+**Ministries (section 3)** — two of six answered themselves via the Mission Partners page:
+- ~~Garden~~ — 6 raised beds, produce to Apostle Presbyterian Food Pantry, part of Food for the Journey ✅
+- ~~Shared Kitchen~~ — "Gather and Grow", commercial-grade upgrade, rentable to local food entrepreneurs ✅
+- **Music** — what ensembles exist, when do they rehearse, how does someone join?
+- **Congregational Life** — beyond "Ladies Who Lunch" and Interfaith Thanksgiving, what else, and how to join?
 
-**Congregational Life** — three sentences today. Beyond "Ladies Who Lunch" and the Interfaith Thanksgiving Service, what else does the committee run, and how does someone join it?
+**Giving (section 8)** — is there a capital campaign running? Goal, purpose, progress?
+Right now that page is empty and Donations is a placeholder.
 
-**Community Partners** — five links with one line each. For each partner: what do we actually do together?
+**Welcome / Contact (section 7)** — office hours, parking, accessibility, who to call for what.
 
-## Note on scope
+## Photography — the thing that matters most
 
-I can't publish to Squarespace — that needs your admin login. These files are ready to paste; the publishing is yours.
+The site has **one photograph**: the worship shot, reused everywhere. Every reference
+site you sent is carried by dozens — faces, hands, the garden beds, coffee hour, the
+block party, the choir.
+
+This design showcases photography, which means it gets thinner the further it runs from
+that single image. Staff circles are initials because there are no headshots.
+
+If someone can shoot one Sunday morning and one block party, the whole site changes.
+Everything else is a smaller lever than this.
+
+## Publishing
+
+Pages reference images by their Squarespace CDN URLs, so they work as-is once pasted.
+I can't publish to Squarespace — that needs your admin login.

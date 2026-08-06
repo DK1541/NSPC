@@ -1,0 +1,169 @@
+/* ==========================================================================
+   NSPC design system  ·  v2, photography-led
+   PASTE ONCE: Squarespace → Design → Custom CSS
+   Every page in pages/ depends on this. Scoped to .nspc-page so it cannot
+   affect anything else on the site.
+   ========================================================================== */
+
+.nspc-page{
+  --ground:#FBF8F2;
+  --surface:#FFFFFF;
+  --ink:#171512;
+  --ink-2:#3D3833;
+  --ink-soft:#6B645B;
+  --ink-faint:#9A9288;
+  --gold:#C8952F;
+  --gold-lift:#E0AC44;
+  --line:#E4DDD0;
+  --scrim:#100E0B;
+
+  --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+  --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
+
+  --gutter:clamp(1.2rem,5vw,3rem);
+  --measure:60ch;
+
+  font-family:var(--body);
+  font-size:1.0625rem;
+  line-height:1.65;
+  color:var(--ink);
+  background:var(--ground);
+}
+.nspc-page *{box-sizing:border-box}
+.nspc-wrap{max-width:1140px;margin:0 auto;padding-inline:var(--gutter)}
+
+/* ---------- photographic hero ------------------------------------------- */
+.nspc-hero{position:relative;isolation:isolate;min-height:min(72vh,620px);
+  display:flex;align-items:flex-end;overflow:hidden}
+.nspc-hero.short{min-height:min(48vh,420px)}
+.nspc-hero img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:50% 38%;z-index:-2}
+.nspc-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(to top,var(--scrim) 4%,rgba(16,14,11,.86) 26%,rgba(16,14,11,.35) 58%,rgba(16,14,11,.15) 100%),
+  linear-gradient(to right,rgba(16,14,11,.6) 0%,rgba(16,14,11,0) 62%)}
+.nspc-hero-in{padding-block:clamp(2.5rem,7vw,4.5rem);color:#FCF9F3;width:100%;
+  position:relative;z-index:1}
+.nspc-hero h1{font-family:var(--display);font-weight:400;
+  font-size:clamp(2.4rem,6.4vw,4.6rem);line-height:1.02;letter-spacing:-.022em;
+  margin:0;max-width:16ch;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.nspc-hero.short h1{font-size:clamp(2rem,5vw,3.4rem)}
+.nspc-hero .lede{margin:1.15rem 0 0;font-size:clamp(1.05rem,1.7vw,1.25rem);
+  max-width:46ch;color:rgba(252,249,243,.9)}
+
+.nspc-eyebrow{display:flex;align-items:center;gap:.6rem;margin:0 0 1.15rem;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-lift)}
+.nspc-eyebrow::before{content:"";width:28px;height:2px;background:var(--gold-lift)}
+
+/* service times / key facts strip inside a hero */
+.nspc-times{display:flex;flex-wrap:wrap;gap:0 2.5rem;margin:2rem 0 0;
+  padding-top:1.5rem;border-top:1px solid rgba(252,249,243,.25)}
+.nspc-times div{padding-block:.35rem}
+.nspc-times dt{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;color:var(--gold-lift);margin-bottom:.15rem}
+.nspc-times dd{margin:0;font-family:var(--display);font-size:1.3rem;color:#FCF9F3}
+.nspc-times dd small{display:block;font-family:var(--body);font-size:.8rem;
+  color:rgba(252,249,243,.62);letter-spacing:0}
+
+/* ---------- buttons ------------------------------------------------------ */
+.nspc-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
+.nspc-btn{display:inline-block;padding:.85rem 1.7rem;border-radius:99px;
+  font-size:.78rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+  text-decoration:none!important;transition:.18s;border:1.5px solid transparent;cursor:pointer}
+.nspc-btn.primary{background:var(--gold-lift);color:#171512!important}
+.nspc-btn.primary:hover{background:#F0C367}
+.nspc-btn.ghost{border-color:rgba(252,249,243,.5);color:#FCF9F3!important}
+.nspc-btn.ghost:hover{background:rgba(252,249,243,.12);border-color:#FCF9F3}
+.nspc-btn.dark{background:var(--ink);color:var(--ground)!important}
+.nspc-btn:focus-visible{outline:2px solid var(--gold-lift);outline-offset:3px}
+
+/* ---------- sections ----------------------------------------------------- */
+.nspc-page section{padding-block:clamp(2.75rem,6vw,4.5rem)}
+.nspc-page section + section{border-top:1px solid var(--line)}
+.nspc-kicker{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin:0 0 .8rem}
+.nspc-page h2{font-family:var(--display);font-weight:400;
+  font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.12;letter-spacing:-.018em;
+  margin:0 0 1rem;max-width:20ch;text-wrap:balance}
+.nspc-lede{color:var(--ink-soft);max-width:var(--measure);margin:0 0 2rem;font-size:1.1rem}
+
+/* dark band */
+.nspc-band{background:var(--ink);color:var(--ground)}
+.nspc-band h2{color:var(--ground)}
+.nspc-band .nspc-lede{color:rgba(245,241,233,.75)}
+.nspc-band .nspc-kicker{color:var(--gold-lift)}
+
+/* ---------- pull quote / verse ------------------------------------------- */
+.nspc-verse{text-align:center;max-width:34ch;margin-inline:auto}
+.nspc-verse blockquote{font-family:var(--display);font-size:clamp(1.5rem,3.2vw,2.1rem);
+  line-height:1.32;margin:0;letter-spacing:-.01em}
+.nspc-verse cite{display:block;margin-top:1rem;font-style:normal;font-size:.7rem;
+  letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+
+/* ---------- card grids --------------------------------------------------- */
+.nspc-grid{display:grid;gap:1.6rem}
+@media(min-width:700px){.nspc-grid.two{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:820px){.nspc-grid.three{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.nspc-grid.three{grid-template-columns:repeat(2,1fr)}}
+
+.nspc-card{display:flex;flex-direction:column;gap:.55rem}
+.nspc-card .thumb{aspect-ratio:4/3;overflow:hidden;background:var(--line);border-radius:2px}
+.nspc-card .thumb img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s ease}
+.nspc-card:hover .thumb img{transform:scale(1.04)}
+.nspc-card h3{font-family:var(--display);font-weight:400;font-size:1.45rem;
+  margin:.6rem 0 0;line-height:1.2}
+.nspc-card p{margin:0;color:var(--ink-soft);font-size:.98rem}
+.nspc-link{color:var(--ink);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;text-decoration:none!important;border-bottom:2px solid var(--gold);
+  padding-bottom:2px;align-self:flex-start;margin-top:.3rem}
+.nspc-band .nspc-link{color:var(--ground)}
+
+/* boxed variant, for cards without photography */
+.nspc-card.boxed{background:var(--surface);border:1px solid var(--line);
+  padding:1.6rem;border-radius:2px;gap:.5rem}
+.nspc-band .nspc-card.boxed{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.nspc-card.boxed h3{margin-top:0}
+
+/* ---------- people ------------------------------------------------------- */
+.nspc-people{display:grid;gap:2rem 2.5rem}
+@media(min-width:760px){.nspc-people{grid-template-columns:1fr 1fr}}
+.nspc-person{display:grid;grid-template-columns:74px 1fr;gap:1.25rem;align-items:start}
+.nspc-avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--display);font-size:1.6rem;background:var(--ink);color:var(--ground);
+  overflow:hidden}
+.nspc-avatar img{width:100%;height:100%;object-fit:cover}
+.nspc-person:nth-child(2n) .nspc-avatar{background:var(--gold);color:#171512}
+.nspc-person h3{font-family:var(--display);font-weight:400;font-size:1.5rem;
+  margin:0;line-height:1.15}
+.nspc-role{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin:.35rem 0 .65rem}
+.nspc-person p{margin:0;color:var(--ink-soft);font-size:.98rem;max-width:52ch}
+
+/* ---------- timeline ----------------------------------------------------- */
+.nspc-timeline{list-style:none;margin:0;padding:0;border-left:2px solid var(--line);
+  padding-left:1.6rem}
+.nspc-timeline li{position:relative;margin-bottom:1.5rem;break-inside:avoid}
+.nspc-timeline li::before{content:"";position:absolute;left:-2rem;top:.55rem;
+  width:11px;height:11px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 3px var(--ground)}
+.nspc-timeline .year{font-family:var(--display);font-size:1.5rem;display:block;
+  line-height:1.1;color:var(--ink)}
+.nspc-timeline p{margin:.25rem 0 0;color:var(--ink-soft);font-size:.98rem;max-width:56ch}
+
+/* ---------- directory list (partners, links) ----------------------------- */
+.nspc-directory{display:grid;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.nspc-directory > *{background:var(--surface);padding:1.4rem 1.5rem}
+.nspc-directory h3{font-family:var(--display);font-weight:400;font-size:1.35rem;
+  margin:0 0 .35rem;line-height:1.2}
+.nspc-directory p{margin:0 0 .6rem;color:var(--ink-soft);font-size:.97rem;max-width:60ch}
+.nspc-directory a{color:var(--ink-2);font-weight:700;font-size:.9rem}
+
+/* ---------- notice ------------------------------------------------------- */
+.nspc-notice{background:var(--gold-lift);color:#171512;padding:1.4rem 1.6rem;border-radius:2px}
+.nspc-notice h3{font-family:var(--display);font-weight:400;font-size:1.6rem;margin:0 0 .4rem}
+.nspc-notice p{margin:0;font-weight:600;max-width:var(--measure)}
+.nspc-notice a{color:#171512;font-weight:800}
+
+@media(prefers-reduced-motion:reduce){.nspc-page *{transition:none!important;animation:none!important}}
