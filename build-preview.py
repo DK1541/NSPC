@@ -86,6 +86,12 @@ def build(rel: str) -> pathlib.Path | None:
         header = re.sub(r'src="https://images\.squarespace-cdn\.com[^"]*"', f'src="{uri}"', header)
         footer = re.sub(r'src="https://images\.squarespace-cdn\.com[^"]*"', f'src="{uri}"', footer)
 
+    # The shepherd cursor ships via Squarespace Code Injection, not inside a
+    # page — but every preview gets it so the site can be judged as it will
+    # actually feel to use.
+    cursor_file = ROOT / "pages" / "home" / "cursor.html"
+    cursor = cursor_file.read_text(encoding="utf-8") if cursor_file.exists() else ""
+
     title = slug.replace("-", " ").title()
     out = PAGES / rel / "preview.html"
     out.write_text(
@@ -94,7 +100,8 @@ def build(rel: str) -> pathlib.Path | None:
         f"<style>\n{css}\n{chrome}\n"
         "body{margin:0;background:#FDF9F0}\n"
         "</style>\n"
-        f"{header}\n{html}\n{footer}\n",
+        f"{header}\n{html}\n{footer}\n"
+        f"<!-- preview only: ships via Code Injection -->\n{cursor}\n",
         encoding="utf-8",
     )
     print(f"  {out.relative_to(ROOT)}  ({out.stat().st_size/1048576:.2f} MB)")

@@ -278,6 +278,118 @@
 }
 
 /* ==========================================================================
+   CENTURY — a hundred years as one continuous line
+   ========================================================================== */
+
+.nspc-century{position:relative;padding-block:1rem 2rem}
+
+/* the line itself: a meandering path, stroke kept even while it stretches */
+.nspc-century-path{
+  position:absolute;top:0;bottom:0;left:50%;translate:-50% 0;
+  width:min(320px,42vw);height:100%;overflow:visible;pointer-events:none;z-index:0;
+}
+.nspc-century-path path{
+  fill:none;stroke:var(--gold-lift);stroke-width:2.5;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;opacity:.55;stroke-dasharray:1 9;
+}
+.nspc-century-path path.solid{stroke-dasharray:none;opacity:.28;stroke-width:8;stroke:var(--tint-gold)}
+@media(max-width:820px){
+  .nspc-century-path{left:22px;translate:none;width:60px}
+}
+
+/* era heading */
+.nspc-era{position:relative;z-index:2;margin:3.25rem 0 1.75rem;text-align:center}
+.nspc-era:first-child{margin-top:0}
+.nspc-era span{
+  display:inline-block;background:var(--ground);padding:.35rem 1.15rem;
+  font-family:var(--hand);font-size:1.45rem;font-weight:700;color:var(--teal-deep);
+  border:1.5px solid var(--line);border-radius:99px;
+}
+.nspc-era small{
+  display:block;margin-top:.45rem;font-size:.68rem;letter-spacing:.2em;
+  text-transform:uppercase;font-weight:700;color:var(--ink-faint);
+}
+@media(max-width:820px){.nspc-era{text-align:left;padding-left:56px}}
+
+/* one moment */
+.nspc-moment{
+  position:relative;z-index:2;display:grid;gap:.5rem 2.5rem;
+  grid-template-columns:1fr 1fr;align-items:center;margin-bottom:2.25rem;
+}
+.nspc-moment > div{grid-column:1;text-align:right;padding-right:1.5rem}
+.nspc-moment.r > div{grid-column:2;text-align:left;padding:0 0 0 1.5rem}
+
+.nspc-moment .year{
+  display:block;font-family:var(--display);font-weight:400;
+  font-size:clamp(2.1rem,4.6vw,3.1rem);line-height:1;color:var(--gold);
+  letter-spacing:-.02em;
+}
+.nspc-moment h3{
+  font-family:var(--display);font-weight:400;font-size:1.25rem;
+  margin:.3rem 0 .35rem;line-height:1.25;color:var(--ink);
+}
+.nspc-moment p{margin:0;color:var(--ink-soft);font-size:.97rem;max-width:34ch}
+.nspc-moment.r p{margin-right:auto}
+.nspc-moment > div[style], .nspc-moment > div{margin-left:auto}
+.nspc-moment.r > div{margin-left:0;margin-right:auto}
+
+/* the bead on the line */
+.nspc-moment::before{
+  content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
+  width:15px;height:15px;border-radius:50%;
+  background:var(--gold-lift);box-shadow:0 0 0 5px var(--ground),0 0 0 6.5px var(--tint-gold);
+  z-index:3;
+}
+
+/* the pause between moments, named */
+.nspc-gap{
+  position:relative;z-index:2;text-align:center;margin:-.85rem 0 1.6rem;
+}
+.nspc-gap span{
+  background:var(--ground);padding:.2rem .8rem;font-family:var(--hand);
+  font-size:1.1rem;color:var(--ink-faint);
+}
+
+@media(max-width:820px){
+  .nspc-moment{grid-template-columns:1fr;padding-left:56px}
+  .nspc-moment > div,
+  .nspc-moment.r > div{
+    grid-column:1;text-align:left;padding:0;margin:0;}
+  .nspc-moment::before{left:22px;top:.9rem;translate:-50% 0}
+  .nspc-gap{text-align:left;padding-left:56px}
+}
+
+/* the summing-up strip */
+.nspc-century-stats{
+  display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:3px;overflow:hidden;margin-top:2.5rem;
+}
+@media(min-width:640px){.nspc-century-stats{grid-template-columns:repeat(4,1fr)}}
+.nspc-century-stats div{background:var(--surface);padding:1.35rem 1rem;text-align:center}
+.nspc-century-stats b{
+  display:block;font-family:var(--display);font-weight:400;
+  font-size:2.1rem;line-height:1;color:var(--teal-deep);
+}
+.nspc-century-stats span{
+  display:block;margin-top:.4rem;font-size:.7rem;letter-spacing:.16em;
+  text-transform:uppercase;font-weight:700;color:var(--ink-faint);
+}
+
+@media(prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .nspc-moment,.nspc-era,.nspc-gap{
+      animation:nspc-moment-in linear both;
+      animation-timeline:view();
+      animation-range:entry 2% cover 18%;
+    }
+    @keyframes nspc-moment-in{
+      from{opacity:0;transform:translateY(26px)}
+      to{opacity:1;transform:none}
+    }
+  }
+}
+
+/* ==========================================================================
    NSPC site chrome — header and footer
    OPTIONAL. Squarespace already renders its own header and footer, so
    only load this if you intend to replace them. It is used by every
@@ -582,4 +694,214 @@ body{margin:0;background:#FDF9F0}
   </div>
 </footer>
 <script>document.getElementById('nspc-year').textContent = new Date().getFullYear();</script>
+
+<!-- preview only: ships via Code Injection -->
+<!-- ===========================================================
+     NSPC — shepherd cursor  (OPTIONAL)
+
+     Replaces the system pointer with a robed figure carrying a staff
+     and a lantern-warm light that follows wherever it goes.
+
+     FILE: pages/home/cursor.html
+
+     TO USE:  Squarespace → Settings → Advanced → Code Injection →
+              FOOTER, and paste this whole block.
+     TO REMOVE: delete it from Code Injection. Nothing else depends on it.
+
+     NOTE ON PLACEMENT: this file lives in the home page folder, but
+     Code Injection FOOTER applies to every page on the site. To keep
+     the cursor on the homepage alone, paste it instead into the
+     homepage'''s own Page Settings → Advanced → Page Header Code
+     Injection.
+
+     ── WHAT'S ON SCREEN ────────────────────────────────────────
+     · a small gold dot marking the exact click point
+     · the figure walking beside it
+     · a soft warm light spreading around it
+     · faint motes fading behind it
+
+     The dot matters: with the system pointer hidden, a 60px figure
+     gives no precise click target. The dot is the pointer; the
+     figure is company.
+
+     ── SWITCHES ────────────────────────────────────────────────
+     FIGURE  'jesus' | 'crook' | 'pineapple'
+     LIGHT   size of the glow in px, 0 turns it off
+     TRAIL   true / false
+
+     ── STILL WORTH A SECOND OPINION ────────────────────────────
+     A figure of Jesus as a mouse pointer will read as charming to
+     some of the congregation and irreverent to others. 'crook' gives
+     the shepherd's staff alone; 'pineapple' gives your own mark.
+     Both are drawn and working — it is a one-word change.
+     =========================================================== -->
+
+<style>
+  /* the system pointer goes away everywhere, including over links */
+  html.nspc-cursor-on, html.nspc-cursor-on *, html.nspc-cursor-on *::before,
+  html.nspc-cursor-on *:hover, html.nspc-cursor-on a, html.nspc-cursor-on button,
+  html.nspc-cursor-on input, html.nspc-cursor-on textarea, html.nspc-cursor-on select{
+    cursor:none !important;
+  }
+
+  #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:99999;
+    will-change:transform;opacity:0;transition:opacity .3s ease;
+  }
+  #nspc-glow{
+    width:420px;height:420px;margin:-210px 0 0 -210px;z-index:99997;
+    background:radial-gradient(circle closest-side,
+      rgba(255,206,110,.42) 0%,
+      rgba(255,188,74,.22) 38%,
+      rgba(255,176,48,.08) 62%,
+      rgba(255,176,48,0) 100%);
+    mix-blend-mode:screen;
+  }
+  #nspc-shepherd{width:62px;height:82px;margin:-14px 0 0 6px;z-index:99998;
+    filter:drop-shadow(0 6px 10px rgba(60,40,10,.34))}
+  #nspc-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;
+    background:#FFD27A;box-shadow:0 0 0 1.5px rgba(90,60,15,.55),0 0 12px 3px rgba(255,190,80,.9)}
+  #nspc-motes span{position:fixed;border-radius:50%;pointer-events:none;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(255,214,130,.95) 0%,rgba(255,183,60,0) 70%)}
+
+  html.nspc-cursor-ready #nspc-glow,
+  html.nspc-cursor-ready #nspc-shepherd,
+  html.nspc-cursor-ready #nspc-dot{opacity:1}
+
+  @media (hover:none),(max-width:899px),(prefers-reduced-motion:reduce){
+    #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{display:none!important}
+  }
+</style>
+
+<div id="nspc-glow" aria-hidden="true"></div>
+<div id="nspc-motes" aria-hidden="true"></div>
+<svg id="nspc-shepherd" viewBox="0 0 62 82" aria-hidden="true" focusable="false"></svg>
+<div id="nspc-dot" aria-hidden="true"></div>
+
+<script>
+(function () {
+  var FIGURE = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
+  var LIGHT  = 420;       // glow diameter in px, 0 = off
+  var TRAIL  = true;
+
+  var glow = document.getElementById('nspc-glow');
+  var fig  = document.getElementById('nspc-shepherd');
+  var dot  = document.getElementById('nspc-dot');
+  var mote = document.getElementById('nspc-motes');
+  if (!fig) return;
+
+  var blocked = window.matchMedia('(hover:none)').matches ||
+                window.matchMedia('(prefers-reduced-motion:reduce)').matches ||
+                window.innerWidth < 900;
+  if (blocked) { [glow,fig,dot,mote].forEach(function(n){ n && n.remove(); }); return; }
+
+  var ART = {
+    /* Robed figure with staff. Built in layers so it stays legible at 62px:
+       halo ring, hair mass, face, beard, cream robe, blue mantle, staff. */
+    jesus:
+      '<g stroke-linejoin="round" stroke-linecap="round">' +
+        /* staff, behind the body */
+        '<path d="M49 20v58" stroke="#8A5A2B" stroke-width="3.4" fill="none"/>' +
+        '<path d="M49 20c0-6.4 9.6-6.4 9.6 0 0 5.4-8 6.6-9.2 1.4" stroke="#8A5A2B" stroke-width="3.4" fill="none"/>' +
+        /* halo */
+        '<circle cx="24" cy="17" r="13.5" fill="none" stroke="#FFD27A" stroke-width="2.6" opacity=".95"/>' +
+        /* hair falling to the shoulders */
+        '<path d="M24 4c-8 0-11.5 5.4-11.5 12 0 5 .8 8.4 1.6 12.6.5 2.4-1 5-1 5s3-1.4 4-4.4c.7-2.2.4-6 .4-9.6 3.6.6 9.6-.6 12.6-3.4 1.6 2.2 3.6 3 5.4 3.2 0 3.4-.3 7.6.4 9.8 1 3 4 4.4 4 4.4s-1.5-2.6-1-5c.8-4.2 1.6-7.6 1.6-12.6C41.5 9.4 32 4 24 4Z" fill="#4A3220"/>' +
+        /* face */
+        '<path d="M24 9.5c4.9 0 8.2 3.4 8.2 8.6 0 6-3.6 10.6-8.2 10.6s-8.2-4.6-8.2-10.6c0-5.2 3.3-8.6 8.2-8.6Z" fill="#F0CBA4"/>' +
+        /* eyes */
+        '<path d="M20.4 17.6h2.2M25.4 17.6h2.2" stroke="#3A2A1A" stroke-width="1.5" fill="none"/>' +
+        /* beard and moustache */
+        '<path d="M15.8 19.4c0 6.2 3.6 12.4 8.2 12.4s8.2-6.2 8.2-12.4c0 4-2.4 6-8.2 6s-8.2-2-8.2-6Z" fill="#4A3220"/>' +
+        '<path d="M21 22.4h6" stroke="#4A3220" stroke-width="2" fill="none"/>' +
+        /* cream robe */
+        '<path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h32l-4.4-37.6C34.6 34.6 31 30 24 30Z" fill="#FBF3E3" stroke="#C9A96E" stroke-width="1.4"/>' +
+        /* blue mantle over the left shoulder */
+        '<path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h9.6l3-33.6c.3-3.6 1.8-6 3.4-7.6V30Z" fill="#3E6E9B" stroke="#2C5476" stroke-width="1.2"/>' +
+        /* sash and fold lines */
+        '<path d="M13.6 46.6c6.4 3 14.4 3 20.8 0" stroke="#C9A96E" stroke-width="1.6" fill="none"/>' +
+        '<path d="M27 52l-1.4 24M31.4 52l1 24" stroke="#E4D3AE" stroke-width="1.4" fill="none"/>' +
+        /* arm reaching to the staff */
+        '<path d="M33.6 40c4.6 1.6 10.4 4.4 14 8.6" stroke="#FBF3E3" stroke-width="6" fill="none"/>' +
+        '<circle cx="48.2" cy="49.4" r="3.6" fill="#F0CBA4"/>' +
+      '</g>',
+
+    crook:
+      '<g fill="none" stroke-linecap="round">' +
+        '<path d="M26 22v56" stroke="#8A5A2B" stroke-width="5"/>' +
+        '<path d="M26 22c0-8 13-8 13 0 0 6.8-10.6 8.4-12 1.8" stroke="#8A5A2B" stroke-width="5"/>' +
+        '<path d="M26 22v56" stroke="#C08A4A" stroke-width="1.6" opacity=".55"/>' +
+      '</g>',
+
+    pineapple:
+      '<g stroke-linejoin="round">' +
+        '<path d="M31 28c11 0 17.6 8 17.6 21.6S41 74 31 74 13.4 63.2 13.4 49.6 20 28 31 28Z" fill="#F0B429" stroke="#B77F14" stroke-width="2"/>' +
+        '<path d="M31 34 24 42l7 8 7-8-7-8ZM31 50l-6.2 7 6.2 7 6.2-7-6.2-7Z" fill="none" stroke="#B77F14" stroke-width="1.5"/>' +
+        '<path d="M31 28V8M31 11c-4.4-4.6-10-6-15.6-3.6 1.2 6 5.2 10 11 11.4M31 11c4.4-4.6 10-6 15.6-3.6-1.2 6-5.2 10-11 11.4" fill="none" stroke="#3E9BAB" stroke-width="3" stroke-linecap="round"/>' +
+      '</g>'
+  };
+
+  fig.innerHTML = ART[FIGURE] || ART.jesus;
+  document.documentElement.classList.add('nspc-cursor-on');
+
+  if (LIGHT && glow) { glow.style.width = glow.style.height = LIGHT + 'px';
+                       glow.style.margin = (-LIGHT / 2) + 'px 0 0 ' + (-LIGHT / 2) + 'px'; }
+  else if (glow)     { glow.remove(); glow = null; }
+
+  var tx = 0, ty = 0, fx = 0, fy = 0, gx = 0, gy = 0;
+  var started = false, raf = 0, lastMote = 0;
+
+  function place(node, x, y) { node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
+
+  function loop(now) {
+    fx += (tx - fx) * 0.20;   // figure walks, slight lag
+    fy += (ty - fy) * 0.20;
+    gx += (tx - gx) * 0.11;   // light drifts slower still
+    gy += (ty - gy) * 0.11;
+    place(fig, fx, fy);
+    if (glow) place(glow, gx, gy);
+
+    if (TRAIL && now - lastMote > 55) {
+      lastMote = now;
+      var d = Math.hypot(tx - fx, ty - fy);
+      if (d > 1.5) {
+        var s = document.createElement('span');
+        var size = 6 + Math.random() * 10;
+        s.style.width = s.style.height = size + 'px';
+        s.style.left = (fx + (Math.random() * 14 - 7)) + 'px';
+        s.style.top  = (fy + 30 + (Math.random() * 14 - 7)) + 'px';
+        mote.appendChild(s);
+        s.animate(
+          [{ opacity: .85, transform: 'translate(-50%,-50%) scale(1)' },
+           { opacity: 0,   transform: 'translate(-50%,-60%) scale(.25)' }],
+          { duration: 620 + Math.random() * 340, easing: 'ease-out' }
+        ).onfinish = function () { s.remove(); };
+      }
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('mousemove', function (e) {
+    tx = e.clientX; ty = e.clientY;
+    place(dot, tx, ty);
+    if (!started) {                       // land on the pointer, don't fly in from a corner
+      started = true;
+      fx = tx; fy = ty; gx = tx; gy = ty;
+      place(fig, fx, fy); if (glow) place(glow, gx, gy);
+      document.documentElement.classList.add('nspc-cursor-ready');
+      raf = requestAnimationFrame(loop);
+    }
+  }, { passive: true });
+
+  // leaving the window restores the ordinary pointer, so nothing is stranded
+  document.addEventListener('mouseleave', function () {
+    document.documentElement.classList.remove('nspc-cursor-ready', 'nspc-cursor-on');
+  });
+  document.addEventListener('mouseenter', function () {
+    document.documentElement.classList.add('nspc-cursor-on');
+    if (started) document.documentElement.classList.add('nspc-cursor-ready');
+  });
+})();
+</script>
 
