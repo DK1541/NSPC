@@ -1,0 +1,550 @@
+<title>NSPC — Design Direction</title>
+
+<style>
+  :root{
+    --ground:#F2F4F0;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDE7;
+    --ink:#1F312A;
+    --ink-soft:#55665E;
+    --ink-faint:#7C8A83;
+    --gold:#C9871F;
+    --gold-bright:#E3A02F;
+    --brick:#9C4A2F;
+    --lake:#2F6377;
+    --line:#DCE2D9;
+    --line-soft:#E7EBE4;
+
+    --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+    --body:"Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,"Helvetica Neue",Arial,sans-serif;
+
+    --step-0:1.0625rem;
+    --step-1:1.1875rem;
+    --step-2:clamp(1.35rem,2.2vw,1.6rem);
+    --step-3:clamp(1.6rem,3vw,2.1rem);
+    --step-4:clamp(2.2rem,5vw,3.4rem);
+
+    --gutter:clamp(1.15rem,4vw,2.75rem);
+    --measure:64ch;
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#16211C;
+      --surface:#1E2B25;
+      --surface-2:#243329;
+      --ink:#E9EFE9;
+      --ink-soft:#A6B5AC;
+      --ink-faint:#7F8F86;
+      --gold:#E3A02F;
+      --gold-bright:#F2B855;
+      --brick:#C9714E;
+      --lake:#77B6C9;
+      --line:#2E3D35;
+      --line-soft:#26332C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#16211C;
+    --surface:#1E2B25;
+    --surface-2:#243329;
+    --ink:#E9EFE9;
+    --ink-soft:#A6B5AC;
+    --ink-faint:#7F8F86;
+    --gold:#E3A02F;
+    --gold-bright:#F2B855;
+    --brick:#C9714E;
+    --lake:#77B6C9;
+    --line:#2E3D35;
+    --line-soft:#26332C;
+  }
+  :root[data-theme="light"]{
+    --ground:#F2F4F0;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDE7;
+    --ink:#1F312A;
+    --ink-soft:#55665E;
+    --ink-faint:#7C8A83;
+    --gold:#C9871F;
+    --gold-bright:#E3A02F;
+    --brick:#9C4A2F;
+    --lake:#2F6377;
+    --line:#DCE2D9;
+    --line-soft:#E7EBE4;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--step-0);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 var(--gutter)}
+
+  /* ---------- site chrome ---------- */
+  .chrome{
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+  }
+  .chrome-in{
+    display:flex;align-items:center;gap:.7rem;
+    padding-block:.9rem;
+  }
+  .mark{width:26px;height:32px;flex:none;color:var(--gold)}
+  .wordmark{
+    font-family:var(--display);
+    font-size:1.05rem;letter-spacing:.02em;color:var(--ink);
+  }
+  .wordmark span{display:block;font-family:var(--body);font-size:.62rem;
+    letter-spacing:.19em;text-transform:uppercase;color:var(--ink-faint);line-height:1.5}
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;gap:.15rem;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+    position:sticky;top:0;z-index:5;
+  }
+  .tabs-in{display:flex;gap:.15rem;flex-wrap:wrap}
+  .tab{
+    appearance:none;border:0;background:none;cursor:pointer;
+    font-family:var(--body);font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:600;
+    color:var(--ink-faint);
+    padding:.85rem .95rem;
+    border-bottom:2px solid transparent;
+    margin-bottom:-1px;
+    transition:color .18s;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--brick);border-bottom-color:var(--brick)}
+  .tab:focus-visible{outline:2px solid var(--lake);outline-offset:-3px}
+
+  .panel{display:none;animation:rise .5s ease both}
+  .panel.on{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){
+    .panel{animation:none}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;overflow:hidden;padding:clamp(2.75rem,7vw,4.75rem) 0 clamp(2rem,4vw,3rem)}
+  .hero-mark{
+    position:absolute;right:-3%;top:-8%;
+    width:min(340px,45vw);height:auto;
+    color:var(--gold);opacity:.09;pointer-events:none;
+  }
+  .eyebrow{
+    font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
+    font-weight:600;color:var(--brick);margin:0 0 1rem;
+  }
+  h1{
+    font-family:var(--display);
+    font-size:var(--step-4);
+    line-height:1.05;font-weight:400;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+    margin:0;
+    max-width:19ch;
+  }
+  .lede{
+    margin:1.15rem 0 0;
+    font-size:var(--step-1);
+    color:var(--ink-soft);
+    max-width:var(--measure);
+    text-wrap:pretty;
+  }
+  .hero-rule{
+    width:56px;height:3px;background:var(--gold);
+    border:0;margin:1.6rem 0 0;
+  }
+
+  /* ---------- sections ---------- */
+  section{padding-block:clamp(2rem,4vw,3.1rem);border-top:1px solid var(--line-soft)}
+  .sec-head{display:flex;align-items:baseline;gap:.65rem;margin:0 0 1.5rem}
+  .sec-head svg{width:15px;height:19px;color:var(--gold);flex:none;transform:translateY(2px)}
+  h2{
+    font-family:var(--display);font-weight:400;
+    font-size:var(--step-3);line-height:1.15;letter-spacing:-.01em;
+    margin:0;text-wrap:balance;
+  }
+  .sec-note{margin:-.85rem 0 1.5rem;color:var(--ink-soft);max-width:var(--measure)}
+
+  /* ---------- people ---------- */
+  .people{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .person{
+    background:var(--surface);
+    padding:1.5rem clamp(1.1rem,2.5vw,1.7rem);
+    display:grid;grid-template-columns:52px 1fr;gap:1.15rem;
+    align-items:start;
+  }
+  .monogram{
+    width:52px;height:52px;border-radius:50%;
+    display:grid;place-items:center;
+    font-family:var(--display);font-size:1.3rem;
+    color:var(--surface);background:var(--brick);
+    letter-spacing:.01em;
+  }
+  .person:nth-child(2n) .monogram{background:var(--lake)}
+  .person:nth-child(3n) .monogram{background:var(--gold)}
+  .person h3{
+    font-family:var(--display);font-weight:400;
+    font-size:var(--step-2);margin:0;line-height:1.2;
+  }
+  .person .title{
+    font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-faint);margin:.3rem 0 .7rem;
+  }
+  .person p{margin:0;color:var(--ink-soft);max-width:58ch}
+  .person a{color:var(--lake);text-decoration-thickness:1px;text-underline-offset:2px}
+  .person .mail{margin-top:.7rem;font-size:.92rem}
+
+  @media (min-width:760px){ .people{grid-template-columns:1fr 1fr} }
+
+  /* ---------- body ministry blocks ---------- */
+  .duo{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media (min-width:760px){ .duo{grid-template-columns:1fr 1fr} }
+  .duo > div{background:var(--surface);padding:1.5rem clamp(1.1rem,2.5vw,1.7rem)}
+  .duo h3{font-family:var(--display);font-weight:400;font-size:var(--step-2);margin:0 0 .55rem}
+  .duo p{margin:0 0 .8rem;color:var(--ink-soft)}
+  .duo a{color:var(--lake)}
+
+  /* ---------- schedule ---------- */
+  .sched{border-top:1px solid var(--line);margin:0}
+  .sched-row{
+    display:grid;gap:.15rem 1.5rem;
+    padding:1rem 0;border-bottom:1px solid var(--line);
+    align-items:baseline;
+  }
+  @media (min-width:640px){ .sched-row{grid-template-columns:11rem 8rem 1fr} }
+  .sched-row dt{font-weight:600;color:var(--ink)}
+  .sched-row .when{
+    color:var(--brick);font-variant-numeric:tabular-nums;
+    font-size:.92rem;font-weight:600;
+  }
+  .sched-row dd{margin:0;color:var(--ink-soft)}
+
+  /* ---------- events ---------- */
+  .events{display:grid;gap:1.25rem}
+  @media (min-width:700px){ .events{grid-template-columns:1fr 1fr} }
+  @media (min-width:960px){ .events{grid-template-columns:repeat(3,1fr)} }
+  .event{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-top:3px solid var(--gold);
+    padding:1.35rem 1.4rem 1.5rem;
+    display:flex;flex-direction:column;gap:.5rem;
+  }
+  .event:nth-child(3n+2){border-top-color:var(--brick)}
+  .event:nth-child(3n+3){border-top-color:var(--lake)}
+  .event .season{
+    font-size:.66rem;letter-spacing:.17em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-faint);
+  }
+  .event h3{font-family:var(--display);font-weight:400;font-size:var(--step-2);margin:0;line-height:1.2}
+  .event p{margin:0;color:var(--ink-soft);font-size:.97rem;flex:1}
+  .event a{color:var(--lake);font-size:.93rem;font-weight:600}
+
+  /* ---------- notice ---------- */
+  .notice{
+    border-left:3px solid var(--brick);
+    background:var(--surface-2);
+    padding:1.15rem 1.4rem;
+  }
+  .notice h3{font-family:var(--display);font-weight:400;font-size:var(--step-2);margin:0 0 .4rem}
+  .notice p{margin:0;color:var(--ink-soft);max-width:var(--measure)}
+  .notice a{color:var(--lake)}
+
+  /* ---------- item lists ---------- */
+  .items{
+    columns:2;column-gap:2.5rem;
+    list-style:none;padding:0;margin:0;
+  }
+  @media (min-width:820px){ .items{columns:3} }
+  .items li{
+    break-inside:avoid;padding:.42rem 0 .42rem 1.35rem;
+    position:relative;color:var(--ink-soft);font-size:.97rem;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .items li::before{
+    content:"";position:absolute;left:0;top:.95em;
+    width:6px;height:6px;background:var(--gold);
+    transform:rotate(45deg);
+  }
+  .items.no li::before{background:none;border:1px solid var(--ink-faint);opacity:.6}
+
+  .split{display:grid;gap:clamp(1.75rem,4vw,2.75rem)}
+  @media (min-width:820px){ .split{grid-template-columns:1fr 1fr} }
+
+  /* ---------- footer note ---------- */
+  .foot{
+    border-top:1px solid var(--line);
+    padding:1.5rem 0 3rem;color:var(--ink-faint);font-size:.85rem;
+  }
+  .foot strong{color:var(--ink-soft);font-weight:600}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pineapple" viewBox="0 0 24 30">
+    <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"
+      d="M12 8.2c4.1 0 6.6 3 6.6 8.1 0 5.6-2.9 9.2-6.6 9.2s-6.6-3.6-6.6-9.2c0-5.1 2.5-8.1 6.6-8.1Z"/>
+    <path fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+      d="M12 8.4V2.6M12 3.6C10.4 1.9 8.3 1.4 6.2 2.2c.4 2.2 1.9 3.7 4 4.2M12 3.6c1.6-1.7 3.7-2.2 5.8-1.4-.4 2.2-1.9 3.7-4 4.2"/>
+    <path fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".75"
+      d="M12 10.4 8.4 14 12 17.6 15.6 14 12 10.4ZM12 17.6 8.8 20.8 12 24l3.2-3.2-3.2-3.2Z"/>
+  </symbol>
+</svg>
+
+<div class="chrome">
+  <div class="wrap chrome-in">
+    <svg class="mark" aria-hidden="true"><use href="#pineapple"/></svg>
+    <div class="wordmark">North Shore Presbyterian
+      <span>Shorewood, Wisconsin · since 1922</span>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs" aria-label="Page previews">
+  <div class="wrap tabs-in" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  aria-controls="p-lead" id="t-lead">Leadership</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-cal"  id="t-cal">Calendar</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p-gne"  id="t-gne">Good Neighbour Exchange</button>
+  </div>
+</nav>
+
+<!-- ===================== LEADERSHIP ===================== -->
+<div class="panel on" id="p-lead" role="tabpanel" aria-labelledby="t-lead">
+  <header class="hero">
+    <svg class="hero-mark" viewBox="0 0 24 30" aria-hidden="true"><use href="#pineapple"/></svg>
+    <div class="wrap">
+      <p class="eyebrow">Staff · Session · Deacons</p>
+      <h1>The people who keep this place open</h1>
+      <p class="lede">A pastor, two musicians, an organist, and an office that has held a century of records. Between them they lead worship, teach the children, and answer the phone when you call.</p>
+      <hr class="hero-rule"/>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section>
+      <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>Staff</h2></div>
+      <div class="people">
+        <article class="person">
+          <div class="monogram" aria-hidden="true">JD</div>
+          <div>
+            <h3>Rev. Jeannine Oakes Daugherty</h3>
+            <p class="title">Pastor</p>
+            <p>Ordained a teaching elder in the PC(USA) since May 2015. She studied film and photography at UIC, completed her divinity studies at Yale, and holds an MA in Urban Ministry from McCormick Theological Seminary. She moved to Wisconsin in January 2024 with her wife Denise and their three daughters.</p>
+            <p class="mail"><a href="mailto:jeannine@northshorepres.org">jeannine@northshorepres.org</a></p>
+          </div>
+        </article>
+
+        <article class="person">
+          <div class="monogram" aria-hidden="true">SD</div>
+          <div>
+            <h3>Sean DeBoth</h3>
+            <p class="title">Director of Music</p>
+            <p>Director of Music at North Shore Presbyterian since 2004. He teaches at Lake Denoon Middle School and holds degrees from Carroll College and UWM. He lives in Mukwonago with his wife and three children.</p>
+            <p class="mail"><a href="mailto:nspcmusic@gmail.com">nspcmusic@gmail.com</a></p>
+          </div>
+        </article>
+
+        <article class="person">
+          <div class="monogram" aria-hidden="true">JP</div>
+          <div>
+            <h3>Jeff Peterson</h3>
+            <p class="title">Organist</p>
+            <p>Professor emeritus at UWM, with degrees from the Oberlin College Conservatory of Music and the University of Illinois. He has played for churches for more than four decades, and spends his summers boating and fishing at the family cottage up north.</p>
+            <p class="mail"><a href="mailto:jeffry@uwm.edu">jeffry@uwm.edu</a></p>
+          </div>
+        </article>
+
+        <article class="person">
+          <div class="monogram" aria-hidden="true">LH</div>
+          <div>
+            <h3>Leanne Hoeg</h3>
+            <p class="title">Office &amp; Financial Assistant</p>
+            <p>Originally from Mediapolis, Iowa, with more than 25 years in office administration and a BA in Elementary Education from Iowa Wesleyan University. She is usually the first voice you hear.</p>
+            <p class="mail"><a href="mailto:office@northshorepres.org">office@northshorepres.org</a></p>
+          </div>
+        </article>
+
+        <article class="person">
+          <div class="monogram" aria-hidden="true">BS</div>
+          <div>
+            <h3>Becky Schuppman</h3>
+            <p class="title">Children's Music Director</p>
+            <p>Becky directs the children's choir, which sings in worship each month and presents the Christmas pageant every December. She works as a medical secretary and has two children.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>Session &amp; Deacons</h2></div>
+      <div class="duo">
+        <div>
+          <h3>Session</h3>
+          <p>The elected board of elders, responsible for the spiritual life, mission, and governance of the church. Elders serve three-year terms and lead alongside the pastor.</p>
+          <p><a href="mailto:office@northshorepres.org">Bring something to the Session →</a></p>
+        </div>
+        <div>
+          <h3>Deacons</h3>
+          <p>Our ministry of care — visiting members, walking with families through illness and loss, and serving as "deacon buddies" to the children of the church through the year.</p>
+          <p><a href="mailto:office@northshorepres.org">Ask the Deacons for care →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot"><strong>Replaces:</strong> the note currently visible on the live page — "session and deacons will look the same but I still need to get content."</div>
+  </div>
+</div>
+
+<!-- ===================== CALENDAR ===================== -->
+<div class="panel" id="p-cal" role="tabpanel" aria-labelledby="t-cal">
+  <header class="hero">
+    <svg class="hero-mark" viewBox="0 0 24 30" aria-hidden="true"><use href="#pineapple"/></svg>
+    <div class="wrap">
+      <p class="eyebrow">What's coming up</p>
+      <h1>A year has a rhythm here</h1>
+      <p class="lede">Worship on Sunday, Bible study on Wednesday, the children after school — and once a season, something that spills out onto the street.</p>
+      <hr class="hero-rule"/>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section>
+      <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>Every week</h2></div>
+      <dl class="sched">
+        <div class="sched-row">
+          <dt>Sunday Worship</dt>
+          <div class="when">10:00am</div>
+          <dd>In the sanctuary through the school year. Communion the first Sunday of the month.</dd>
+        </div>
+        <div class="sched-row">
+          <dt>Gather at the Garden</dt>
+          <div class="when">9:00am</div>
+          <dd>Outdoor worship on the patio, June through Labor Day.</dd>
+        </div>
+        <div class="sched-row">
+          <dt>Adult Bible Study</dt>
+          <div class="when">Wed 10:30am</div>
+          <dd>Every week in season, every other week through the summer.</dd>
+        </div>
+        <div class="sched-row">
+          <dt>Kindness World Explorers</dt>
+          <div class="when">Wed — 4:30pm</div>
+          <dd>After school for elementary students. $20 a month, snack included.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section>
+      <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>Across the year</h2></div>
+      <div class="events">
+        <article class="event">
+          <p class="season">Saturday before Easter</p>
+          <h3>Easter Egg Hunt</h3>
+          <p>Crafts, stories, and an egg hunt for the neighborhood's children.</p>
+        </article>
+        <article class="event">
+          <p class="season">Spring</p>
+          <h3>Shorewood Spring Clean Out</h3>
+          <p>A free community exchange with Shorewood Buy Nothing. Bring what you no longer need, take what you do.</p>
+        </article>
+        <article class="event">
+          <p class="season">Summer</p>
+          <h3>Good Neighbour Exchange</h3>
+          <p>Two donation days and a free store day, run with Catch the Wave Shorewood and the Shorewood Waters Project.</p>
+          <p><a href="#">Exchange details →</a></p>
+        </article>
+        <article class="event">
+          <p class="season">August</p>
+          <h3>Compassion Camp</h3>
+          <p>Summer day camp for children entering 4K through 5th grade, built around kindness and hands-on service.</p>
+          <p><a href="#">Camp details →</a></p>
+        </article>
+        <article class="event">
+          <p class="season">Saturday before school starts</p>
+          <h3>Block Party</h3>
+          <p>We close the street for food trucks, ice cream, games, and a bounce house. All of Shorewood is welcome.</p>
+        </article>
+        <article class="event">
+          <p class="season">November</p>
+          <h3>Interfaith Thanksgiving Service</h3>
+          <p>Hosted with our interfaith neighbors, with hospitality coordinated by Congregational Life.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="foot"><strong>Replaces:</strong> a page containing only a heading and the words "Link to google calendar." The live embed sits below "Across the year" once the calendar URL is added.</div>
+  </div>
+</div>
+
+<!-- ===================== GOOD NEIGHBOUR EXCHANGE ===================== -->
+<div class="panel" id="p-gne" role="tabpanel" aria-labelledby="t-gne">
+  <header class="hero">
+    <svg class="hero-mark" viewBox="0 0 24 30" aria-hidden="true"><use href="#pineapple"/></svg>
+    <div class="wrap">
+      <p class="eyebrow">With Catch the Wave Shorewood &amp; Shorewood Waters Project</p>
+      <h1>Bring what you don't need. Take what you do.</h1>
+      <p class="lede">Two days of donations, then a free store day. Everything costs nothing, and nobody is asked why they came.</p>
+      <hr class="hero-rule"/>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section>
+      <div class="notice">
+        <h3>Next exchange: dates to be announced</h3>
+        <p>We hold the Exchange each summer at 4048 N. Bartlett Ave. Write to <a href="mailto:office@northshorepres.org">office@northshorepres.org</a> and we'll tell you as soon as the dates are set.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="split">
+        <div>
+          <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>What we can take</h2></div>
+          <p class="sec-note">Gently used and in working order — if you'd hand it to a friend, we'd love to have it.</p>
+          <ul class="items">
+            <li>Kitchen gadgets</li><li>Small furniture</li><li>Lamps</li>
+            <li>Music equipment</li><li>Home décor</li><li>Costume jewelry</li>
+            <li>Books</li><li>Office supplies</li><li>Hand tools</li>
+            <li>Art supplies</li><li>Bins and baskets</li><li>Toys and games</li>
+            <li>Pet supplies</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sec-head"><svg aria-hidden="true"><use href="#pineapple"/></svg><h2>What we can't</h2></div>
+          <p class="sec-note">Unsafe to handle, impossible to store, or better served somewhere else.</p>
+          <ul class="items no">
+            <li>Clothing and shoes</li><li>Large appliances</li><li>Fine jewelry</li>
+            <li>Medications</li><li>Firearms</li><li>Live plants or animals</li>
+            <li>Power tools</li><li>Automotive items</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot"><strong>Replaces:</strong> a page still advertising July 30 – August 1, 2026 as the next exchange. Those dates passed five days ago.</div>
+  </div>
+</div>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        document.getElementById(t.getAttribute('aria-controls')).classList.toggle('on', on);
+      });
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+</script>
