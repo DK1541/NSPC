@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NSPC — Website Files</title>
+<style>
+  :root{
+    --ground:#F2F4F0; --surface:#FFFFFF; --ink:#1F312A; --ink-soft:#55665E;
+    --ink-faint:#7C8A83; --gold:#C9871F; --brick:#9C4A2F; --lake:#2F6377;
+    --line:#DCE2D9;
+    --display:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    --body:"Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--ground:#16211C;--surface:#1E2B25;--ink:#E9EFE9;--ink-soft:#A6B5AC;
+      --ink-faint:#7F8F86;--gold:#E3A02F;--brick:#C9714E;--lake:#77B6C9;--line:#2E3D35}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+    font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 clamp(1.15rem,4vw,2.5rem)}
+  header{padding:clamp(2.5rem,6vw,4rem) 0 clamp(1.5rem,3vw,2.25rem);position:relative;overflow:hidden}
+  .mark{position:absolute;right:-2%;top:-10%;width:min(260px,40vw);color:var(--gold);opacity:.1}
+  .eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;
+    color:var(--brick);margin:0 0 .9rem}
+  h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3rem);
+    line-height:1.08;letter-spacing:-.015em;margin:0;max-width:18ch;text-wrap:balance}
+  .lede{margin:1.1rem 0 0;color:var(--ink-soft);max-width:60ch;font-size:1.1875rem}
+  hr.rule{width:56px;height:3px;background:var(--gold);border:0;margin:1.5rem 0 0}
+  section{padding-block:clamp(1.75rem,3.5vw,2.75rem);border-top:1px solid var(--line)}
+  h2{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,3vw,1.9rem);
+    margin:0 0 1.2rem;letter-spacing:-.01em}
+  .files{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  a.file{background:var(--surface);padding:1.15rem 1.35rem;text-decoration:none;
+    color:inherit;display:block;border-left:3px solid transparent;transition:border-color .15s}
+  a.file:hover,a.file:focus-visible{border-left-color:var(--gold);outline:none}
+  a.file .name{font-family:var(--display);font-size:1.2rem;display:block;margin-bottom:.2rem}
+  a.file .desc{color:var(--ink-soft);font-size:.95rem}
+  .plain{background:var(--surface);padding:1.15rem 1.35rem;border-left:3px solid var(--line)}
+  .plain .name{font-family:var(--display);font-size:1.2rem;display:block;margin-bottom:.2rem}
+  .plain .desc{color:var(--ink-soft);font-size:.95rem}
+  ol{color:var(--ink-soft);padding-left:1.3rem}
+  ol li{margin-bottom:.5rem}
+  code{background:var(--surface);border:1px solid var(--line);border-radius:3px;
+    padding:.1rem .35rem;font-size:.9em}
+  footer{border-top:1px solid var(--line);padding:1.5rem 0 3rem;color:var(--ink-faint);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="mark" viewBox="0 0 24 30" fill="none" stroke="currentColor" aria-hidden="true">
+    <path stroke-width="1.5" stroke-linejoin="round" d="M12 8.2c4.1 0 6.6 3 6.6 8.1 0 5.6-2.9 9.2-6.6 9.2s-6.6-3.6-6.6-9.2c0-5.1 2.5-8.1 6.6-8.1Z"/>
+    <path stroke-width="1.3" stroke-linecap="round" d="M12 8.4V2.6M12 3.6C10.4 1.9 8.3 1.4 6.2 2.2c.4 2.2 1.9 3.7 4 4.2M12 3.6c1.6-1.7 3.7-2.2 5.8-1.4-.4 2.2-1.9 3.7-4 4.2"/>
+    <path stroke-width="1" stroke-linecap="round" opacity=".75" d="M12 10.4 8.4 14 12 17.6 15.6 14 12 10.4ZM12 17.6 8.8 20.8 12 24l3.2-3.2-3.2-3.2Z"/>
+  </svg>
+  <div class="wrap">
+    <p class="eyebrow">North Shore Presbyterian · Shorewood, Wisconsin</p>
+    <h1>Website files</h1>
+    <p class="lede">Rebuilt pages for northshorepres.org. Click any page below to see it rendered — GitHub shows these as source code, this view shows them as they'll look.</p>
+    <hr class="rule"/>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>See the design</h2>
+    <div class="files">
+      <a class="file" href="nspc-design-preview.html">
+        <span class="name">Design direction →</span>
+        <span class="desc">Three rebuilt pages — Leadership, Calendar, Good Neighbour Exchange — in the proposed design. Start here.</span>
+      </a>
+      <a class="file" href="compassion_camp.html">
+        <span class="name">Compassion Camp →</span>
+        <span class="desc">The live camp page. Ambassador applications closed for the season; kid registration still open.</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ready to paste into Squarespace</h2>
+    <div class="files">
+      <a class="file" href="page-leadership.html">
+        <span class="name">Leadership →</span>
+        <span class="desc">Removes the editorial note currently visible on the live page.</span>
+      </a>
+      <a class="file" href="page-calendar.html">
+        <span class="name">Calendar &amp; Special Events →</span>
+        <span class="desc">Replaces the "Link to google calendar" placeholder. Needs your calendar embed URL.</span>
+      </a>
+      <a class="file" href="page-good-neighbour-exchange.html">
+        <span class="name">Good Neighbour Exchange →</span>
+        <span class="desc">Clears the expired July–August 2026 dates.</span>
+      </a>
+      <div class="plain">
+        <span class="name">nspc-custom-css.css</span>
+        <span class="desc">Shared styles. Goes into Design → Custom CSS once, not into a page.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Still to do</h2>
+    <ol>
+      <li>Delete the three 2019 demo posts on the News page — they're Squarespace template placeholder text.</li>
+      <li>Rewrite <strong>Garden</strong> and <strong>Music</strong>; both currently show the Education page's text word for word.</li>
+      <li>Fill out <strong>Shared Kitchen</strong>, <strong>Congregational Life</strong>, and <strong>Community Partners</strong>.</li>
+    </ol>
+    <p style="color:var(--ink-soft)">Details and the specific questions in <code>README-website-refresh.md</code>.</p>
+  </section>
+
+  <footer>Not affiliated with the live site. These files are drafts for review before publishing.</footer>
+</div>
+
+</body>
+</html>
