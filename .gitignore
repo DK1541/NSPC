@@ -1,2 +1,5 @@
 .claude/
 assets/
+~$*
+*.tmp
+NSPC-design-direction-*.pdf
