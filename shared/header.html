@@ -1,0 +1,91 @@
+<!-- ===========================================================
+     NSPC — site header
+     Used by every preview. Squarespace renders its own header, so only
+     paste this into the site if you intend to replace theirs.
+     {{ACTIVE}} is swapped for the current page slug by build-preview.py.
+     =========================================================== -->
+<header class="nspc-header">
+  <div class="nspc-header-in">
+    <a class="nspc-brand" href="/">
+      <img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/21cadccf-324a-4ebb-b35d-38f629121069/NSP+Logo%3AW%3ABoarder2.png?format=750w"
+           alt="North Shore Presbyterian Church"/>
+      <span>North Shore Presbyterian<small>Shorewood, since 1922</small></span>
+    </a>
+
+    <ul class="nspc-nav">
+      <li><a href="/welcome" data-slug="welcome">Welcome</a>
+        <ul class="nspc-sub">
+          <li><a href="/contact" data-slug="contact">Contact</a></li>
+        </ul>
+      </li>
+      <li><a href="/covenant-family" data-slug="covenant-family">Covenant Family</a>
+        <ul class="nspc-sub">
+          <li><a href="/mission-and-values" data-slug="mission-and-values">Mission &amp; Values</a></li>
+          <li><a href="/neighboring-initiative" data-slug="neighboring-initiative">Neighboring Initiative</a></li>
+          <li><a href="/leadership" data-slug="leadership">Leadership</a></li>
+          <li><a href="/history" data-slug="history">History</a></li>
+        </ul>
+      </li>
+      <li><a href="/ministries" data-slug="ministries">Ministries</a>
+        <ul class="nspc-sub">
+          <li><a href="/worship" data-slug="worship">Worship</a></li>
+          <li><a href="/education" data-slug="education">Education</a></li>
+          <li><a href="/garden" data-slug="garden">Garden</a></li>
+          <li><a href="/congregational-life" data-slug="congregational-life">Congregational Life</a></li>
+          <li><a href="/music" data-slug="music">Music</a></li>
+          <li><a href="/shared-kitchen" data-slug="shared-kitchen">Shared Kitchen</a></li>
+        </ul>
+      </li>
+      <li><a href="/community-programs" data-slug="community-programs">Community</a>
+        <ul class="nspc-sub">
+          <li><a href="/compassion-camp" data-slug="compassion-camp">Compassion Camp</a></li>
+          <li><a href="/after-school" data-slug="after-school">Kindness World Explorers</a></li>
+          <li><a href="/good-neighbour-exchange" data-slug="good-neighbour-exchange">Good Neighbour Exchange</a></li>
+        </ul>
+      </li>
+      <li><a href="/partnerships" data-slug="partnerships">Partnerships</a>
+        <ul class="nspc-sub">
+          <li><a href="/mission-partners" data-slug="mission-partners">Mission Partners</a></li>
+          <li><a href="/community-partners" data-slug="community-partners">Community Partners</a></li>
+        </ul>
+      </li>
+      <li><a href="/calendar" data-slug="calendar">Calendar</a>
+        <ul class="nspc-sub">
+          <li><a href="/calendar-special-events" data-slug="calendar-special-events">Calendar &amp; Special Events</a></li>
+          <li><a href="/neighboring-initiative-events" data-slug="neighboring-initiative-events">Neighboring Initiative Events</a></li>
+        </ul>
+      </li>
+      <li><a href="/giving" data-slug="giving">Giving</a>
+        <ul class="nspc-sub">
+          <li><a href="/donations" data-slug="donations">Donations</a></li>
+          <li><a href="/capital-campaign" data-slug="capital-campaign">Capital Campaign</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <a class="nspc-btn primary" href="https://secure.myvanco.com/L-ZMZZ/home"
+       target="_blank" rel="noopener">Give</a>
+
+    <button class="nspc-burger" type="button" aria-expanded="false"
+            aria-controls="nspc-drawer" aria-label="Menu"><span></span></button>
+  </div>
+
+  <nav class="nspc-drawer" id="nspc-drawer" aria-label="Menu"></nav>
+</header>
+
+<script>
+(function () {
+  var nav = document.querySelector('.nspc-nav');
+  var drawer = document.getElementById('nspc-drawer');
+  var burger = document.querySelector('.nspc-burger');
+  if (nav && drawer) drawer.innerHTML = '<ul>' + nav.innerHTML + '</ul>';
+  if (burger && drawer) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(open));
+  });
+
+  var active = document.documentElement.getAttribute('data-page');
+  if (active) document.querySelectorAll('[data-slug="' + active + '"]')
+    .forEach(function (a) { a.setAttribute('aria-current', 'page'); });
+})();
+</script>

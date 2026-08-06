@@ -1,53 +1,51 @@
 """
-Build a self-contained preview of a page.
+Build self-contained previews.
 
-    python build-preview.py home
-    python build-preview.py covenant-family
+    python build-preview.py                     every page
+    python build-preview.py home                one page
+    python build-preview.py ministries/worship  a sub-page
 
-Reads  pages/<section>/index.html  +  shared/nspc-base.css
-Writes pages/<section>/preview.html
+Reads  pages/<path>/index.html
+       shared/nspc-base.css  shared/nspc-chrome.css  shared/header.html  shared/footer.html
+Writes pages/<path>/preview.html
 
-Swaps every Squarespace CDN URL for a local image inlined as a data URI, so the
-preview renders offline and inside an Artifact (whose CSP blocks external hosts).
-
-Local images are matched by the PHOTO SLOT comment immediately above each <img>:
-a comment naming a file in pages/<section>/images/ wins; otherwise the first
-image named worship-hero.* is used as the fallback.
+Images are inlined as data URIs so previews render offline and inside an
+Artifact, whose CSP blocks external hosts. Local files in the page's images/
+folder win; a Squarespace CDN URL with no local counterpart is left alone.
 """
 import base64, io, mimetypes, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).parent
+PAGES = ROOT / "pages"
+SHARED = ROOT / "shared"
 
 
-def data_uri(path: pathlib.Path, max_w: int = 1800) -> str:
-    """Inline an image, downscaling and re-encoding to JPEG when Pillow is present."""
+def data_uri(path: pathlib.Path, max_w: int = 1700) -> str:
     try:
         from PIL import Image
-        im = Image.open(path)
-        im = im.convert("RGB")
+        im = Image.open(path).convert("RGB")
         if im.width > max_w:
             im = im.resize((max_w, round(im.height * max_w / im.width)), Image.LANCZOS)
         buf = io.BytesIO()
-        im.save(buf, "JPEG", quality=82, optimize=True, progressive=True)
+        im.save(buf, "JPEG", quality=80, optimize=True, progressive=True)
         return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
     except Exception:
         mime = mimetypes.guess_type(path.name)[0] or "image/png"
         return f"data:{mime};base64," + base64.b64encode(path.read_bytes()).decode()
 
 
-def build(section: str) -> pathlib.Path:
-    page = ROOT / "pages" / section / "index.html"
+def build(rel: str) -> pathlib.Path | None:
+    page = PAGES / rel / "index.html"
     if not page.exists():
-        sys.exit(f"no such page: {page}")
+        print(f"  skip (no index.html): {rel}")
+        return None
 
-    css = (ROOT / "shared" / "nspc-base.css").read_text(encoding="utf-8")
     html = page.read_text(encoding="utf-8")
-    imgdir = ROOT / "pages" / section / "images"
-
-    fallback = next((p for p in imgdir.glob("worship-hero.*")), None) if imgdir.exists() else None
+    imgdir = PAGES / rel / "images"
+    slug = pathlib.Path(rel).name
     cache: dict[str, str] = {}
 
-    def resolve(name: str) -> str | None:
+    def local(name: str):
         if name not in cache:
             p = imgdir / name
             if not p.exists():
@@ -55,39 +53,61 @@ def build(section: str) -> pathlib.Path:
             cache[name] = data_uri(p)
         return cache[name]
 
-    # Walk every <img>, look backwards for a PHOTO SLOT comment naming a local file.
     def swap(m: re.Match) -> str:
         tag = m.group(0)
+        src = re.search(r'src="([^"]*)"', tag)
+        if not src:
+            return tag
+        val = src.group(1)
+
+        # a PHOTO SLOT comment just above may name a specific local file
         before = html[max(0, m.start() - 400):m.start()]
         named = re.findall(r"PHOTO SLOT[^\n]*?([\w\-]+\.(?:jpg|jpeg|png|webp))", before, re.I)
-        uri = resolve(named[-1]) if named else None
-        if uri is None and fallback is not None:
-            uri = cache.setdefault("__fallback__", data_uri(fallback))
-        if uri is None:
-            return tag
-        return re.sub(r'src="[^"]*"', lambda _: f'src="{uri}"', tag, count=1)
+
+        uri = None
+        for cand in (named[-1] if named else None, pathlib.Path(val).name, "hero.jpg"):
+            if cand:
+                uri = local(cand)
+                if uri:
+                    break
+        return tag.replace(val, uri) if uri else tag
 
     html = re.sub(r"<img\b[^>]*>", swap, html)
 
-    out = ROOT / "pages" / section / "preview.html"
+    css = (SHARED / "nspc-base.css").read_text(encoding="utf-8")
+    chrome = (SHARED / "nspc-chrome.css").read_text(encoding="utf-8")
+    header = (SHARED / "header.html").read_text(encoding="utf-8")
+    footer = (SHARED / "footer.html").read_text(encoding="utf-8")
+
+    # the header/footer logo is a remote Squarespace URL — inline it if we have it
+    logo = ROOT / "pages" / "home" / "images" / "logo.png"
+    if logo.exists():
+        uri = data_uri(logo, 400)
+        header = re.sub(r'src="https://images\.squarespace-cdn\.com[^"]*"', f'src="{uri}"', header)
+        footer = re.sub(r'src="https://images\.squarespace-cdn\.com[^"]*"', f'src="{uri}"', footer)
+
+    title = slug.replace("-", " ").title()
+    out = PAGES / rel / "preview.html"
     out.write_text(
-        f"<title>NSPC — {section.replace('-', ' ').title()}</title>\n"
-        f"<style>\n{css}\n"
-        "body{margin:0;background:#FBF8F2}\n"
-        ".nspc-sqsp-note{font:600 .7rem/1 'Segoe UI',system-ui,sans-serif;letter-spacing:.16em;"
-        "text-transform:uppercase;color:#9A9288;background:#fff;border-bottom:1px solid #E4DDD0;"
-        "padding:.85rem 1.5rem;text-align:center}\n"
+        f"<title>NSPC — {title}</title>\n"
+        f'<script>document.documentElement.setAttribute("data-page","{slug}");</script>\n'
+        f"<style>\n{css}\n{chrome}\n"
+        "body{margin:0;background:#FDF9F0}\n"
         "</style>\n"
-        "<p class=\"nspc-sqsp-note\">Preview · Squarespace supplies the logo and navigation above this</p>\n"
-        + html,
+        f"{header}\n{html}\n{footer}\n",
         encoding="utf-8",
     )
-    print(f"{out}  ({out.stat().st_size/1048576:.2f} MB)")
+    print(f"  {out.relative_to(ROOT)}  ({out.stat().st_size/1048576:.2f} MB)")
     return out
 
 
+def all_pages():
+    return sorted(str(p.parent.relative_to(PAGES)).replace("\\", "/")
+                  for p in PAGES.glob("**/index.html"))
+
+
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        sys.exit(__doc__)
-    for s in sys.argv[1:]:
-        build(s)
+    targets = sys.argv[1:] or all_pages()
+    print(f"building {len(targets)} preview(s)")
+    for t in targets:
+        build(t.strip("/"))

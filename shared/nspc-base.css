@@ -6,7 +6,7 @@
    affect anything else on the site.
    ========================================================================== */
 
-.nspc-page{
+:root{
   --ground:#FDF9F0;
   --surface:#FFFFFF;
   --ink:#171512;
@@ -23,14 +23,14 @@
   --tint-rose:#FBEDE7;
   --line:#E9E0CE;
   --scrim:#100E0B;
-
   --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
   --hand:'Caveat',"Segoe Script","Bradley Hand",cursive;
   --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
-
   --gutter:clamp(1.2rem,5vw,3rem);
   --measure:60ch;
+}
 
+.nspc-page{
   font-family:var(--body);
   font-size:1.0625rem;
   line-height:1.65;

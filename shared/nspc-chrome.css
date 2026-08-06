@@ -1,0 +1,101 @@
+/* ==========================================================================
+   NSPC site chrome — header and footer
+   OPTIONAL. Squarespace already renders its own header and footer, so
+   only load this if you intend to replace them. It is used by every
+   preview in pages/*/preview.html so the pages can be judged in context.
+   ========================================================================== */
+
+.nspc-header{
+  position:sticky;top:0;z-index:400;
+  background:rgba(253,249,240,.94);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--line);
+  font-family:var(--body);
+}
+.nspc-header-in{
+  max-width:1140px;margin:0 auto;padding:.75rem var(--gutter);
+  display:flex;align-items:center;gap:1.25rem;
+}
+.nspc-brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--ink);flex:none}
+.nspc-brand img{height:44px;width:auto;display:block}
+.nspc-brand span{font-family:var(--display);font-size:1.05rem;line-height:1.15}
+.nspc-brand small{display:block;font-family:var(--hand);font-size:.95rem;color:var(--teal-deep)}
+
+.nspc-nav{margin-left:auto;display:none;align-items:center;gap:.25rem}
+@media(min-width:1000px){.nspc-nav{display:flex}}
+.nspc-nav > li{list-style:none;position:relative}
+.nspc-nav a{
+  display:block;padding:.6rem .7rem;text-decoration:none;
+  font-size:.74rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-soft);border-radius:4px;
+}
+.nspc-nav a:hover,.nspc-nav a:focus-visible{color:var(--ink);background:var(--tint-gold)}
+.nspc-nav [aria-current="page"]{color:var(--teal-deep);box-shadow:inset 0 -2px 0 var(--gold-lift)}
+
+.nspc-sub{
+  position:absolute;left:0;top:100%;min-width:230px;margin:0;padding:.4rem;
+  background:var(--surface);border:1px solid var(--line);border-radius:6px;
+  box-shadow:0 12px 28px rgba(23,21,18,.13);
+  opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:opacity .16s,transform .16s,visibility .16s;
+}
+.nspc-nav > li:hover .nspc-sub,
+.nspc-nav > li:focus-within .nspc-sub{opacity:1;visibility:visible;transform:none}
+.nspc-sub li{list-style:none}
+.nspc-sub a{
+  text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:600;
+  padding:.5rem .65rem;color:var(--ink-2);
+}
+
+.nspc-header .nspc-btn{padding:.6rem 1.2rem;font-size:.7rem;flex:none}
+.nspc-burger{
+  margin-left:auto;display:grid;place-items:center;width:42px;height:42px;
+  background:none;border:1px solid var(--line);border-radius:6px;cursor:pointer;
+}
+@media(min-width:1000px){.nspc-burger{display:none}}
+.nspc-burger span{display:block;width:18px;height:2px;background:var(--ink);
+  box-shadow:0 -6px 0 var(--ink),0 6px 0 var(--ink)}
+
+.nspc-drawer{display:none;border-top:1px solid var(--line);background:var(--surface);
+  padding:.6rem var(--gutter) 1.1rem}
+.nspc-drawer.open{display:block}
+@media(min-width:1000px){.nspc-drawer{display:none!important}}
+.nspc-drawer ul{margin:0;padding:0}
+.nspc-drawer li{list-style:none}
+.nspc-drawer > ul > li > a{font-weight:800;font-size:.95rem;padding:.6rem 0;
+  display:block;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
+.nspc-drawer .nspc-sub{position:static;opacity:1;visibility:visible;transform:none;
+  box-shadow:none;border:0;padding:.2rem 0 .5rem .8rem;min-width:0;background:none}
+
+/* ---------- footer ------------------------------------------------------- */
+.nspc-footer{
+  background:linear-gradient(160deg,#1E1A14 0%,#241D14 55%,#2A2016 100%);
+  color:rgba(245,241,233,.82);
+  font-family:var(--body);
+  padding:clamp(2.5rem,5vw,4rem) 0 0;
+}
+.nspc-footer-in{max-width:1140px;margin:0 auto;padding-inline:var(--gutter);
+  display:grid;gap:2rem}
+@media(min-width:760px){.nspc-footer-in{grid-template-columns:1.4fr 1fr 1fr}}
+.nspc-footer h4{
+  font-family:var(--hand);font-size:1.3rem;font-weight:700;
+  color:var(--gold-lift);margin:0 0 .8rem;
+}
+.nspc-footer p,.nspc-footer li{font-size:.94rem;line-height:1.6;margin:0 0 .4rem}
+.nspc-footer ul{list-style:none;margin:0;padding:0}
+.nspc-footer a{color:rgba(245,241,233,.82);text-decoration:none}
+.nspc-footer a:hover{color:var(--gold-lift);text-decoration:underline}
+.nspc-footer .nspc-brand span{color:#FCF9F3}
+.nspc-footer .nspc-brand small{color:var(--gold-lift)}
+.nspc-foot-times{margin-top:1rem}
+.nspc-foot-times b{color:#FCF9F3;font-weight:700}
+.nspc-foot-bar{
+  border-top:1px solid rgba(245,241,233,.16);margin-top:2.5rem;
+  padding:1.1rem var(--gutter);
+  max-width:1140px;margin-inline:auto;
+  display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-between;
+  font-size:.82rem;color:rgba(245,241,233,.55);
+}
+
+/* keep nav items on one line */
+.nspc-nav > li > a{white-space:nowrap}
