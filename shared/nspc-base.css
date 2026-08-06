@@ -385,3 +385,26 @@
     }
   }
 }
+
+/* ==========================================================================
+   SQUARESPACE FULL-BLEED BREAKOUT
+   Squarespace wraps a Code Block in a width-constrained container, so
+   heroes and dark bands would otherwise render as narrow columns. These
+   escape the container and span the viewport.
+   In the local previews .nspc-page is already full width, so the margins
+   compute to roughly zero and nothing changes.
+   ========================================================================== */
+
+.nspc-page{overflow-x:clip}
+
+.nspc-hero,
+.nspc-band{
+  width:100vw;
+  max-width:100vw;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+}
+
+/* the inner wrap re-establishes the reading column inside a full-bleed band */
+.nspc-hero > .nspc-wrap,
+.nspc-band > .nspc-wrap{max-width:1140px;margin-inline:auto}
