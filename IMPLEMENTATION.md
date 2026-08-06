@@ -22,7 +22,7 @@ during Compassion Camp registration.
 
 ## Step 1 · The design system, once
 
-Design → **Custom CSS** → paste the whole of `shared/nspc-base.css` → Save.
+**Website → Styles**, scroll to the bottom → **Custom CSS** → paste the whole of `shared/nspc-base.css` → Save.
 
 That's the only global CSS. It is scoped to `.nspc-page`, so pages you haven't
 converted yet are untouched and you can migrate one at a time.
@@ -157,7 +157,7 @@ of each.
 Those two files exist so the previews can be judged in context. What they are *for* on
 the live site is a **specification**: build Squarespace's own header and footer to match.
 
-- **Header** — Design → *Header*. Set the logo, add the seven folders with the
+- **Header** — Website → *Styles* / the header editor. Set the logo, add the seven folders with the
   sub-pages listed in `shared/header.html`, and add a **Give** button linking to
   `https://secure.myvanco.com/L-ZMZZ/home`.
 - **Footer** — edit the footer section directly. `shared/footer.html` has the content
