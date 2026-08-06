@@ -1,0 +1,123 @@
+<!-- ===========================================================
+     NSPC — shepherd cursor  (OPTIONAL)
+
+     A robed figure with a staff follows the pointer, leaving a short
+     fading trail of footsteps.
+
+     TO USE:  Squarespace → Settings → Advanced → Code Injection →
+              FOOTER, and paste this whole block.
+     TO REMOVE: delete it from Code Injection. Nothing else depends on it.
+
+     ── HOW IT BEHAVES ──────────────────────────────────────────
+     · Off on touch screens — no pointer to follow, and it would sit
+       stranded in a corner.
+     · Off when the visitor has asked for reduced motion.
+     · Off when the window is narrower than 900px.
+     · The native pointer stays VISIBLE underneath. Hiding it breaks
+       things for anyone using a large or high-contrast system cursor,
+       so the figure trails alongside rather than replacing it.
+       To replace it instead, set HIDE_NATIVE to true below.
+
+     ── A NOTE WORTH READING ────────────────────────────────────
+     A figure of Jesus as a mouse pointer will read as charming to
+     some of the congregation and as irreverent to others. If you want
+     the effect without that risk, set FIGURE to 'crook' for a plain
+     shepherd's staff, or 'pineapple' for your own hospitality mark.
+     =========================================================== -->
+
+<style>
+  #nspc-shepherd,#nspc-trail{position:fixed;top:0;left:0;pointer-events:none;
+    z-index:99999;will-change:transform}
+  #nspc-shepherd{width:46px;height:56px;margin:-6px 0 0 -8px;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.28));transition:opacity .25s}
+  #nspc-trail span{position:fixed;width:9px;height:9px;border-radius:50%;
+    background:#C8952F;opacity:.5;pointer-events:none;z-index:99998;
+    transform:translate(-50%,-50%)}
+  @media (hover:none),(max-width:899px){#nspc-shepherd,#nspc-trail{display:none!important}}
+  @media (prefers-reduced-motion:reduce){#nspc-shepherd,#nspc-trail{display:none!important}}
+</style>
+
+<div id="nspc-trail" aria-hidden="true"></div>
+<svg id="nspc-shepherd" viewBox="0 0 46 56" aria-hidden="true" focusable="false"></svg>
+
+<script>
+(function () {
+  var FIGURE      = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
+  var HIDE_NATIVE = false;     // true replaces the system pointer entirely
+  var TRAIL       = true;
+
+  var el = document.getElementById('nspc-shepherd');
+  var trail = document.getElementById('nspc-trail');
+  if (!el) return;
+
+  if (window.matchMedia('(hover:none)').matches ||
+      window.matchMedia('(prefers-reduced-motion:reduce)').matches ||
+      window.innerWidth < 900) { el.remove(); trail && trail.remove(); return; }
+
+  var ART = {
+    // Robed figure, staff in the right hand. Silhouette, deliberately simple —
+    // detail is illegible at this size and reads as a smudge.
+    jesus:
+      '<g fill="none" stroke="#F0B429" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M33 8v40" />' +                      // staff
+        '<path d="M33 8c0-3.4 5-3.4 5 0s-5 3.6-5 .6" />' + // crook
+      '</g>' +
+      '<g fill="#FDF9F0" stroke="#5C4A2A" stroke-width="1.6" stroke-linejoin="round">' +
+        '<circle cx="18" cy="10" r="6" />' +           // head
+        '<path d="M18 16c-6 0-9 4-9.6 9L6 50h24l-2.4-25c-.6-5-3.6-9-9.6-9Z" />' + // robe
+        '<path d="M18 16v34" />' +                      // robe centre seam
+      '</g>' +
+      '<path d="M27 27l5-2" fill="none" stroke="#5C4A2A" stroke-width="1.6" stroke-linecap="round"/>',
+
+    crook:
+      '<g fill="none" stroke="#F0B429" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M20 12v40" />' +
+        '<path d="M20 12c0-5 8-5 8 0s-8 5.4-8 1" />' +
+      '</g>',
+
+    pineapple:
+      '<g fill="none" stroke="#F0B429" stroke-width="2.4" stroke-linejoin="round">' +
+        '<path d="M23 18c7.8 0 12.6 5.7 12.6 15.4 0 10.7-5.5 17.5-12.6 17.5S10.4 44.1 10.4 33.4C10.4 23.7 15.2 18 23 18Z"/>' +
+      '</g>' +
+      '<g fill="none" stroke="#3E9BAB" stroke-width="2.2" stroke-linecap="round">' +
+        '<path d="M23 18V4M23 6c-3-3.2-7-4.2-11-2.6.8 4.2 3.6 7 7.6 8M23 6c3-3.2 7-4.2 11-2.6-.8 4.2-3.6 7-7.6 8"/>' +
+      '</g>'
+  };
+
+  el.innerHTML = ART[FIGURE] || ART.jesus;
+  if (HIDE_NATIVE) document.documentElement.style.cursor = 'none';
+
+  var tx = window.innerWidth / 2, ty = window.innerHeight / 2, x = tx, y = ty;
+  var last = 0, running = false;
+
+  function onMove(e) {
+    tx = e.clientX; ty = e.clientY;
+    if (!running) { running = true; requestAnimationFrame(tick); }
+
+    if (TRAIL && e.timeStamp - last > 90) {
+      last = e.timeStamp;
+      var dot = document.createElement('span');
+      dot.style.left = tx + 'px';
+      dot.style.top  = ty + 'px';
+      trail.appendChild(dot);
+      dot.animate(
+        [{ opacity: .5, transform: 'translate(-50%,-50%) scale(1)' },
+         { opacity: 0,  transform: 'translate(-50%,-50%) scale(.3)' }],
+        { duration: 750, easing: 'ease-out' }
+      ).onfinish = function () { dot.remove(); };
+    }
+  }
+
+  function tick() {
+    x += (tx - x) * 0.18;          // lerp, so the figure walks rather than snaps
+    y += (ty - y) * 0.18;
+    el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    if (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4) requestAnimationFrame(tick);
+    else running = false;
+  }
+
+  window.addEventListener('mousemove', onMove, { passive: true });
+  window.addEventListener('mouseleave', function () { el.style.opacity = '0'; });
+  window.addEventListener('mouseenter', function () { el.style.opacity = '1'; });
+})();
+</script>

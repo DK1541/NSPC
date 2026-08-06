@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
 /* ==========================================================================
    NSPC design system  ·  v2, photography-led
    PASTE ONCE: Squarespace → Design → Custom CSS
@@ -6,18 +7,25 @@
    ========================================================================== */
 
 .nspc-page{
-  --ground:#FBF8F2;
+  --ground:#FDF9F0;
   --surface:#FFFFFF;
   --ink:#171512;
   --ink-2:#3D3833;
   --ink-soft:#6B645B;
   --ink-faint:#9A9288;
   --gold:#C8952F;
-  --gold-lift:#E0AC44;
-  --line:#E4DDD0;
+  --gold-lift:#F0B429;
+  --teal:#3E9BAB;          /* nods to the Compassion Camp palette */
+  --teal-deep:#2A7181;
+  --rose:#D4653F;
+  --tint-gold:#FDF1D8;
+  --tint-teal:#E6F3F5;
+  --tint-rose:#FBEDE7;
+  --line:#E9E0CE;
   --scrim:#100E0B;
 
   --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+  --hand:'Caveat',"Segoe Script","Bradley Hand",cursive;
   --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
 
   --gutter:clamp(1.2rem,5vw,3rem);
@@ -167,3 +175,101 @@
 .nspc-notice a{color:#171512;font-weight:800}
 
 @media(prefers-reduced-motion:reduce){.nspc-page *{transition:none!important;animation:none!important}}
+
+/* ==========================================================================
+   LIVELINESS LAYER — adds the warmth the Compassion Camp page has, without
+   borrowing its childishness. Handwritten accents, tinted cards, doodle
+   marks, gentle reveals.
+   ========================================================================== */
+
+
+/* --- handwritten accents, the family tie to the camp page ---------------- */
+.nspc-kicker{
+  font-family:var(--hand);
+  font-size:1.35rem;
+  letter-spacing:0;
+  text-transform:none;
+  font-weight:700;
+  color:var(--teal-deep);
+}
+.nspc-band .nspc-kicker{color:var(--gold-lift)}
+.nspc-verse cite{
+  font-family:var(--hand);
+  font-size:1.15rem;
+  letter-spacing:.04em;
+  text-transform:none;
+}
+.nspc-times dd small{font-family:var(--hand);font-size:1rem;letter-spacing:.02em}
+
+/* --- underline the last word of a heading, hand-drawn ------------------- */
+.nspc-page h2 .mark{
+  position:relative;
+  white-space:nowrap;
+}
+.nspc-page h2 .mark::after{
+  content:"";
+  position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.42em;
+  background:var(--gold-lift);
+  opacity:.32;
+  border-radius:.25em;
+  z-index:-1;
+}
+
+/* --- tinted cards, cycling ---------------------------------------------- */
+.nspc-card.boxed{border:0;box-shadow:inset 0 0 0 1px var(--line)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+1){background:var(--tint-gold)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+2){background:var(--tint-teal)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+3){background:var(--tint-rose)}
+.nspc-band .nspc-grid .nspc-card.boxed{
+  background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.nspc-card.boxed h3{color:var(--ink)}
+.nspc-band .nspc-card.boxed h3{color:var(--ground)}
+.nspc-band .nspc-card.boxed p{color:rgba(245,241,233,.8)}
+
+/* --- doodle mark before each section kicker ----------------------------- */
+.nspc-kicker{display:flex;align-items:center;gap:.5rem}
+.nspc-kicker::before{
+  content:"";width:1.15rem;height:1.15rem;flex:none;
+  background:currentColor;opacity:.85;
+  -webkit-mask:var(--doodle) center/contain no-repeat;
+          mask:var(--doodle) center/contain no-repeat;
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.6 6.9L21.6 11l-6 4.4 2.1 7.1L12 18.4 6.3 22.5l2.1-7.1-6-4.4 7-2.1z'/%3E%3C/svg%3E");
+}
+.nspc-page section:nth-of-type(2n) .nspc-kicker::before{
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21S3 14.6 3 8.9A5 5 0 0112 6a5 5 0 019 2.9C21 14.6 12 21 12 21z'/%3E%3C/svg%3E");
+}
+.nspc-page section:nth-of-type(3n) .nspc-kicker::before{
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' d='M2 16c3-4 5 4 8 0s5 4 8 0 4-2 4-2'/%3E%3C/svg%3E");
+}
+
+/* --- photographs sit like snapshots, a nod to the camp polaroids -------- */
+.nspc-card .thumb{
+  background:#fff;padding:.55rem .55rem 1.6rem;border-radius:2px;
+  box-shadow:0 3px 14px rgba(23,21,18,.13);
+  aspect-ratio:auto;
+  transition:transform .35s ease;
+}
+.nspc-card .thumb img{aspect-ratio:4/3;border-radius:1px}
+.nspc-grid .nspc-card:nth-child(3n+1) .thumb{transform:rotate(-1.1deg)}
+.nspc-grid .nspc-card:nth-child(3n+2) .thumb{transform:rotate(.7deg)}
+.nspc-grid .nspc-card:nth-child(3n+3) .thumb{transform:rotate(-.5deg)}
+.nspc-card:hover .thumb{transform:rotate(0) scale(1.015)}
+
+/* --- warm the dark band, it was flat charcoal --------------------------- */
+.nspc-band{background:linear-gradient(160deg,#1E1A14 0%,#241D14 55%,#2A2016 100%)}
+
+/* --- buttons get a little lift ------------------------------------------ */
+.nspc-btn.primary{box-shadow:0 3px 0 0 #B8871F}
+.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8871F}
+
+/* --- gentle reveal on scroll -------------------------------------------- */
+@supports (animation-timeline:view()){
+@media (prefers-reduced-motion:no-preference){
+  .nspc-page section{
+    animation:nspc-rise linear both;
+    animation-timeline:view();
+    animation-range:entry 5% cover 22%;
+  }
+  @keyframes nspc-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+}
+}
