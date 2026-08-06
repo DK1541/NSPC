@@ -1,0 +1,3112 @@
+<title>NSPC — Build Guide</title>
+<style>
+  :root{--bg:#FDF9F0;--card:#fff;--ink:#171512;--soft:#6B645B;--faint:#9A9288;
+        --gold:#C8952F;--gold-lift:#F0B429;--teal:#2A7181;--rose:#C0472A;--line:#E9E0CE;
+        --disp:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+        --body:"Segoe UI",-apple-system,system-ui,Arial,sans-serif}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#15140F;--card:#1E1C16;--ink:#F3EFE4;--soft:#B0A996;--faint:#847D6E;
+          --gold:#E8A93C;--gold-lift:#F0B429;--teal:#79B6C4;--rose:#E08054;--line:#2E2B22}}
+  :root[data-theme=dark]{--bg:#15140F;--card:#1E1C16;--ink:#F3EFE4;--soft:#B0A996;--faint:#847D6E;
+          --gold:#E8A93C;--gold-lift:#F0B429;--teal:#79B6C4;--rose:#E08054;--line:#2E2B22}
+  :root[data-theme=light]{--bg:#FDF9F0;--card:#fff;--ink:#171512;--soft:#6B645B;--faint:#9A9288;
+          --gold:#C8952F;--gold-lift:#F0B429;--teal:#2A7181;--rose:#C0472A;--line:#E9E0CE}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+       font-size:16px;line-height:1.6}
+  .wrap{max-width:900px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem)}
+  header.top{padding:clamp(2rem,5vw,3.5rem) 0 1.5rem}
+  h1{font-family:var(--disp);font-weight:400;font-size:clamp(2rem,5vw,2.9rem);
+     margin:0 0 .5rem;letter-spacing:-.02em;line-height:1.08}
+  .sub{color:var(--soft);max-width:60ch;margin:0}
+  .clock{display:flex;align-items:center;gap:.7rem;margin:1.5rem 0 0;padding:.9rem 1.1rem;
+        background:var(--card);border:2px solid var(--rose);border-radius:8px}
+  .clock b{color:var(--rose)}
+  .bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+      padding:.7rem 0;margin-bottom:1.5rem}
+  .bar .wrap{display:flex;align-items:center;gap:1rem}
+  .track{flex:1;height:9px;background:var(--line);border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--gold-lift);transition:width .3s}
+  .count{font-variant-numeric:tabular-nums;font-size:.85rem;color:var(--soft);white-space:nowrap}
+  .reset{background:none;border:0;color:var(--faint);font-size:.8rem;cursor:pointer;
+        text-decoration:underline;font-family:inherit}
+  h2{font-family:var(--disp);font-weight:400;font-size:1.7rem;margin:2.5rem 0 .3rem;
+     letter-spacing:-.01em}
+  h2 .n{color:var(--gold);font-size:.75em}
+  .lede{color:var(--soft);margin:.2rem 0 1rem;max-width:62ch}
+  ol.steps{padding-left:1.3rem;color:var(--soft)}
+  ol.steps li{margin-bottom:.55rem}
+  ol.steps b,ol.steps strong{color:var(--ink)}
+  code{background:var(--card);border:1px solid var(--line);border-radius:4px;
+       padding:.08em .4em;font-size:.87em;font-family:ui-monospace,Consolas,monospace}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+        padding:1.2rem 1.3rem;margin:1rem 0}
+  textarea{width:100%;height:170px;font-family:ui-monospace,Consolas,monospace;font-size:11px;
+          line-height:1.45;border:1px solid var(--line);border-radius:8px;padding:.7rem;
+          background:var(--bg);color:var(--soft);resize:vertical;margin-top:.7rem}
+  button.copy{background:var(--gold-lift);color:#171512;border:0;border-radius:99px;
+             padding:.6rem 1.3rem;font-weight:700;font-size:.82rem;cursor:pointer;
+             font-family:inherit;letter-spacing:.02em}
+  button.copy:hover{filter:brightness(1.06)}
+  button.copy.done{background:var(--teal);color:#fff}
+  .acts{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+  .prev{color:var(--teal);font-size:.85rem;font-weight:600;text-decoration:none}
+  .prev:hover{text-decoration:underline}
+  details.page{background:var(--card);border:1px solid var(--line);border-radius:8px;
+              margin-bottom:.5rem;overflow:hidden}
+  details.page summary{padding:.75rem 1rem;cursor:pointer;display:flex;align-items:center;
+                      gap:.7rem;flex-wrap:wrap;list-style:none}
+  details.page summary::-webkit-details-marker{display:none}
+  details.page[open]{border-color:var(--gold)}
+  details.page summary b{font-weight:600;font-size:.95rem}
+  details.page .body{padding:0 1rem 1rem}
+  .tick{display:inline-flex;align-items:center;cursor:pointer}
+  .tick input{position:absolute;opacity:0;width:0;height:0}
+  .tick span{width:19px;height:19px;border:2px solid var(--line);border-radius:5px;
+            display:block;position:relative}
+  .tick input:checked + span{background:var(--teal);border-color:var(--teal)}
+  .tick input:checked + span::after{content:"";position:absolute;left:5px;top:1px;width:5px;
+            height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;rotate:45deg}
+  .tick input:focus-visible + span{outline:2px solid var(--gold);outline-offset:2px}
+  .pill{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+       padding:.2rem .55rem;border-radius:99px;background:var(--line);color:var(--soft)}
+  .pill.home{background:var(--gold-lift);color:#171512}
+  .note{border-radius:6px;padding:.7rem .9rem;font-size:.87rem;margin:.8rem 0 0}
+  .note.warn{background:color-mix(in srgb,var(--rose) 14%,transparent);
+            border:1.5px solid var(--rose)}
+  .note.todo{background:color-mix(in srgb,var(--gold) 14%,transparent);
+            border:1px solid var(--gold)}
+  footer{padding:2.5rem 0 4rem;color:var(--faint);font-size:.85rem;
+        border-top:1px solid var(--line);margin-top:3rem}
+</style>
+
+<header class="top"><div class="wrap">
+  <h1>Building the site on the trial copy</h1>
+  <p class="sub">Work top to bottom. Tick as you go — your progress is saved in this browser.
+     Every code block has a copy button; paste each into Squarespace exactly as it comes.</p>
+  <div class="clock">
+    <div><b>Your trial copy expires 20 August 2026.</b>
+    Everything here fits inside that, but don't leave it to the last weekend.</div>
+  </div>
+</div></header>
+
+<div class="bar"><div class="wrap">
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span class="count" id="count">0 of 0</span>
+  <button class="reset" id="reset">reset</button>
+</div></div>
+
+<div class="wrap">
+
+<h2><span class="n">0</span> Check you're on the right site</h2>
+<p class="lede">Before anything else.</p>
+<ol class="steps">
+  <li>Open <code>northshorepres.org</code> in another tab. Confirm the real site is
+      <b>still intact</b> — pages, camp registration, everything.</li>
+  <li>Everything below happens on <code>hexagon-whale-j5zl.squarespace.com</code>, the copy.
+      Nothing touches the live site until you're happy.</li>
+  <li>While you're here: both sites are called <b>“Your Site Title”</b>. Fix it on the copy at
+      Settings &rarr; Business Information, and remember to fix the live one too — it shows in
+      browser tabs and search results.</li>
+</ol>
+<div class="card"><label class="tick"><input type="checkbox" data-k="step0"/><span></span></label>
+  <b style="margin-left:.6rem">Live site confirmed safe</b></div>
+
+<h2><span class="n">1</span> Paste the design system</h2>
+<p class="lede">One field, once. Nothing will look right until this is in.</p>
+<ol class="steps">
+  <li>On the copy: <b>Design &rarr; Custom CSS</b></li>
+  <li>Paste the whole thing. The <code>@import</code> must stay on line 1 — CSS ignores it anywhere else.</li>
+  <li>Save.</li>
+</ol>
+<div class="card">
+  <div class="acts"><button class="copy" data-t="css">Copy the design system</button>
+    <span class="prev" style="color:var(--faint)">410 lines</span></div>
+  <textarea id="css" readonly>@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap');
+/* ==========================================================================
+   NSPC design system  ·  v2, photography-led
+   PASTE ONCE: Squarespace → Design → Custom CSS
+   Every page in pages/ depends on this. Scoped to .nspc-page so it cannot
+   affect anything else on the site.
+   ========================================================================== */
+
+:root{
+  --ground:#FDF9F0;
+  --surface:#FFFFFF;
+  --ink:#171512;
+  --ink-2:#3D3833;
+  --ink-soft:#6B645B;
+  --ink-faint:#9A9288;
+  --gold:#C8952F;
+  --gold-lift:#F0B429;
+  --teal:#3E9BAB;          /* nods to the Compassion Camp palette */
+  --teal-deep:#2A7181;
+  --rose:#D4653F;
+  --tint-gold:#FDF1D8;
+  --tint-teal:#E6F3F5;
+  --tint-rose:#FBEDE7;
+  --line:#E9E0CE;
+  --scrim:#100E0B;
+  --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+  --hand:'Caveat',"Segoe Script","Bradley Hand",cursive;
+  --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
+  --gutter:clamp(1.2rem,5vw,3rem);
+  --measure:60ch;
+}
+
+.nspc-page{
+  font-family:var(--body);
+  font-size:1.0625rem;
+  line-height:1.65;
+  color:var(--ink);
+  background:var(--ground);
+}
+.nspc-page *{box-sizing:border-box}
+.nspc-wrap{max-width:1140px;margin:0 auto;padding-inline:var(--gutter)}
+
+/* ---------- photographic hero ------------------------------------------- */
+.nspc-hero{position:relative;isolation:isolate;min-height:min(72vh,620px);
+  display:flex;align-items:flex-end;overflow:hidden}
+.nspc-hero.short{min-height:min(48vh,420px)}
+.nspc-hero img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:50% 38%;z-index:-2}
+.nspc-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(to top,var(--scrim) 4%,rgba(16,14,11,.86) 26%,rgba(16,14,11,.35) 58%,rgba(16,14,11,.15) 100%),
+  linear-gradient(to right,rgba(16,14,11,.6) 0%,rgba(16,14,11,0) 62%)}
+.nspc-hero-in{padding-block:clamp(2.5rem,7vw,4.5rem);color:#FCF9F3;width:100%;
+  position:relative;z-index:1}
+.nspc-hero h1{font-family:var(--display);font-weight:400;
+  font-size:clamp(2.4rem,6.4vw,4.6rem);line-height:1.02;letter-spacing:-.022em;
+  margin:0;max-width:16ch;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.nspc-hero.short h1{font-size:clamp(2rem,5vw,3.4rem)}
+.nspc-hero .lede{margin:1.15rem 0 0;font-size:clamp(1.05rem,1.7vw,1.25rem);
+  max-width:46ch;color:rgba(252,249,243,.9)}
+
+.nspc-eyebrow{display:flex;align-items:center;gap:.6rem;margin:0 0 1.15rem;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--gold-lift)}
+.nspc-eyebrow::before{content:"";width:28px;height:2px;background:var(--gold-lift)}
+
+/* service times / key facts strip inside a hero */
+.nspc-times{display:flex;flex-wrap:wrap;gap:0 2.5rem;margin:2rem 0 0;
+  padding-top:1.5rem;border-top:1px solid rgba(252,249,243,.25)}
+.nspc-times div{padding-block:.35rem}
+.nspc-times dt{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;color:var(--gold-lift);margin-bottom:.15rem}
+.nspc-times dd{margin:0;font-family:var(--display);font-size:1.3rem;color:#FCF9F3}
+.nspc-times dd small{display:block;font-family:var(--body);font-size:.8rem;
+  color:rgba(252,249,243,.62);letter-spacing:0}
+
+/* ---------- buttons ------------------------------------------------------ */
+.nspc-cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
+.nspc-btn{display:inline-block;padding:.85rem 1.7rem;border-radius:99px;
+  font-size:.78rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+  text-decoration:none!important;transition:.18s;border:1.5px solid transparent;cursor:pointer}
+.nspc-btn.primary{background:var(--gold-lift);color:#171512!important}
+.nspc-btn.primary:hover{background:#F0C367}
+.nspc-btn.ghost{border-color:rgba(252,249,243,.5);color:#FCF9F3!important}
+.nspc-btn.ghost:hover{background:rgba(252,249,243,.12);border-color:#FCF9F3}
+.nspc-btn.dark{background:var(--ink);color:var(--ground)!important}
+.nspc-btn:focus-visible{outline:2px solid var(--gold-lift);outline-offset:3px}
+
+/* ---------- sections ----------------------------------------------------- */
+.nspc-page section{padding-block:clamp(2.75rem,6vw,4.5rem)}
+.nspc-page section + section{border-top:1px solid var(--line)}
+.nspc-kicker{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin:0 0 .8rem}
+.nspc-page h2{font-family:var(--display);font-weight:400;
+  font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.12;letter-spacing:-.018em;
+  margin:0 0 1rem;max-width:20ch;text-wrap:balance}
+.nspc-lede{color:var(--ink-soft);max-width:var(--measure);margin:0 0 2rem;font-size:1.1rem}
+
+/* dark band */
+.nspc-band{background:var(--ink);color:var(--ground)}
+.nspc-band h2{color:var(--ground)}
+.nspc-band .nspc-lede{color:rgba(245,241,233,.75)}
+.nspc-band .nspc-kicker{color:var(--gold-lift)}
+
+/* ---------- pull quote / verse ------------------------------------------- */
+.nspc-verse{text-align:center;max-width:34ch;margin-inline:auto}
+.nspc-verse blockquote{font-family:var(--display);font-size:clamp(1.5rem,3.2vw,2.1rem);
+  line-height:1.32;margin:0;letter-spacing:-.01em}
+.nspc-verse cite{display:block;margin-top:1rem;font-style:normal;font-size:.7rem;
+  letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+
+/* ---------- card grids --------------------------------------------------- */
+.nspc-grid{display:grid;gap:1.6rem}
+@media(min-width:700px){.nspc-grid.two{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:820px){.nspc-grid.three{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.nspc-grid.three{grid-template-columns:repeat(2,1fr)}}
+
+.nspc-card{display:flex;flex-direction:column;gap:.55rem}
+.nspc-card .thumb{aspect-ratio:4/3;overflow:hidden;background:var(--line);border-radius:2px}
+.nspc-card .thumb img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s ease}
+.nspc-card:hover .thumb img{transform:scale(1.04)}
+.nspc-card h3{font-family:var(--display);font-weight:400;font-size:1.45rem;
+  margin:.6rem 0 0;line-height:1.2}
+.nspc-card p{margin:0;color:var(--ink-soft);font-size:.98rem}
+.nspc-link{color:var(--ink);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;text-decoration:none!important;border-bottom:2px solid var(--gold);
+  padding-bottom:2px;align-self:flex-start;margin-top:.3rem}
+.nspc-band .nspc-link{color:var(--ground)}
+
+/* boxed variant, for cards without photography */
+.nspc-card.boxed{background:var(--surface);border:1px solid var(--line);
+  padding:1.6rem;border-radius:2px;gap:.5rem}
+.nspc-band .nspc-card.boxed{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.nspc-card.boxed h3{margin-top:0}
+
+/* ---------- people ------------------------------------------------------- */
+.nspc-people{display:grid;gap:2rem 2.5rem}
+@media(min-width:760px){.nspc-people{grid-template-columns:1fr 1fr}}
+.nspc-person{display:grid;grid-template-columns:74px 1fr;gap:1.25rem;align-items:start}
+.nspc-avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--display);font-size:1.6rem;background:var(--ink);color:var(--ground);
+  overflow:hidden}
+.nspc-avatar img{width:100%;height:100%;object-fit:cover}
+.nspc-person:nth-child(2n) .nspc-avatar{background:var(--gold);color:#171512}
+.nspc-person h3{font-family:var(--display);font-weight:400;font-size:1.5rem;
+  margin:0;line-height:1.15}
+.nspc-role{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin:.35rem 0 .65rem}
+.nspc-person p{margin:0;color:var(--ink-soft);font-size:.98rem;max-width:52ch}
+
+/* ---------- timeline ----------------------------------------------------- */
+.nspc-timeline{list-style:none;margin:0;padding:0;border-left:2px solid var(--line);
+  padding-left:1.6rem}
+.nspc-timeline li{position:relative;margin-bottom:1.5rem;break-inside:avoid}
+.nspc-timeline li::before{content:"";position:absolute;left:-2rem;top:.55rem;
+  width:11px;height:11px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 3px var(--ground)}
+.nspc-timeline .year{font-family:var(--display);font-size:1.5rem;display:block;
+  line-height:1.1;color:var(--ink)}
+.nspc-timeline p{margin:.25rem 0 0;color:var(--ink-soft);font-size:.98rem;max-width:56ch}
+
+/* ---------- directory list (partners, links) ----------------------------- */
+.nspc-directory{display:grid;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.nspc-directory &gt; *{background:var(--surface);padding:1.4rem 1.5rem}
+.nspc-directory h3{font-family:var(--display);font-weight:400;font-size:1.35rem;
+  margin:0 0 .35rem;line-height:1.2}
+.nspc-directory p{margin:0 0 .6rem;color:var(--ink-soft);font-size:.97rem;max-width:60ch}
+.nspc-directory a{color:var(--ink-2);font-weight:700;font-size:.9rem}
+
+/* ---------- notice ------------------------------------------------------- */
+.nspc-notice{background:var(--gold-lift);color:#171512;padding:1.4rem 1.6rem;border-radius:2px}
+.nspc-notice h3{font-family:var(--display);font-weight:400;font-size:1.6rem;margin:0 0 .4rem}
+.nspc-notice p{margin:0;font-weight:600;max-width:var(--measure)}
+.nspc-notice a{color:#171512;font-weight:800}
+
+@media(prefers-reduced-motion:reduce){.nspc-page *{transition:none!important;animation:none!important}}
+
+/* ==========================================================================
+   LIVELINESS LAYER — adds the warmth the Compassion Camp page has, without
+   borrowing its childishness. Handwritten accents, tinted cards, doodle
+   marks, gentle reveals.
+   ========================================================================== */
+
+
+/* --- handwritten accents, the family tie to the camp page ---------------- */
+.nspc-kicker{
+  font-family:var(--hand);
+  font-size:1.35rem;
+  letter-spacing:0;
+  text-transform:none;
+  font-weight:700;
+  color:var(--teal-deep);
+}
+.nspc-band .nspc-kicker{color:var(--gold-lift)}
+.nspc-verse cite{
+  font-family:var(--hand);
+  font-size:1.15rem;
+  letter-spacing:.04em;
+  text-transform:none;
+}
+.nspc-times dd small{font-family:var(--hand);font-size:1rem;letter-spacing:.02em}
+
+/* --- underline the last word of a heading, hand-drawn ------------------- */
+.nspc-page h2 .mark{
+  position:relative;
+  white-space:nowrap;
+}
+.nspc-page h2 .mark::after{
+  content:"";
+  position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.42em;
+  background:var(--gold-lift);
+  opacity:.32;
+  border-radius:.25em;
+  z-index:-1;
+}
+
+/* --- tinted cards, cycling ---------------------------------------------- */
+.nspc-card.boxed{border:0;box-shadow:inset 0 0 0 1px var(--line)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+1){background:var(--tint-gold)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+2){background:var(--tint-teal)}
+.nspc-grid .nspc-card.boxed:nth-child(3n+3){background:var(--tint-rose)}
+.nspc-band .nspc-grid .nspc-card.boxed{
+  background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.nspc-card.boxed h3{color:var(--ink)}
+.nspc-band .nspc-card.boxed h3{color:var(--ground)}
+.nspc-band .nspc-card.boxed p{color:rgba(245,241,233,.8)}
+
+/* --- doodle mark before each section kicker ----------------------------- */
+.nspc-kicker{display:flex;align-items:center;gap:.5rem}
+.nspc-kicker::before{
+  content:"";width:1.15rem;height:1.15rem;flex:none;
+  background:currentColor;opacity:.85;
+  -webkit-mask:var(--doodle) center/contain no-repeat;
+          mask:var(--doodle) center/contain no-repeat;
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.6 6.9L21.6 11l-6 4.4 2.1 7.1L12 18.4 6.3 22.5l2.1-7.1-6-4.4 7-2.1z'/%3E%3C/svg%3E");
+}
+.nspc-page section:nth-of-type(2n) .nspc-kicker::before{
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21S3 14.6 3 8.9A5 5 0 0112 6a5 5 0 019 2.9C21 14.6 12 21 12 21z'/%3E%3C/svg%3E");
+}
+.nspc-page section:nth-of-type(3n) .nspc-kicker::before{
+  --doodle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' d='M2 16c3-4 5 4 8 0s5 4 8 0 4-2 4-2'/%3E%3C/svg%3E");
+}
+
+/* --- photographs sit like snapshots, a nod to the camp polaroids -------- */
+.nspc-card .thumb{
+  background:#fff;padding:.55rem .55rem 1.6rem;border-radius:2px;
+  box-shadow:0 3px 14px rgba(23,21,18,.13);
+  aspect-ratio:auto;
+  transition:transform .35s ease;
+}
+.nspc-card .thumb img{aspect-ratio:4/3;border-radius:1px}
+.nspc-grid .nspc-card:nth-child(3n+1) .thumb{transform:rotate(-1.1deg)}
+.nspc-grid .nspc-card:nth-child(3n+2) .thumb{transform:rotate(.7deg)}
+.nspc-grid .nspc-card:nth-child(3n+3) .thumb{transform:rotate(-.5deg)}
+.nspc-card:hover .thumb{transform:rotate(0) scale(1.015)}
+
+/* --- warm the dark band, it was flat charcoal --------------------------- */
+.nspc-band{background:linear-gradient(160deg,#1E1A14 0%,#241D14 55%,#2A2016 100%)}
+
+/* --- buttons get a little lift ------------------------------------------ */
+.nspc-btn.primary{box-shadow:0 3px 0 0 #B8871F}
+.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8871F}
+
+/* --- gentle reveal on scroll -------------------------------------------- */
+@supports (animation-timeline:view()){
+@media (prefers-reduced-motion:no-preference){
+  .nspc-page section{
+    animation:nspc-rise linear both;
+    animation-timeline:view();
+    animation-range:entry 5% cover 22%;
+  }
+  @keyframes nspc-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+}
+}
+
+/* ==========================================================================
+   CENTURY — a hundred years as one continuous line
+   ========================================================================== */
+
+.nspc-century{position:relative;padding-block:1rem 2rem}
+
+/* the line itself: a meandering path, stroke kept even while it stretches */
+.nspc-century-path{
+  position:absolute;top:0;bottom:0;left:50%;translate:-50% 0;
+  width:min(320px,42vw);height:100%;overflow:visible;pointer-events:none;z-index:0;
+}
+.nspc-century-path path{
+  fill:none;stroke:var(--gold-lift);stroke-width:2.5;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;opacity:.55;stroke-dasharray:1 9;
+}
+.nspc-century-path path.solid{stroke-dasharray:none;opacity:.28;stroke-width:8;stroke:var(--tint-gold)}
+@media(max-width:820px){
+  .nspc-century-path{left:22px;translate:none;width:60px}
+}
+
+/* era heading */
+.nspc-era{position:relative;z-index:2;margin:3.25rem 0 1.75rem;text-align:center}
+.nspc-era:first-child{margin-top:0}
+.nspc-era span{
+  display:inline-block;background:var(--ground);padding:.35rem 1.15rem;
+  font-family:var(--hand);font-size:1.45rem;font-weight:700;color:var(--teal-deep);
+  border:1.5px solid var(--line);border-radius:99px;
+}
+.nspc-era small{
+  display:block;margin-top:.45rem;font-size:.68rem;letter-spacing:.2em;
+  text-transform:uppercase;font-weight:700;color:var(--ink-faint);
+}
+@media(max-width:820px){.nspc-era{text-align:left;padding-left:56px}}
+
+/* one moment */
+.nspc-moment{
+  position:relative;z-index:2;display:grid;gap:.5rem 2.5rem;
+  grid-template-columns:1fr 1fr;align-items:center;margin-bottom:2.25rem;
+}
+.nspc-moment &gt; div{grid-column:1;text-align:right;padding-right:1.5rem}
+.nspc-moment.r &gt; div{grid-column:2;text-align:left;padding:0 0 0 1.5rem}
+
+.nspc-moment .year{
+  display:block;font-family:var(--display);font-weight:400;
+  font-size:clamp(2.1rem,4.6vw,3.1rem);line-height:1;color:var(--gold);
+  letter-spacing:-.02em;
+}
+.nspc-moment h3{
+  font-family:var(--display);font-weight:400;font-size:1.25rem;
+  margin:.3rem 0 .35rem;line-height:1.25;color:var(--ink);
+}
+.nspc-moment p{margin:0;color:var(--ink-soft);font-size:.97rem;max-width:34ch}
+.nspc-moment.r p{margin-right:auto}
+.nspc-moment &gt; div[style], .nspc-moment &gt; div{margin-left:auto}
+.nspc-moment.r &gt; div{margin-left:0;margin-right:auto}
+
+/* the bead on the line */
+.nspc-moment::before{
+  content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
+  width:15px;height:15px;border-radius:50%;
+  background:var(--gold-lift);box-shadow:0 0 0 5px var(--ground),0 0 0 6.5px var(--tint-gold);
+  z-index:3;
+}
+
+/* the pause between moments, named */
+.nspc-gap{
+  position:relative;z-index:2;text-align:center;margin:-.85rem 0 1.6rem;
+}
+.nspc-gap span{
+  background:var(--ground);padding:.2rem .8rem;font-family:var(--hand);
+  font-size:1.1rem;color:var(--ink-faint);
+}
+
+@media(max-width:820px){
+  .nspc-moment{grid-template-columns:1fr;padding-left:56px}
+  .nspc-moment &gt; div,
+  .nspc-moment.r &gt; div{
+    grid-column:1;text-align:left;padding:0;margin:0;}
+  .nspc-moment::before{left:22px;top:.9rem;translate:-50% 0}
+  .nspc-gap{text-align:left;padding-left:56px}
+}
+
+/* the summing-up strip */
+.nspc-century-stats{
+  display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:3px;overflow:hidden;margin-top:2.5rem;
+}
+@media(min-width:640px){.nspc-century-stats{grid-template-columns:repeat(4,1fr)}}
+.nspc-century-stats div{background:var(--surface);padding:1.35rem 1rem;text-align:center}
+.nspc-century-stats b{
+  display:block;font-family:var(--display);font-weight:400;
+  font-size:2.1rem;line-height:1;color:var(--teal-deep);
+}
+.nspc-century-stats span{
+  display:block;margin-top:.4rem;font-size:.7rem;letter-spacing:.16em;
+  text-transform:uppercase;font-weight:700;color:var(--ink-faint);
+}
+
+@media(prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .nspc-moment,.nspc-era,.nspc-gap{
+      animation:nspc-moment-in linear both;
+      animation-timeline:view();
+      animation-range:entry 2% cover 18%;
+    }
+    @keyframes nspc-moment-in{
+      from{opacity:0;transform:translateY(26px)}
+      to{opacity:1;transform:none}
+    }
+  }
+}
+
+/* ==========================================================================
+   SQUARESPACE FULL-BLEED BREAKOUT
+   Squarespace wraps a Code Block in a width-constrained container, so
+   heroes and dark bands would otherwise render as narrow columns. These
+   escape the container and span the viewport.
+   In the local previews .nspc-page is already full width, so the margins
+   compute to roughly zero and nothing changes.
+   ========================================================================== */
+
+.nspc-page{overflow-x:clip}
+
+.nspc-hero,
+.nspc-band{
+  width:100vw;
+  max-width:100vw;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+}
+
+/* the inner wrap re-establishes the reading column inside a full-bleed band */
+.nspc-hero &gt; .nspc-wrap,
+.nspc-band &gt; .nspc-wrap{max-width:1140px;margin-inline:auto}
+</textarea>
+  <label class="tick" style="margin-top:.8rem"><input type="checkbox" data-k="step1"/><span></span></label>
+  <b style="margin-left:.6rem">Custom CSS saved</b>
+</div>
+
+<h2><span class="n">2</span> Upload the photographs</h2>
+<p class="lede">Squarespace has no file browser, so images need a home before pages can point at them.</p>
+<ol class="steps">
+  <li>Add a blank page called <b>Image Library</b> and leave it <b>out of the navigation</b>.</li>
+  <li>Add an Image Block for each file in <code>pages/home/images/</code>, upload it.</li>
+  <li>Publish, view the page, right-click each image &rarr; <b>Copy image address</b>.</li>
+  <li>Keep those URLs somewhere — you'll paste them over the placeholders marked
+      <code>PHOTO SLOT</code> in the page code.</li>
+</ol>
+<div class="card">
+  <p class="note todo" style="margin-top:0">The <code>hero.jpg</code> in every page folder is a
+  stock landscape standing in for a real photograph. They're there so layout can be judged.
+  Don't upload them.</p>
+  <label class="tick" style="margin-top:.8rem"><input type="checkbox" data-k="step2"/><span></span></label>
+  <b style="margin-left:.6rem">Images uploaded, URLs collected</b>
+</div>
+
+<h2><span class="n">3</span> Build the pages</h2>
+<p class="lede">For each one: <b>Pages &rarr; + &rarr; Blank Page</b>, name it, open it, add a
+   <b>Code Block</b>, paste, save. Then in that section's settings set <b>top and bottom padding to zero</b>,
+   or the hero will float in a gap.</p>
+<p class="lede"><b>Do the first one and look at it before doing the other 27.</b>
+   If the hero is a narrow column instead of full width, the section still has padding.</p>
+
+
+<details class="page" id="p1">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page1"/><span></span></label>
+    <b>1. Home</b>
+    <code>/</code>
+    <span class="pill home">set as homepage</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c1">Copy the code for this page</button>
+      <a class="prev" href="pages/home/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c1" readonly>&lt;!-- ===========================================================
+     NSPC — Home
+     Paste as a Code Block on the homepage.
+     Requires shared/nspc-base.css in Design → Custom CSS.
+
+     ⚠ DO NOT paste this into a page that also shows the Squarespace
+     header. This block is page BODY only — Squarespace supplies the
+     logo and navigation above it.
+
+     ── PHOTOS ──────────────────────────────────────────────────
+     The hero uses your existing "Joint Worship" image from the
+     Squarespace CDN and needs nothing.
+
+     The three programme cards are marked PHOTO SLOT. Upload the
+     files in pages/home/images/ to Squarespace (any page → add
+     image → then copy the CDN URL), and paste each URL over the
+     placeholder. Until then all three show the worship photo.
+     =========================================================== --&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;!-- ================= HERO ================= --&gt;
+  &lt;header class="nspc-hero"&gt;
+    &lt;img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/0494d0ae-8096-4c96-bf59-741bea129a40/Joint+Worship.png?format=2500w"
+         alt="The congregation of North Shore Presbyterian standing to sing during Sunday worship"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Shorewood, Wisconsin · Since 1922&lt;/p&gt;
+      &lt;h1&gt;There is a seat here with your name on it&lt;/h1&gt;
+      &lt;p class="lede"&gt;A neighborhood congregation on the corner of Bartlett and Olive. Come as you are, believe what you believe, and sing with us anyway.&lt;/p&gt;
+
+      &lt;dl class="nspc-times"&gt;
+        &lt;div&gt;
+          &lt;dt&gt;Sundays, school year&lt;/dt&gt;
+          &lt;dd&gt;10:00am&lt;small&gt;In the sanctuary&lt;/small&gt;&lt;/dd&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;dt&gt;June – Labor Day&lt;/dt&gt;
+          &lt;dd&gt;9:00am&lt;small&gt;Outdoors, at the garden&lt;/small&gt;&lt;/dd&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;dt&gt;Find us&lt;/dt&gt;
+          &lt;dd&gt;4048 N. Bartlett&lt;small&gt;Shorewood, WI 53211&lt;/small&gt;&lt;/dd&gt;
+        &lt;/div&gt;
+      &lt;/dl&gt;
+
+      &lt;div class="nspc-cta"&gt;
+        &lt;a class="nspc-btn primary" href="/contact"&gt;Plan your visit&lt;/a&gt;
+        &lt;!-- TODO: point this at your YouTube channel --&gt;
+        &lt;a class="nspc-btn ghost" href="#"&gt;Watch this Sunday&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+
+    &lt;!-- ================= VERSE ================= --&gt;
+    &lt;section&gt;
+      &lt;div class="nspc-verse"&gt;
+        &lt;blockquote&gt;Do justice, love kindness, and walk humbly with your God.&lt;/blockquote&gt;
+        &lt;cite&gt;Micah 6:8&lt;/cite&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ================= NEW HERE ================= --&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;New here?&lt;/p&gt;
+      &lt;h2&gt;The things people wonder about before a &lt;span class="mark"&gt;first Sunday&lt;/span&gt;&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Nobody asks these out loud, so here are the answers in advance.&lt;/p&gt;
+
+      &lt;div class="nspc-grid three" style="margin-top:2.5rem"&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;What do I wear?&lt;/h3&gt;
+          &lt;p&gt;Whatever you own. You'll see a suit and you'll see jeans in the same pew, and no one is counting.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;How long does it last?&lt;/h3&gt;
+          &lt;p&gt;About an hour. Coffee afterward for as long as you like, and no obligation to stay for it.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Where do I park?&lt;/h3&gt;
+          &lt;p&gt;On Bartlett or Olive, free on Sundays. The Bartlett entrance is step-free.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;What about my kids?&lt;/h3&gt;
+          &lt;p&gt;Bring them. Godly Play for ages 2–5, Sunday School for grades 1–5, and nobody minds noise in the meantime.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Do I have to believe it all?&lt;/h3&gt;
+          &lt;p&gt;No. This congregation holds a wide range of politics and theology. You are welcome wherever you are on the way.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Can I take communion?&lt;/h3&gt;
+          &lt;p&gt;Yes — the first Sunday of every month, and the table is open to anyone who trusts Jesus, children included.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div style="margin-top:2.5rem"&gt;
+        &lt;a class="nspc-btn primary" href="/contact"&gt;Tell us you're coming&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+
+    &lt;!-- ================= OUT IN THE NEIGHBORHOOD ================= --&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Out in the neighborhood&lt;/p&gt;
+      &lt;h2&gt;Most of what we do happens &lt;span class="mark"&gt;outside the building&lt;/span&gt;&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;A summer camp, an after-school programme, six raised garden beds feeding a food pantry, and a block party that closes the street.&lt;/p&gt;
+
+      &lt;div class="nspc-grid three"&gt;
+        &lt;div class="nspc-card"&gt;
+          &lt;!-- PHOTO SLOT: upload pages/home/images/camp-treats.jpg --&gt;
+          &lt;div class="thumb"&gt;
+            &lt;img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/0494d0ae-8096-4c96-bf59-741bea129a40/Joint+Worship.png?format=1000w"
+                 alt="Children at Compassion Camp sharing homemade treats" loading="lazy"/&gt;
+          &lt;/div&gt;
+          &lt;h3&gt;Compassion Camp&lt;/h3&gt;
+          &lt;p&gt;Two August weeks for children entering 4K through 5th grade, built on kindness and hands-on service. $60 a week, $10 off each additional child.&lt;/p&gt;
+          &lt;a class="nspc-link" href="/compassion-camp"&gt;Camp details&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-card"&gt;
+          &lt;!-- PHOTO SLOT: upload pages/home/images/camp-service-project.jpg --&gt;
+          &lt;div class="thumb"&gt;
+            &lt;img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/0494d0ae-8096-4c96-bf59-741bea129a40/Joint+Worship.png?format=1000w"
+                 alt="Campers packing gifts for a service project with youth leaders" loading="lazy"/&gt;
+          &lt;/div&gt;
+          &lt;h3&gt;Kindness World Explorers&lt;/h3&gt;
+          &lt;p&gt;After school on Wednesdays for elementary students, exploring kindness and world cultures through art. $20 a month, snack included.&lt;/p&gt;
+          &lt;a class="nspc-link" href="/kindness-world-explorers"&gt;Programme details&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-card"&gt;
+          &lt;!-- PHOTO SLOT: upload pages/home/images/camp-thank-you-cards.jpg --&gt;
+          &lt;div class="thumb"&gt;
+            &lt;img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/0494d0ae-8096-4c96-bf59-741bea129a40/Joint+Worship.png?format=1000w"
+                 alt="Children making thank-you cards for community helpers" loading="lazy"/&gt;
+          &lt;/div&gt;
+          &lt;h3&gt;Good Neighbour Exchange&lt;/h3&gt;
+          &lt;p&gt;Two donation days and a free store day each summer, with Catch the Wave Shorewood and the Shorewood Waters Project. Everything free, nobody asked why they came.&lt;/p&gt;
+          &lt;a class="nspc-link" href="/good-neighbour-exchange"&gt;Exchange details&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- ================= THE YEAR ================= --&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Across the year&lt;/p&gt;
+      &lt;h2&gt;Three times a year the church &lt;span class="mark"&gt;spills onto the street&lt;/span&gt;&lt;/h2&gt;
+
+      &lt;div class="nspc-grid three"&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Easter Egg Hunt&lt;/h3&gt;
+          &lt;p&gt;The Saturday before Easter. Crafts, stories, and an egg hunt for every child who turns up.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Block Party&lt;/h3&gt;
+          &lt;p&gt;The Saturday before school starts. We close the street for food trucks, ice cream, games and a bounce house.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Interfaith Thanksgiving&lt;/h3&gt;
+          &lt;p&gt;Every November with Congregation Shalom, a partnership now in its eighth decade.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div style="margin-top:2rem"&gt;
+        &lt;a class="nspc-link" href="/calendar-special-events"&gt;The full calendar&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ================= GIVING ================= --&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Give&lt;/p&gt;
+      &lt;h2&gt;What your giving &lt;span class="mark"&gt;actually pays for&lt;/span&gt;&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;A camp that costs families $60 a week to attend. An after-school programme at $20 a month. Six raised beds whose produce goes to Apostle Presbyterian Food Pantry. A century-old building kept warm and open.&lt;/p&gt;
+      &lt;div class="nspc-cta"&gt;
+        &lt;a class="nspc-btn primary" href="https://secure.myvanco.com/L-ZMZZ/home" target="_blank" rel="noopener"&gt;Give online&lt;/a&gt;
+        &lt;a class="nspc-btn ghost" href="/donations"&gt;Other ways to give&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p2">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page2"/><span></span></label>
+    <b>2. Welcome</b>
+    <code>/welcome</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c2">Copy the code for this page</button>
+      <a class="prev" href="pages/welcome/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c2" readonly>&lt;!-- NSPC — Come as you are, and come as often as you like
+     page: welcome   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Come as you are, and come as often as you like"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Welcome&lt;/p&gt;
+      &lt;h1&gt;Come as you are, and come as often as you like&lt;/h1&gt;
+      &lt;p class="lede"&gt;Whatever brought you here — curiosity, a hard season, a child who wants to sing — there is room.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Before you come&lt;/p&gt;
+      &lt;h2&gt;What a first Sunday actually looks like&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Arrive whenever&lt;/h3&gt;
+        &lt;p&gt;People trickle in from about ten to. Nobody will make you stand up and introduce yourself.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Wear what you own&lt;/h3&gt;
+        &lt;p&gt;A suit and a pair of jeans sit in the same pew most weeks.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;An hour, near enough&lt;/h3&gt;
+        &lt;p&gt;Coffee afterwards for as long as you like, and no obligation to stay.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Children stay or go&lt;/h3&gt;
+        &lt;p&gt;Godly Play for ages 2–5, Sunday School for grades 1–5, and nobody minds noise.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;The table is open&lt;/h3&gt;
+        &lt;p&gt;Communion the first Sunday of the month, open to anyone who trusts Jesus, children included.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Parking is free&lt;/h3&gt;
+        &lt;p&gt;On Bartlett or Olive on a Sunday. The Bartlett entrance is step-free. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Questions&lt;/p&gt;
+      &lt;h2&gt;Ask us anything before you turn up&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;The office answers email faster than you would expect.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p3">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page3"/><span></span></label>
+    <b>3. Contact</b>
+    <code>/contact</code>
+    <span class="pill">4 placeholders</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c3">Copy the code for this page</button>
+      <a class="prev" href="pages/welcome/contact/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c3" readonly>&lt;!-- NSPC — Where to find us and who to ask
+     page: contact   ·   under: welcome
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Where to find us and who to ask"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Contact&lt;/p&gt;
+      &lt;h1&gt;Where to find us and who to ask&lt;/h1&gt;
+      &lt;p class="lede"&gt;One office, one phone, and a small staff who genuinely do answer.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Reach us&lt;/p&gt;
+      &lt;h2&gt;Get in touch&lt;/h2&gt;
+    &lt;div class="nspc-directory"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Church office&lt;/h3&gt;
+        &lt;p&gt;414-332-8130 · office@northshorepres.org · Monday to Thursday, 8:30am – 6:00pm&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Rev. Jeannine Oakes Daugherty&lt;/h3&gt;
+        &lt;p&gt;Pastor · jeannine@northshorepres.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Sean DeBoth&lt;/h3&gt;
+        &lt;p&gt;Director of Music · nspcmusic@gmail.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Building and rentals&lt;/h3&gt;
+        &lt;p&gt;Ask the office about the sanctuary, the hall, or the shared kitchen. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Getting here&lt;/p&gt;
+      &lt;h2&gt;Finding the building&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;4048 N. Bartlett Avenue, Shorewood, WI 53211.&lt;/p&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;By car&lt;/h3&gt;
+        &lt;p&gt;Free street parking on Bartlett and Olive on Sundays. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Step-free access&lt;/h3&gt;
+        &lt;p&gt;The Bartlett Avenue entrance is level. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;By bus&lt;/h3&gt;
+        &lt;p&gt;Several MCTS routes stop within a few blocks. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p4">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page4"/><span></span></label>
+    <b>4. Covenant Family</b>
+    <code>/covenant-family</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c4">Copy the code for this page</button>
+      <a class="prev" href="pages/covenant-family/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c4" readonly>&lt;!-- ===========================================================
+     NSPC — Covenant Family  (section landing page)
+     Paste as a Code Block. Requires shared/nspc-base.css in
+     Design → Custom CSS.
+
+     Covers the four pages in this nav folder:
+       Mission and Values · Neighboring Initiative · Leadership · History
+
+     PHOTO SLOTS marked below. Each currently reuses the one worship
+     photograph; swap the src for a real image of that subject.
+     =========================================================== --&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;!-- HERO --&gt;
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: congregation gathered, ideally outdoors or at coffee hour --&gt;
+    &lt;img src="https://images.squarespace-cdn.com/content/v1/6926fced74d46d2f486d9855/0494d0ae-8096-4c96-bf59-741bea129a40/Joint+Worship.png?format=2500w"
+         alt="The congregation of North Shore Presbyterian gathered for worship"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Covenant Family&lt;/p&gt;
+      &lt;h1&gt;Not a membership. A promise we keep to each other.&lt;/h1&gt;
+      &lt;p class="lede"&gt;We don't call ourselves a congregation of members. We call ourselves a Covenant Family — because what holds this place together is what we've promised one another, not what we've signed.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+
+    &lt;!-- MISSION &amp; VALUES --&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Mission &amp;amp; Values&lt;/p&gt;
+      &lt;h2&gt;Wherever you are on your faith journey, you are welcome here&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;We welcome you with open hearts and minds. This congregation holds a wide range of politics and theology, united by a commitment to follow Jesus — and by a conviction that the door stays open.&lt;/p&gt;
+
+      &lt;div class="nspc-verse" style="margin-block:2.5rem"&gt;
+        &lt;blockquote&gt;Creating a Spiritual Home, Growing the Covenant Family.&lt;/blockquote&gt;
+        &lt;cite&gt;Our calling&lt;/cite&gt;
+      &lt;/div&gt;
+
+      &lt;div class="nspc-grid three"&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Worship&lt;/h3&gt;
+          &lt;p&gt;We gather to worship God together — in the sanctuary through the school year, and outdoors at the garden all summer.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Welcome&lt;/h3&gt;
+          &lt;p&gt;We meet others with Christian compassion, whoever they are and whatever brought them to the door.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Educate&lt;/h3&gt;
+          &lt;p&gt;We promote faith development at every age, from Godly Play at two years old to Bible study on Wednesday mornings.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card boxed"&gt;
+          &lt;h3&gt;Advocate&lt;/h3&gt;
+          &lt;p&gt;We work for peace and justice, and we address suffering where we find it — starting with our own neighborhood.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;!-- NEIGHBORING INITIATIVE --&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Neighboring Initiative&lt;/p&gt;
+      &lt;h2&gt;Three times a year, the church spills onto the street&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Not outreach aimed at the neighborhood. Events held with it — free, open, and no one asked what they believe at the door.&lt;/p&gt;
+
+      &lt;div class="nspc-grid three" style="margin-top:2.5rem"&gt;
+        &lt;div class="nspc-card"&gt;
+          &lt;h3&gt;Easter Egg Hunt&lt;/h3&gt;
+          &lt;p&gt;The Saturday before Easter. Crafts, stories, and an egg hunt for every child who turns up.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card"&gt;
+          &lt;h3&gt;Block Party&lt;/h3&gt;
+          &lt;p&gt;The Saturday before school starts. We close the street for food trucks, ice cream, games, and a bounce house.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="nspc-card"&gt;
+          &lt;h3&gt;Spring Clean Out&lt;/h3&gt;
+          &lt;p&gt;A free community exchange with Shorewood Buy Nothing, in the freecycle spirit — bring what you don't need, take what you do.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="nspc-verse" style="margin-top:3rem;max-width:44ch"&gt;
+        &lt;blockquote&gt;All we're ever asked to do in this life is to treat our neighbor exactly as we would hope to be treated ourselves.&lt;/blockquote&gt;
+        &lt;cite&gt;Fred Rogers&lt;/cite&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+
+    &lt;!-- LEADERSHIP --&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Leadership&lt;/p&gt;
+      &lt;h2&gt;The people who keep this place open&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;A pastor, a director of music, an organist, a children's choir director, and an office that has held a century of records.&lt;/p&gt;
+
+      &lt;!-- PHOTO SLOT: replace each .nspc-avatar contents with a headshot:
+           &lt;div class="nspc-avatar"&gt;&lt;img src="…" alt="Name"/&gt;&lt;/div&gt; --&gt;
+      &lt;div class="nspc-people"&gt;
+        &lt;article class="nspc-person"&gt;
+          &lt;div class="nspc-avatar" aria-hidden="true"&gt;JD&lt;/div&gt;
+          &lt;div&gt;
+            &lt;h3&gt;Rev. Jeannine Oakes Daugherty&lt;/h3&gt;
+            &lt;p class="nspc-role"&gt;Pastor&lt;/p&gt;
+            &lt;p&gt;Ordained a teaching elder in the PC(USA) since May 2015. She came to Wisconsin in January 2024 with her wife Denise and their three daughters.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class="nspc-person"&gt;
+          &lt;div class="nspc-avatar" aria-hidden="true"&gt;SD&lt;/div&gt;
+          &lt;div&gt;
+            &lt;h3&gt;Sean DeBoth&lt;/h3&gt;
+            &lt;p class="nspc-role"&gt;Director of Music&lt;/p&gt;
+            &lt;p&gt;Director of Music here since 2004. He teaches at Lake Denoon Middle School and lives in Mukwonago with his wife and three children.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class="nspc-person"&gt;
+          &lt;div class="nspc-avatar" aria-hidden="true"&gt;JP&lt;/div&gt;
+          &lt;div&gt;
+            &lt;h3&gt;Jeff Peterson&lt;/h3&gt;
+            &lt;p class="nspc-role"&gt;Organist&lt;/p&gt;
+            &lt;p&gt;Professor emeritus at UWM, with degrees from Oberlin and the University of Illinois. He has played for churches for more than four decades.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class="nspc-person"&gt;
+          &lt;div class="nspc-avatar" aria-hidden="true"&gt;LH&lt;/div&gt;
+          &lt;div&gt;
+            &lt;h3&gt;Leanne Hoeg&lt;/h3&gt;
+            &lt;p class="nspc-role"&gt;Office &amp;amp; Financial Assistant&lt;/p&gt;
+            &lt;p&gt;More than 25 years in office administration. She is usually the first voice you hear.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+
+      &lt;div style="margin-top:2rem"&gt;
+        &lt;a class="nspc-link" href="/leadership"&gt;Full staff, Session and Deacons&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- HISTORY --&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;History&lt;/p&gt;
+      &lt;h2&gt;A hundred years on the same corner&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;From a storefront mission with Sunday School in the old village jail, to a centennial celebrated in 2022.&lt;/p&gt;
+
+      &lt;ol class="nspc-timeline"&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1922&lt;/span&gt;
+          &lt;p&gt;Begins as a mission of Westminster Presbyterian, meeting in a Shorewood storefront. The old village jail next to the village hall serves as the Sunday School room.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1923&lt;/span&gt;
+          &lt;p&gt;The congregation formally organizes.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1924&lt;/span&gt;
+          &lt;p&gt;The first building goes up — a wooden structure on the corner.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1951&lt;/span&gt;
+          &lt;p&gt;The name changes to North Shore Presbyterian Church.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1952&lt;/span&gt;
+          &lt;p&gt;The colonial-style brick building is dedicated — the sanctuary the congregation still worships in.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;1959&lt;/span&gt;
+          &lt;p&gt;The educational wing is added.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;2002&lt;/span&gt;
+          &lt;p&gt;The memorial patio is built — now home to summer worship at the garden.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;2015&lt;/span&gt;
+          &lt;p&gt;The pineapple becomes our mark. It is the universal image of hospitality, which is the promise we most wanted to make in public.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+          &lt;span class="year"&gt;2022&lt;/span&gt;
+          &lt;p&gt;One hundred years.&lt;/p&gt;
+        &lt;/li&gt;
+      &lt;/ol&gt;
+
+      &lt;div style="margin-top:2rem"&gt;
+        &lt;a class="nspc-link" href="/history"&gt;The longer history&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p5">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page5"/><span></span></label>
+    <b>5. Mission and Values</b>
+    <code>/mission-and-values</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c5">Copy the code for this page</button>
+      <a class="prev" href="pages/covenant-family/mission-and-values/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c5" readonly>&lt;!-- NSPC — Wherever you are on your faith journey, you are welcome here
+     page: mission-and-values   ·   under: covenant-family
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Wherever you are on your faith journey, you are welcome here"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Mission &amp;amp; Values&lt;/p&gt;
+      &lt;h1&gt;Wherever you are on your faith journey, you are welcome here&lt;/h1&gt;
+      &lt;p class="lede"&gt;We welcome you with open hearts and minds. This congregation holds a wide range of politics and theology, united by a commitment to follow Jesus.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;div class="nspc-verse"&gt;
+        &lt;blockquote&gt;Creating a Spiritual Home, Growing the Covenant Family.&lt;/blockquote&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;How we spend what we have&lt;/p&gt;
+      &lt;h2&gt;Four things we have promised to do&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Worship God&lt;/h3&gt;
+        &lt;p&gt;Together, every week, in the sanctuary and out at the garden.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Welcome others&lt;/h3&gt;
+        &lt;p&gt;With Christian compassion, whoever they are and whatever brought them.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Promote faith development&lt;/h3&gt;
+        &lt;p&gt;Education at every age, from two years old to Wednesday morning Bible study.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Advocate for peace and justice&lt;/h3&gt;
+        &lt;p&gt;And address suffering where we find it, starting on our own street.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p6">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page6"/><span></span></label>
+    <b>6. Neighboring Initiative</b>
+    <code>/neighboring-initiative</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c6">Copy the code for this page</button>
+      <a class="prev" href="pages/covenant-family/neighboring-initiative/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c6" readonly>&lt;!-- NSPC — Three times a year the church spills onto the street
+     page: neighboring-initiative   ·   under: covenant-family
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Three times a year the church spills onto the street"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Neighboring Initiative&lt;/p&gt;
+      &lt;h1&gt;Three times a year the church spills onto the street&lt;/h1&gt;
+      &lt;p class="lede"&gt;Not outreach aimed at the neighborhood — events held with it. Free, open, and nobody asked what they believe at the door.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;What we run&lt;/p&gt;
+      &lt;h2&gt;Held with Shorewood, not at it&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Easter Egg Hunt&lt;/h3&gt;
+        &lt;p&gt;The Saturday before Easter. Crafts, stories, and an egg hunt for every child who turns up.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Block Party&lt;/h3&gt;
+        &lt;p&gt;The Saturday before school starts. We close the street for food trucks, ice cream, games and a bounce house.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Shorewood Spring Clean Out&lt;/h3&gt;
+        &lt;p&gt;A free exchange with Shorewood Buy Nothing, in the freecycle spirit. Bring what you don't need, take what you do.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;div class="nspc-verse"&gt;
+        &lt;blockquote&gt;All we're ever asked to do in this life is to treat our neighbor exactly as we would hope to be treated ourselves.&lt;/blockquote&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p7">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page7"/><span></span></label>
+    <b>7. Leadership</b>
+    <code>/leadership</code>
+    
+  </summary>
+  <div class="body">
+    <p class="note todo">Replaces the page currently showing “I still need to get content” to the public.</p>
+    <div class="acts">
+      <button class="copy" data-t="c7">Copy the code for this page</button>
+      <a class="prev" href="pages/covenant-family/leadership/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c7" readonly>&lt;!-- NSPC — The people who keep this place open
+     page: leadership   ·   under: covenant-family
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="The people who keep this place open"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Staff · Session · Deacons&lt;/p&gt;
+      &lt;h1&gt;The people who keep this place open&lt;/h1&gt;
+      &lt;p class="lede"&gt;A pastor, a director of music, an organist, a children's choir director, and an office that has held a century of records.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Staff&lt;/p&gt;
+      &lt;h2&gt;Who you'll meet&lt;/h2&gt;
+    &lt;div class="nspc-directory"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Rev. Jeannine Oakes Daugherty — Pastor&lt;/h3&gt;
+        &lt;p&gt;Ordained a teaching elder in the PC(USA) since May 2015. She studied at UIC and Yale, holds an MA in Urban Ministry from McCormick, and moved to Wisconsin in January 2024 with her wife Denise and their three daughters. jeannine@northshorepres.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Sean DeBoth — Director of Music&lt;/h3&gt;
+        &lt;p&gt;Director of Music here since 2004. He teaches at Lake Denoon Middle School and holds degrees from Carroll College and UWM. nspcmusic@gmail.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Jeff Peterson — Organist&lt;/h3&gt;
+        &lt;p&gt;Professor emeritus at UWM, with degrees from Oberlin and the University of Illinois. He has played for churches for more than four decades. jeffry@uwm.edu&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Leanne Hoeg — Office &amp;amp; Financial Assistant&lt;/h3&gt;
+        &lt;p&gt;Originally from Mediapolis, Iowa, with more than 25 years in office administration. She is usually the first voice you hear. office@northshorepres.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Becky Schuppman — Children's Music Director&lt;/h3&gt;
+        &lt;p&gt;Becky directs the children's choir, which sings in worship each month and presents the Christmas pageant every December.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Elected leadership&lt;/p&gt;
+      &lt;h2&gt;Session and Deacons&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Session&lt;/h3&gt;
+        &lt;p&gt;The elected board of elders, responsible for the spiritual life, mission and governance of the church. Elders serve three-year terms.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Deacons&lt;/h3&gt;
+        &lt;p&gt;Our ministry of care — visiting members, walking with families through illness and loss, and serving as deacon buddies to the children.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p8">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page8"/><span></span></label>
+    <b>8. History</b>
+    <code>/history</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c8">Copy the code for this page</button>
+      <a class="prev" href="pages/covenant-family/history/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c8" readonly>&lt;!-- NSPC — A hundred years on the same corner
+     page: history   ·   under: covenant-family
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+
+     The century below is one continuous line with the milestones set either
+     side of it. The lines between moments name the pause — how long the
+     congregation lived with each decision before the next one.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg — best replaced with an archive photograph --&gt;
+    &lt;img src="images/hero.jpg" alt="North Shore Presbyterian Church"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;History&lt;/p&gt;
+      &lt;h1&gt;A hundred years on the same corner&lt;/h1&gt;
+      &lt;p class="lede"&gt;It began in a storefront, with Sunday School held in the old village jail. Everything since has happened within a few hundred feet of where it started.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;1922 to now&lt;/p&gt;
+      &lt;h2&gt;One congregation, three buildings, &lt;span class="mark"&gt;one corner&lt;/span&gt;&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Read down the line. The years in gold are the decisions; the small notes between them are how long the congregation lived with each one before making the next.&lt;/p&gt;
+
+      &lt;div class="nspc-century"&gt;
+
+        &lt;!-- the meandering line, behind everything --&gt;
+        &lt;svg class="nspc-century-path" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"&gt;
+          &lt;path class="solid" d="M50 0 C82 118 18 214 50 332 C82 450 18 546 50 664 C82 782 18 878 50 1000"/&gt;
+          &lt;path d="M50 0 C82 118 18 214 50 332 C82 450 18 546 50 664 C82 782 18 878 50 1000"/&gt;
+        &lt;/svg&gt;
+
+        &lt;!-- ── ERA ONE ───────────────────────────────────────────── --&gt;
+        &lt;div class="nspc-era"&gt;
+          &lt;span&gt;Finding a room&lt;/span&gt;
+          &lt;small&gt;1922 &amp;ndash; 1949&lt;/small&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-moment"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1922&lt;/span&gt;
+            &lt;h3&gt;A mission, in a shop&lt;/h3&gt;
+            &lt;p&gt;Westminster Presbyterian in Milwaukee starts a mission in Shorewood. Services are held in a storefront. Sunday School meets in the old village jail beside the village hall.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;one year later&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment r"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1923&lt;/span&gt;
+            &lt;h3&gt;A congregation of its own&lt;/h3&gt;
+            &lt;p&gt;The Shorewood Presbyterian Society organizes formally. The first service is held on the sixteenth of June.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;a year of building&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1924&lt;/span&gt;
+            &lt;h3&gt;The first building&lt;/h3&gt;
+            &lt;p&gt;A wooden church goes up on the corner — the first building this congregation could call its own.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;twenty-seven years in the wooden church&lt;/span&gt;&lt;/p&gt;
+
+        &lt;!-- ── ERA TWO ───────────────────────────────────────────── --&gt;
+        &lt;div class="nspc-era"&gt;
+          &lt;span&gt;Building in brick&lt;/span&gt;
+          &lt;small&gt;1950 &amp;ndash; 1999&lt;/small&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-moment r"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1951&lt;/span&gt;
+            &lt;h3&gt;A new name&lt;/h3&gt;
+            &lt;p&gt;Shorewood Presbyterian becomes North Shore Presbyterian Church — a name for the whole north shore, not one village.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;the following year&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1952&lt;/span&gt;
+            &lt;h3&gt;The sanctuary we still use&lt;/h3&gt;
+            &lt;p&gt;The colonial brick building is dedicated. Every Sunday since — more than three thousand of them — has been held in this room.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;seven years on&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment r"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;1959&lt;/span&gt;
+            &lt;h3&gt;Room for the children&lt;/h3&gt;
+            &lt;p&gt;The educational wing is added. Godly Play, Sunday School and Compassion Camp all still happen inside it.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;forty-three quiet years&lt;/span&gt;&lt;/p&gt;
+
+        &lt;!-- ── ERA THREE ─────────────────────────────────────────── --&gt;
+        &lt;div class="nspc-era"&gt;
+          &lt;span&gt;Turning outward&lt;/span&gt;
+          &lt;small&gt;2000 &amp;ndash; today&lt;/small&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-moment"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;2002&lt;/span&gt;
+            &lt;h3&gt;The memorial patio&lt;/h3&gt;
+            &lt;p&gt;Built in memory of those who came before. From June to Labor Day the whole congregation now worships out here at nine in the morning, beside the garden.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;thirteen years&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment r"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;2015&lt;/span&gt;
+            &lt;h3&gt;The pineapple&lt;/h3&gt;
+            &lt;p&gt;The congregation takes the pineapple as its mark. It is the universal image of hospitality — a promise made in public, on the sign, before anyone walks in.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="nspc-gap"&gt;&lt;span&gt;seven more&lt;/span&gt;&lt;/p&gt;
+
+        &lt;div class="nspc-moment"&gt;
+          &lt;div&gt;
+            &lt;span class="year"&gt;2022&lt;/span&gt;
+            &lt;h3&gt;One hundred years&lt;/h3&gt;
+            &lt;p&gt;The centennial. Four generations of one congregation, on one corner, in a village of fourteen thousand people.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="nspc-century-stats"&gt;
+          &lt;div&gt;&lt;b&gt;104&lt;/b&gt;&lt;span&gt;years so far&lt;/span&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;b&gt;3&lt;/b&gt;&lt;span&gt;buildings&lt;/span&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;b&gt;74&lt;/b&gt;&lt;span&gt;years in this sanctuary&lt;/span&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;b&gt;1&lt;/b&gt;&lt;span&gt;corner, throughout&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Help us fill the gaps&lt;/p&gt;
+      &lt;h2&gt;The archive has holes in it&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;A hundred years leaves gaps — the forty-three years between the education wing and the patio are almost entirely undocumented online. If you have photographs, bulletins, or a story from any decade above, the office would be glad of them.&lt;/p&gt;
+      &lt;div class="nspc-cta"&gt;
+        &lt;a class="nspc-btn primary" href="mailto:office@northshorepres.org"&gt;Share something for the archive&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p9">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page9"/><span></span></label>
+    <b>9. Ministries</b>
+    <code>/ministries</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c9">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c9" readonly>&lt;!-- NSPC — Six ways this congregation spends itself
+     page: ministries   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Six ways this congregation spends itself"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Ministries&lt;/p&gt;
+      &lt;h1&gt;Six ways this congregation spends itself&lt;/h1&gt;
+      &lt;p class="lede"&gt;Worship and music, education at every age, a garden that feeds a food pantry, and a kitchen being rebuilt for the neighborhood.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;What we do&lt;/p&gt;
+      &lt;h2&gt;Where to find your place&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Worship&lt;/h3&gt;
+        &lt;p&gt;Sundays at 10:00am in the sanctuary, 9:00am outdoors at the garden through the summer.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Education&lt;/h3&gt;
+        &lt;p&gt;Godly Play, Sunday School, Confirmation and adult Bible study.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Garden&lt;/h3&gt;
+        &lt;p&gt;Six raised beds whose produce goes to Apostle Presbyterian Food Pantry.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Music&lt;/h3&gt;
+        &lt;p&gt;A chancel choir, a children's choir, and an organ played for four decades.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Shared Kitchen&lt;/h3&gt;
+        &lt;p&gt;Gather and Grow — a commercial kitchen for local food entrepreneurs.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Congregational Life&lt;/h3&gt;
+        &lt;p&gt;The committee that makes the building feel like somewhere you are expected.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p10">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page10"/><span></span></label>
+    <b>10. Worship</b>
+    <code>/worship</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c10">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/worship/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c10" readonly>&lt;!-- NSPC — Church is God's house
+     page: worship   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Church is God's house"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Worship&lt;/p&gt;
+      &lt;h1&gt;Church is God's house&lt;/h1&gt;
+      &lt;p class="lede"&gt;A place where everyone is welcome. Come to grow through worship, service, fellowship and education — and bring your questions with you.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;When we gather&lt;/p&gt;
+      &lt;h2&gt;Sunday, and the shape of it&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;School year&lt;/h3&gt;
+        &lt;p&gt;10:00am in the sanctuary.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;June to Labor Day&lt;/h3&gt;
+        &lt;p&gt;9:00am outdoors — Gather at the Garden, on the memorial patio.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Online&lt;/h3&gt;
+        &lt;p&gt;Every service is streamed to our YouTube channel. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;The sacraments&lt;/p&gt;
+      &lt;h2&gt;Communion, baptism, marriage&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Communion&lt;/h3&gt;
+        &lt;p&gt;The first Sunday of every month. We practise open communion — anyone who trusts Jesus is welcome at the table, children included.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Baptism&lt;/h3&gt;
+        &lt;p&gt;We baptise infants as an acknowledgement of God's lifelong presence, during Sunday worship so the whole congregation shares the promise.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Weddings&lt;/h3&gt;
+        &lt;p&gt;Marriage preparation here is about building a strong relationship for the whole marriage, supported by the counsel and prayers of this community.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p11">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page11"/><span></span></label>
+    <b>11. Education</b>
+    <code>/education</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c11">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/education/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c11" readonly>&lt;!-- NSPC — Faith is learned at every age
+     page: education   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Faith is learned at every age"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Education&lt;/p&gt;
+      &lt;h1&gt;Faith is learned at every age&lt;/h1&gt;
+      &lt;p class="lede"&gt;Godly Play, Sunday School, Confirmation, and a Wednesday morning Bible study that has been running a long time.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;By age&lt;/p&gt;
+      &lt;h2&gt;Where each age group belongs&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Godly Play · 2–5 years&lt;/h3&gt;
+        &lt;p&gt;Our younger children go to the Godly Play room on the second floor, where teachers supervise play and read a few stories.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Sunday School · grades 1–5&lt;/h3&gt;
+        &lt;p&gt;Each month children explore Bible stories through art, service projects and music. On the first Sunday they sing in worship, then go to the library for story time and to borrow books, and return for communion. Every child is assigned a deacon buddy for the year.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Confirmation · grades 6–9&lt;/h3&gt;
+        &lt;p&gt;A joint programme with other churches in Milwaukee Presbytery, meeting monthly for study and a meal, hosted by a different church each time. In the second year, youth build a mission immersion project with a mentor.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Adult Bible Study&lt;/h3&gt;
+        &lt;p&gt;Wednesdays at 10:30am — biblical texts, church history and theology, with devotionals from A Sanctified Art during Advent and Lent. Every other week in summer.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p12">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page12"/><span></span></label>
+    <b>12. Garden</b>
+    <code>/garden</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c12">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/garden/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c12" readonly>&lt;!-- NSPC — Six raised beds and a food pantry
+     page: garden   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Six raised beds and a food pantry"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Garden&lt;/p&gt;
+      &lt;h1&gt;Six raised beds and a food pantry&lt;/h1&gt;
+      &lt;p class="lede"&gt;Part of Food for the Journey — five churches across Southeast Wisconsin growing food for neighborhoods that don't have a grocery store.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;The garden&lt;/p&gt;
+      &lt;h2&gt;What grows here and where it goes&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Six raised beds&lt;/h3&gt;
+        &lt;p&gt;Tended through the season by volunteers from the congregation and the neighborhood.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Where the produce goes&lt;/h3&gt;
+        &lt;p&gt;Harvested and delivered to Apostle Presbyterian Food Pantry.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Food for the Journey&lt;/h3&gt;
+        &lt;p&gt;Five churches yoked together to feed people living in Milwaukee's food desert areas. food4thejourney.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Worship among it&lt;/h3&gt;
+        &lt;p&gt;From June to Labor Day the whole congregation worships outdoors here at 9:00am.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Lend a hand&lt;/p&gt;
+      &lt;h2&gt;Anyone can dig&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;No experience needed and no membership required. DUMMY&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p13">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page13"/><span></span></label>
+    <b>13. Congregational Life</b>
+    <code>/congregational-life</code>
+    <span class="pill">2 placeholders</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c13">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/congregational-life/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c13" readonly>&lt;!-- NSPC — Someone makes sure you are expected
+     page: congregational-life   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Someone makes sure you are expected"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Congregational Life&lt;/p&gt;
+      &lt;h1&gt;Someone makes sure you are expected&lt;/h1&gt;
+      &lt;p class="lede"&gt;The committee that prepares the worship space for each season, hosts the Interfaith Thanksgiving Service, and quietly organises the lunches.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;What the committee does&lt;/p&gt;
+      &lt;h2&gt;Hospitality, seasons, and the hard days&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;The liturgical seasons&lt;/h3&gt;
+        &lt;p&gt;Preparing and dressing the worship space for Advent, Christmas, Lent, Easter and Pentecost.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Interfaith Thanksgiving&lt;/h3&gt;
+        &lt;p&gt;Coordinating hospitality when we host, with Congregation Shalom and our other interfaith neighbors.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Weddings and funerals&lt;/h3&gt;
+        &lt;p&gt;Helping families with the details on the best days and the worst ones.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Ladies Who Lunch&lt;/h3&gt;
+        &lt;p&gt;Every few months, and new faces are the point. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Join in&lt;/p&gt;
+      &lt;h2&gt;The committee is always short of hands&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;DUMMY — describe how someone volunteers, who to contact, and when the committee meets.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p14">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page14"/><span></span></label>
+    <b>14. Music</b>
+    <code>/music</code>
+    <span class="pill">5 placeholders</span>
+  </summary>
+  <div class="body">
+    <p class="note todo">Mostly placeholder. Tell me the real ensembles and rehearsal times and I will rewrite it.</p>
+    <div class="acts">
+      <button class="copy" data-t="c14">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/music/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c14" readonly>&lt;!-- NSPC — A choir, an organ, and children who sing once a month
+     page: music   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="A choir, an organ, and children who sing once a month"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Music&lt;/p&gt;
+      &lt;h1&gt;A choir, an organ, and children who sing once a month&lt;/h1&gt;
+      &lt;p class="lede"&gt;DUMMY — this page needs the real programme. Everything below is a placeholder built from the staff list.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Who leads it&lt;/p&gt;
+      &lt;h2&gt;The people making the music&lt;/h2&gt;
+    &lt;div class="nspc-directory"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Sean DeBoth — Director of Music&lt;/h3&gt;
+        &lt;p&gt;Director of Music since 2004, and a teacher at Lake Denoon Middle School.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Jeff Peterson — Organist&lt;/h3&gt;
+        &lt;p&gt;Professor emeritus at UWM, with degrees from Oberlin and the University of Illinois.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Becky Schuppman — Children's Music Director&lt;/h3&gt;
+        &lt;p&gt;Directs the children's choir, which sings monthly and presents the Christmas pageant.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Ensembles&lt;/p&gt;
+      &lt;h2&gt;Where you could sing or play&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;DUMMY — replace with the real ensembles, rehearsal times and how to join.&lt;/p&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Chancel Choir&lt;/h3&gt;
+        &lt;p&gt;DUMMY — rehearsal night and time, who it is for, whether you need to audition.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Children's Choir&lt;/h3&gt;
+        &lt;p&gt;DUMMY — ages, rehearsal time, how often they sing in worship.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Instrumentalists&lt;/h3&gt;
+        &lt;p&gt;DUMMY — whether there is a bell choir, brass at Easter, anything seasonal.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p15">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page15"/><span></span></label>
+    <b>15. Shared Kitchen</b>
+    <code>/shared-kitchen</code>
+    <span class="pill">2 placeholders</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c15">Copy the code for this page</button>
+      <a class="prev" href="pages/ministries/shared-kitchen/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c15" readonly>&lt;!-- NSPC — Gather and Grow
+     page: shared-kitchen   ·   under: ministries
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Gather and Grow"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Shared Kitchen&lt;/p&gt;
+      &lt;h1&gt;Gather and Grow&lt;/h1&gt;
+      &lt;p class="lede"&gt;We are upgrading the church kitchen to commercial grade and renting it to local food entrepreneurs who need somewhere licensed to work.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;The project&lt;/p&gt;
+      &lt;h2&gt;What it is and who it is for&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Commercial grade&lt;/h3&gt;
+        &lt;p&gt;An upgrade of the existing kitchen to standards that let food businesses trade from it.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Who can use it&lt;/h3&gt;
+        &lt;p&gt;Local food entrepreneurs across the North Shore, at rates set to be reachable. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Jobea Bakes&lt;/h3&gt;
+        &lt;p&gt;Our kitchen manager and a cottage baker, who connects food entrepreneurs to the building and works with our youth on service projects. jobeabakes.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Booking&lt;/h3&gt;
+        &lt;p&gt;DUMMY — how someone applies, what it costs, what certification they need.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p16">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page16"/><span></span></label>
+    <b>16. Community Programs</b>
+    <code>/community-programs</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c16">Copy the code for this page</button>
+      <a class="prev" href="pages/community-programs/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c16" readonly>&lt;!-- NSPC — Most of what we do happens outside the building
+     page: community-programs   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Most of what we do happens outside the building"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Community Programs&lt;/p&gt;
+      &lt;h1&gt;Most of what we do happens outside the building&lt;/h1&gt;
+      &lt;p class="lede"&gt;A summer camp built on service, an after-school programme about kindness and culture, and a free store that asks nobody why they came.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Three programmes&lt;/p&gt;
+      &lt;h2&gt;Open to the whole neighborhood&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Compassion Camp&lt;/h3&gt;
+        &lt;p&gt;Two August weeks for children entering 4K through 5th grade. $60 a week, $10 off each additional child.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Kindness World Explorers&lt;/h3&gt;
+        &lt;p&gt;After school on Wednesdays for elementary students. $20 a month, snack included.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Good Neighbour Exchange&lt;/h3&gt;
+        &lt;p&gt;Two donation days and a free store day each summer, with Catch the Wave Shorewood and the Shorewood Waters Project.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p17">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page17"/><span></span></label>
+    <b>17. Compassion Camp</b>
+    <code>/compassion-camp</code>
+    
+  </summary>
+  <div class="body">
+    <p class="note warn"><b>Do not publish yet.</b> This page has no registration form. Camp registration is open on the live site — do not put this live until the form from LIVE-with-registration-form.html is ported across.</p>
+    <div class="acts">
+      <button class="copy" data-t="c17">Copy the code for this page</button>
+      <a class="prev" href="pages/community-programs/compassion-camp/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c17" readonly>&lt;!-- NSPC — Kindness is a skill, and it gets stronger with practice
+     page: compassion-camp   ·   under: community-programs
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Kindness is a skill, and it gets stronger with practice"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Compassion Camp&lt;/p&gt;
+      &lt;h1&gt;Kindness is a skill, and it gets stronger with practice&lt;/h1&gt;
+      &lt;p class="lede"&gt;A summer day camp for children entering 4K through 5th grade, hosted here and open to kids of all faith backgrounds or none.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;The weeks&lt;/p&gt;
+      &lt;h2&gt;When camp runs&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Week 1&lt;/h3&gt;
+        &lt;p&gt;August 17–20, with an optional field trip on Friday 21 August for 2nd grade and up.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Week 2&lt;/h3&gt;
+        &lt;p&gt;August 24–27, with an optional field trip on Friday 28 August.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Cost&lt;/h3&gt;
+        &lt;p&gt;$60 per week, with a $10 discount for each additional child in a family.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;What happens&lt;/p&gt;
+      &lt;h2&gt;The shape of a camp day&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Compassion Heroes&lt;/h3&gt;
+        &lt;p&gt;Daily guest speakers from the community who inspire kids through real acts of service — animals, nature, the arts.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Compassionhood&lt;/h3&gt;
+        &lt;p&gt;A hands-on project where the children build and run a miniature community: a food pantry, a bookstore, a compost system.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Who leads it&lt;/h3&gt;
+        &lt;p&gt;Pastor Jeannine and UWM education students, with trained youth counselors we call Compassion Ambassadors.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p18">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page18"/><span></span></label>
+    <b>18. Kindness World Explorers</b>
+    <code>/kindness-world-explorers</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c18">Copy the code for this page</button>
+      <a class="prev" href="pages/community-programs/after-school/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c18" readonly>&lt;!-- NSPC — Wednesdays, after school, until half past four
+     page: after-school   ·   under: community-programs
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Wednesdays, after school, until half past four"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Kindness World Explorers&lt;/p&gt;
+      &lt;h1&gt;Wednesdays, after school, until half past four&lt;/h1&gt;
+      &lt;p class="lede"&gt;An after-school programme for elementary students about acts of kindness and the way other cultures practise them.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;The programme&lt;/p&gt;
+      &lt;h2&gt;What an afternoon looks like&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;When&lt;/h3&gt;
+        &lt;p&gt;Wednesdays when school is in session, from after school until 4:30pm.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Cost&lt;/h3&gt;
+        &lt;p&gt;$20 a month, snack included.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;What they do&lt;/h3&gt;
+        &lt;p&gt;Acts of kindness, plus cultures and spiritual practices through art and video — memory boxes for Día de los Muertos during Latin American History Month, quilt designs and Black History bingo in February.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Signing up&lt;/h3&gt;
+        &lt;p&gt;DUMMY — how a family registers, whether there is a waiting list, who to contact.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p19">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page19"/><span></span></label>
+    <b>19. Good Neighbour Exchange</b>
+    <code>/good-neighbour-exchange</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c19">Copy the code for this page</button>
+      <a class="prev" href="pages/community-programs/good-neighbour-exchange/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c19" readonly>&lt;!-- NSPC — Bring what you don't need. Take what you do.
+     page: good-neighbour-exchange   ·   under: community-programs
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Bring what you don't need. Take what you do."/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Good Neighbour Exchange&lt;/p&gt;
+      &lt;h1&gt;Bring what you don't need. Take what you do.&lt;/h1&gt;
+      &lt;p class="lede"&gt;Two days of donations, then a free store day. Everything costs nothing and nobody is asked why they came.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Next exchange&lt;/p&gt;
+      &lt;h2&gt;Dates to be announced&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;We hold the Exchange each summer at 4048 N. Bartlett Avenue. Write to office@northshorepres.org and we will tell you when the dates are set.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Donations&lt;/p&gt;
+      &lt;h2&gt;What we can and can't take&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Gently used and in working order — if you would hand it to a friend, we would love to have it.&lt;/p&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Yes please&lt;/h3&gt;
+        &lt;p&gt;Kitchen gadgets, small furniture, lamps, music equipment, home décor, costume jewelry, books, office supplies, hand tools, art supplies, bins and baskets, toys and games, pet supplies.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Not these&lt;/h3&gt;
+        &lt;p&gt;Clothing and shoes, large appliances, fine jewelry, medications, firearms, live plants or animals, power tools, automotive items.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Who runs it&lt;/h3&gt;
+        &lt;p&gt;North Shore Presbyterian with Catch the Wave Shorewood and the Shorewood Waters Project.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p20">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page20"/><span></span></label>
+    <b>20. Partnerships</b>
+    <code>/partnerships</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c20">Copy the code for this page</button>
+      <a class="prev" href="pages/partnerships/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c20" readonly>&lt;!-- NSPC — We are not much use on our own
+     page: partnerships   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="We are not much use on our own"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Partnerships&lt;/p&gt;
+      &lt;h1&gt;We are not much use on our own&lt;/h1&gt;
+      &lt;p class="lede"&gt;Six mission partners and five community partners — some of these relationships are older than most of the congregation.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Two kinds&lt;/p&gt;
+      &lt;h2&gt;Who we work with&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Mission Partners&lt;/h3&gt;
+        &lt;p&gt;Food, shelter, theatre and an interfaith friendship now in its eighth decade.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Community Partners&lt;/h3&gt;
+        &lt;p&gt;The businesses and organisations that make Shorewood work.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Want to partner?&lt;/h3&gt;
+        &lt;p&gt;Write to the office. We are easier to work with than most buildings this old. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p21">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page21"/><span></span></label>
+    <b>21. Mission Partners</b>
+    <code>/mission-partners</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c21">Copy the code for this page</button>
+      <a class="prev" href="pages/partnerships/mission-partners/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c21" readonly>&lt;!-- NSPC — Food, shelter, theatre, and a seventy-year friendship
+     page: mission-partners   ·   under: partnerships
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Food, shelter, theatre, and a seventy-year friendship"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Mission Partners&lt;/p&gt;
+      &lt;h1&gt;Food, shelter, theatre, and a seventy-year friendship&lt;/h1&gt;
+      &lt;p class="lede"&gt;Six organisations we work with rather than write cheques to.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Our partners&lt;/p&gt;
+      &lt;h2&gt;Who we work with and what we do together&lt;/h2&gt;
+    &lt;div class="nspc-directory"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Food for the Journey&lt;/h3&gt;
+        &lt;p&gt;Five churches in Southeast Wisconsin yoked together to garden for neighborhoods living in Milwaukee's food deserts. We keep six raised beds and send the produce to Apostle Presbyterian Food Pantry. food4thejourney.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Gather and Grow Shared Kitchen&lt;/h3&gt;
+        &lt;p&gt;Our own kitchen, being upgraded to commercial grade and rented to local food entrepreneurs across the North Shore.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Milwaukee Youth Theatre&lt;/h3&gt;
+        &lt;p&gt;Open auditions for every show regardless of experience, with students working in every part of a production. They have performed here since autumn 2025. milwaukeeyouththeatre.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Congregation Shalom&lt;/h3&gt;
+        &lt;p&gt;A Jewish congregation we have worked alongside for more than seventy years, through the annual Interfaith Thanksgiving service and youth-led service projects. cong-shalom.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Pathfinders&lt;/h3&gt;
+        &lt;p&gt;Supporting homeless youth with resources and advocacy. We host their annual Christmas dinner. pathfindersmke.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Divine Intervention&lt;/h3&gt;
+        &lt;p&gt;Tippecanoe Presbyterian's winter shelter, offering shelter, safety and sustenance from December through March. tippemission.org&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p22">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page22"/><span></span></label>
+    <b>22. Community Partners</b>
+    <code>/community-partners</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c22">Copy the code for this page</button>
+      <a class="prev" href="pages/partnerships/community-partners/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c22" readonly>&lt;!-- NSPC — The people who make Shorewood work
+     page: community-partners   ·   under: partnerships
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="The people who make Shorewood work"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Community Partners&lt;/p&gt;
+      &lt;h1&gt;The people who make Shorewood work&lt;/h1&gt;
+      &lt;p class="lede"&gt;Local businesses and organisations we share a neighborhood, and often a project, with.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Our partners&lt;/p&gt;
+      &lt;h2&gt;Who they are&lt;/h2&gt;
+    &lt;div class="nspc-directory"&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Kids Impact Community&lt;/h3&gt;
+        &lt;p&gt;Empowering children of all ages to work with their caregivers to build relationships and strengthen the Milwaukee community. kicmke.org&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Jobea Bakes&lt;/h3&gt;
+        &lt;p&gt;A local cottage baker and our shared kitchen manager, who connects food entrepreneurs to the building and works with our youth on service projects. jobeabakes.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;North Shore Chamber of Commerce&lt;/h3&gt;
+        &lt;p&gt;A business membership organisation promoting economic growth across the North Shore. discoverthenorthshoremke.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Wisconsin LGBT Chamber of Commerce&lt;/h3&gt;
+        &lt;p&gt;Working towards a welcoming and inclusive Wisconsin for LGBTQ+ businesses. wislgbtchamber.com&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;h3&gt;Shorewood Business Improvement District&lt;/h3&gt;
+        &lt;p&gt;Established in 1999 to support retail and service businesses in the village. shorewoodwi.com&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p23">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page23"/><span></span></label>
+    <b>23. Calendar</b>
+    <code>/calendar</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c23">Copy the code for this page</button>
+      <a class="prev" href="pages/calendar/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c23" readonly>&lt;!-- NSPC — A year here has a rhythm
+     page: calendar   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="A year here has a rhythm"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Calendar&lt;/p&gt;
+      &lt;h1&gt;A year here has a rhythm&lt;/h1&gt;
+      &lt;p class="lede"&gt;Worship on Sunday, Bible study on Wednesday, the children after school — and once a season, something that closes the street.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Every week&lt;/p&gt;
+      &lt;h2&gt;The weekly rhythm&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Sunday Worship&lt;/h3&gt;
+        &lt;p&gt;10:00am in the sanctuary through the school year. Communion the first Sunday of the month.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Gather at the Garden&lt;/h3&gt;
+        &lt;p&gt;9:00am outdoors on the patio, June to Labor Day.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Adult Bible Study&lt;/h3&gt;
+        &lt;p&gt;Wednesdays at 10:30am, every other week in summer.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Kindness World Explorers&lt;/h3&gt;
+        &lt;p&gt;Wednesdays after school until 4:30pm.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p24">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page24"/><span></span></label>
+    <b>24. Calendar &amp; Special Events</b>
+    <code>/calendar-special-events</code>
+    <span class="pill">1 placeholder</span>
+  </summary>
+  <div class="body">
+    <p class="note todo">Needs your Google Calendar embed URL pasted in before it is useful.</p>
+    <div class="acts">
+      <button class="copy" data-t="c24">Copy the code for this page</button>
+      <a class="prev" href="pages/calendar/calendar-special-events/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c24" readonly>&lt;!-- NSPC — Everything, in one place
+     page: calendar-special-events   ·   under: calendar
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Everything, in one place"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Calendar &amp;amp; Special Events&lt;/p&gt;
+      &lt;h1&gt;Everything, in one place&lt;/h1&gt;
+      &lt;p class="lede"&gt;The full church calendar, plus the handful of days each year that need more than a diary entry.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Across the year&lt;/p&gt;
+      &lt;h2&gt;The days worth planning around&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Easter Egg Hunt&lt;/h3&gt;
+        &lt;p&gt;The Saturday before Easter.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Shorewood Spring Clean Out&lt;/h3&gt;
+        &lt;p&gt;Spring, with Shorewood Buy Nothing.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Good Neighbour Exchange&lt;/h3&gt;
+        &lt;p&gt;Summer — two donation days and a free store day.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Compassion Camp&lt;/h3&gt;
+        &lt;p&gt;Two weeks in August.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Block Party&lt;/h3&gt;
+        &lt;p&gt;The Saturday before school starts.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Interfaith Thanksgiving&lt;/h3&gt;
+        &lt;p&gt;November, with Congregation Shalom.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Full calendar&lt;/p&gt;
+      &lt;h2&gt;The live calendar goes here&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Add the Google Calendar embed URL and this becomes the month view. DUMMY&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p25">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page25"/><span></span></label>
+    <b>25. Neighboring Initiative Events</b>
+    <code>/neighboring-initiative-events</code>
+    
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c25">Copy the code for this page</button>
+      <a class="prev" href="pages/calendar/neighboring-initiative-events/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c25" readonly>&lt;!-- NSPC — The three days the street is ours
+     page: neighboring-initiative-events   ·   under: calendar
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="The three days the street is ours"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Neighboring Initiative Events&lt;/p&gt;
+      &lt;h1&gt;The three days the street is ours&lt;/h1&gt;
+      &lt;p class="lede"&gt;Free, open to everyone in Shorewood, and no one is asked what they believe at the door.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Three events&lt;/p&gt;
+      &lt;h2&gt;What to expect&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Easter Egg Hunt&lt;/h3&gt;
+        &lt;p&gt;The Saturday before Easter. Crafts, stories and an egg hunt for every child who turns up.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Block Party&lt;/h3&gt;
+        &lt;p&gt;The Saturday before school starts. Food trucks, ice cream, games and a bounce house.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card"&gt;
+        &lt;h3&gt;Spring Clean Out&lt;/h3&gt;
+        &lt;p&gt;A free community exchange with Shorewood Buy Nothing.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p26">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page26"/><span></span></label>
+    <b>26. Giving</b>
+    <code>/giving</code>
+    <span class="pill">2 placeholders</span>
+  </summary>
+  <div class="body">
+    
+    <div class="acts">
+      <button class="copy" data-t="c26">Copy the code for this page</button>
+      <a class="prev" href="pages/giving/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c26" readonly>&lt;!-- NSPC — What your giving actually pays for
+     page: giving   ·   section landing
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="What your giving actually pays for"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Giving&lt;/p&gt;
+      &lt;h1&gt;What your giving actually pays for&lt;/h1&gt;
+      &lt;p class="lede"&gt;A camp that costs families $60 a week. An after-school programme at $20 a month. Six raised beds feeding a food pantry. A century-old building kept warm and open.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;Where it goes&lt;/p&gt;
+      &lt;h2&gt;Give to what matters to you&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Where most needed&lt;/h3&gt;
+        &lt;p&gt;The general fund keeps the lights on, the staff paid and the doors open.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Compassion Camp&lt;/h3&gt;
+        &lt;p&gt;Keeps camp at $60 a week and pays for the children whose families cannot manage that. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;The garden and pantry&lt;/h3&gt;
+        &lt;p&gt;Seed, soil and tools for six raised beds feeding Apostle Presbyterian Food Pantry.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Capital Campaign&lt;/h3&gt;
+        &lt;p&gt;The building itself — see the campaign page. DUMMY&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p27">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page27"/><span></span></label>
+    <b>27. Donations</b>
+    <code>/donations</code>
+    <span class="pill">2 placeholders</span>
+  </summary>
+  <div class="body">
+    <p class="note todo">Replaces the page currently showing “*LINK Copy Here” to the public.</p>
+    <div class="acts">
+      <button class="copy" data-t="c27">Copy the code for this page</button>
+      <a class="prev" href="pages/giving/donations/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c27" readonly>&lt;!-- NSPC — Every way to give
+     page: donations   ·   under: giving
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="Every way to give"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Donations&lt;/p&gt;
+      &lt;h1&gt;Every way to give&lt;/h1&gt;
+      &lt;p class="lede"&gt;Online in a minute, by post, or in the plate on a Sunday.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;How to give&lt;/p&gt;
+      &lt;h2&gt;Pick whichever suits you&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Online&lt;/h3&gt;
+        &lt;p&gt;Through Vanco, our secure payment processor: secure.myvanco.com/L-ZMZZ/home&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;By cheque&lt;/h3&gt;
+        &lt;p&gt;Payable to North Shore Presbyterian Church, 4048 N. Bartlett Avenue, Shorewood, WI 53211.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;On a Sunday&lt;/h3&gt;
+        &lt;p&gt;In the offering during worship.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Pledging&lt;/h3&gt;
+        &lt;p&gt;DUMMY — describe the annual pledge, when it runs, and how someone commits.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Legacy gifts&lt;/h3&gt;
+        &lt;p&gt;DUMMY — bequests and planned giving, and who to speak to.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+  &lt;section class="nspc-band"&gt;
+    &lt;div class="nspc-wrap"&gt;
+      &lt;p class="nspc-kicker"&gt;Replace this page&lt;/p&gt;
+      &lt;h2&gt;The live page currently shows a placeholder&lt;/h2&gt;
+      &lt;p class="nspc-lede"&gt;Right now northshorepres.org/donations displays the text “*LINK Copy Here” to the public. This page replaces it.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+<details class="page" id="p28">
+  <summary>
+    <label class="tick"><input type="checkbox" data-k="page28"/><span></span></label>
+    <b>28. Capital Campaign</b>
+    <code>/capital-campaign</code>
+    <span class="pill">6 placeholders</span>
+  </summary>
+  <div class="body">
+    <p class="note todo">Entirely placeholder — I have no campaign details.</p>
+    <div class="acts">
+      <button class="copy" data-t="c28">Copy the code for this page</button>
+      <a class="prev" href="pages/giving/capital-campaign/preview.html" target="_blank">See the preview &rarr;</a>
+    </div>
+    <textarea id="c28" readonly>&lt;!-- NSPC — The building itself
+     page: capital-campaign   ·   under: giving
+     Paste as a Code Block. Requires shared/nspc-base.css in Design -&gt; Custom CSS.
+     Page BODY only: Squarespace supplies header and navigation.
+     Search this file for "DUMMY" to find copy that must be replaced.
+--&gt;
+
+&lt;div class="nspc-page"&gt;
+
+  &lt;header class="nspc-hero short"&gt;
+    &lt;!-- PHOTO SLOT: hero.jpg --&gt;
+    &lt;img src="images/hero.jpg" alt="The building itself"/&gt;
+    &lt;div class="nspc-wrap nspc-hero-in"&gt;
+      &lt;p class="nspc-eyebrow"&gt;Capital Campaign&lt;/p&gt;
+      &lt;h1&gt;The building itself&lt;/h1&gt;
+      &lt;p class="lede"&gt;DUMMY — this whole page is a placeholder. The live page is empty and I have no campaign details.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;div class="nspc-wrap"&gt;
+    &lt;section&gt;
+      &lt;p class="nspc-kicker"&gt;What we need from you&lt;/p&gt;
+      &lt;h2&gt;Fill these in and the page writes itself&lt;/h2&gt;
+    &lt;div class="nspc-grid three"&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;What is the campaign for&lt;/h3&gt;
+        &lt;p&gt;DUMMY — the kitchen upgrade, the roof, accessibility, the organ?&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;The goal&lt;/h3&gt;
+        &lt;p&gt;DUMMY — how much, and by when.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Where we are&lt;/h3&gt;
+        &lt;p&gt;DUMMY — raised so far, so a progress bar can be shown.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;How to give&lt;/h3&gt;
+        &lt;p&gt;DUMMY — whether pledges are separate from ordinary giving.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="nspc-card boxed"&gt;
+        &lt;h3&gt;Who to ask&lt;/h3&gt;
+        &lt;p&gt;DUMMY — the person on Session leading it.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+</textarea>
+  </div>
+</details>
+
+<h2><span class="n">4</span> Wire up the navigation</h2>
+<ol class="steps">
+  <li>The seven section pages — Welcome, Covenant Family, Ministries, Community Programs,
+      Partnerships, Calendar, Giving — become <b>folders</b> in the nav, each linking to its own page
+      with its sub-pages inside.</li>
+  <li>Add a <b>Give</b> button pointing at
+      <code>https://secure.myvanco.com/L-ZMZZ/home</code></li>
+  <li>Set <b>Home</b> as the homepage: Pages &rarr; hover Home &rarr; ⚙ &rarr; Set as Homepage.</li>
+</ol>
+<div class="card"><label class="tick"><input type="checkbox" data-k="step4"/><span></span></label>
+  <b style="margin-left:.6rem">Navigation matches the header spec</b></div>
+
+<h2><span class="n">5</span> The footer</h2>
+<p class="lede">Edit Squarespace's own footer — don't paste mine, or visitors get two.
+   Carry across: address, phone, office hours, all three service times, section links,
+   Facebook, and the PC(USA) line.</p>
+<div class="card"><label class="tick"><input type="checkbox" data-k="step5"/><span></span></label>
+  <b style="margin-left:.6rem">Footer content carried across</b></div>
+
+<h2><span class="n">6</span> The shepherd cursor — optional, last</h2>
+<p class="lede">Needs a Business plan or higher. Try the site without it first, then decide.</p>
+<div class="card">
+  <div class="acts"><button class="copy" data-t="cur">Copy the cursor</button>
+    <span class="prev" style="color:var(--faint)">Settings &rarr; Advanced &rarr; Code Injection &rarr; Footer</span></div>
+  <textarea id="cur" readonly>&lt;!-- ===========================================================
+     NSPC — shepherd cursor  (OPTIONAL)
+
+     Replaces the system pointer with a robed figure carrying a staff
+     and a lantern-warm light that follows wherever it goes.
+
+     FILE: pages/home/cursor.html
+
+     TO USE:  Squarespace → Settings → Advanced → Code Injection →
+              FOOTER, and paste this whole block.
+     TO REMOVE: delete it from Code Injection. Nothing else depends on it.
+
+     NOTE ON PLACEMENT: this file lives in the home page folder, but
+     Code Injection FOOTER applies to every page on the site. To keep
+     the cursor on the homepage alone, paste it instead into the
+     homepage'''s own Page Settings → Advanced → Page Header Code
+     Injection.
+
+     ── WHAT'S ON SCREEN ────────────────────────────────────────
+     · a small gold dot marking the exact click point
+     · the figure walking beside it
+     · a soft warm light spreading around it
+     · faint motes fading behind it
+
+     The dot matters: with the system pointer hidden, a 60px figure
+     gives no precise click target. The dot is the pointer; the
+     figure is company.
+
+     ── SWITCHES ────────────────────────────────────────────────
+     FIGURE  'jesus' | 'crook' | 'pineapple'
+     LIGHT   size of the glow in px, 0 turns it off
+     TRAIL   true / false
+
+     ── STILL WORTH A SECOND OPINION ────────────────────────────
+     A figure of Jesus as a mouse pointer will read as charming to
+     some of the congregation and irreverent to others. 'crook' gives
+     the shepherd's staff alone; 'pineapple' gives your own mark.
+     Both are drawn and working — it is a one-word change.
+     =========================================================== --&gt;
+
+&lt;style&gt;
+  /* the system pointer goes away everywhere, including over links */
+  html.nspc-cursor-on, html.nspc-cursor-on *, html.nspc-cursor-on *::before,
+  html.nspc-cursor-on *:hover, html.nspc-cursor-on a, html.nspc-cursor-on button,
+  html.nspc-cursor-on input, html.nspc-cursor-on textarea, html.nspc-cursor-on select{
+    cursor:none !important;
+  }
+
+  #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:99999;
+    will-change:transform;opacity:0;transition:opacity .3s ease;
+  }
+  #nspc-glow{
+    width:420px;height:420px;margin:-210px 0 0 -210px;z-index:99997;
+    background:radial-gradient(circle closest-side,
+      rgba(255,206,110,.42) 0%,
+      rgba(255,188,74,.22) 38%,
+      rgba(255,176,48,.08) 62%,
+      rgba(255,176,48,0) 100%);
+    mix-blend-mode:screen;
+  }
+  #nspc-shepherd{width:62px;height:82px;margin:-14px 0 0 6px;z-index:99998;
+    filter:drop-shadow(0 6px 10px rgba(60,40,10,.34))}
+  #nspc-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;
+    background:#FFD27A;box-shadow:0 0 0 1.5px rgba(90,60,15,.55),0 0 12px 3px rgba(255,190,80,.9)}
+  #nspc-motes span{position:fixed;border-radius:50%;pointer-events:none;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(255,214,130,.95) 0%,rgba(255,183,60,0) 70%)}
+
+  html.nspc-cursor-ready #nspc-glow,
+  html.nspc-cursor-ready #nspc-shepherd,
+  html.nspc-cursor-ready #nspc-dot{opacity:1}
+
+  @media (hover:none),(max-width:899px),(prefers-reduced-motion:reduce){
+    #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{display:none!important}
+  }
+&lt;/style&gt;
+
+&lt;div id="nspc-glow" aria-hidden="true"&gt;&lt;/div&gt;
+&lt;div id="nspc-motes" aria-hidden="true"&gt;&lt;/div&gt;
+&lt;svg id="nspc-shepherd" viewBox="0 0 62 82" aria-hidden="true" focusable="false"&gt;&lt;/svg&gt;
+&lt;div id="nspc-dot" aria-hidden="true"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function () {
+  var FIGURE = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
+  var LIGHT  = 420;       // glow diameter in px, 0 = off
+  var TRAIL  = true;
+
+  var glow = document.getElementById('nspc-glow');
+  var fig  = document.getElementById('nspc-shepherd');
+  var dot  = document.getElementById('nspc-dot');
+  var mote = document.getElementById('nspc-motes');
+  if (!fig) return;
+
+  var blocked = window.matchMedia('(hover:none)').matches ||
+                window.matchMedia('(prefers-reduced-motion:reduce)').matches ||
+                window.innerWidth &lt; 900;
+  if (blocked) { [glow,fig,dot,mote].forEach(function(n){ n &amp;&amp; n.remove(); }); return; }
+
+  var ART = {
+    /* Robed figure with staff. Built in layers so it stays legible at 62px:
+       halo ring, hair mass, face, beard, cream robe, blue mantle, staff. */
+    jesus:
+      '&lt;g stroke-linejoin="round" stroke-linecap="round"&gt;' +
+        /* staff, behind the body */
+        '&lt;path d="M49 20v58" stroke="#8A5A2B" stroke-width="3.4" fill="none"/&gt;' +
+        '&lt;path d="M49 20c0-6.4 9.6-6.4 9.6 0 0 5.4-8 6.6-9.2 1.4" stroke="#8A5A2B" stroke-width="3.4" fill="none"/&gt;' +
+        /* halo */
+        '&lt;circle cx="24" cy="17" r="13.5" fill="none" stroke="#FFD27A" stroke-width="2.6" opacity=".95"/&gt;' +
+        /* hair falling to the shoulders */
+        '&lt;path d="M24 4c-8 0-11.5 5.4-11.5 12 0 5 .8 8.4 1.6 12.6.5 2.4-1 5-1 5s3-1.4 4-4.4c.7-2.2.4-6 .4-9.6 3.6.6 9.6-.6 12.6-3.4 1.6 2.2 3.6 3 5.4 3.2 0 3.4-.3 7.6.4 9.8 1 3 4 4.4 4 4.4s-1.5-2.6-1-5c.8-4.2 1.6-7.6 1.6-12.6C41.5 9.4 32 4 24 4Z" fill="#4A3220"/&gt;' +
+        /* face */
+        '&lt;path d="M24 9.5c4.9 0 8.2 3.4 8.2 8.6 0 6-3.6 10.6-8.2 10.6s-8.2-4.6-8.2-10.6c0-5.2 3.3-8.6 8.2-8.6Z" fill="#F0CBA4"/&gt;' +
+        /* eyes */
+        '&lt;path d="M20.4 17.6h2.2M25.4 17.6h2.2" stroke="#3A2A1A" stroke-width="1.5" fill="none"/&gt;' +
+        /* beard and moustache */
+        '&lt;path d="M15.8 19.4c0 6.2 3.6 12.4 8.2 12.4s8.2-6.2 8.2-12.4c0 4-2.4 6-8.2 6s-8.2-2-8.2-6Z" fill="#4A3220"/&gt;' +
+        '&lt;path d="M21 22.4h6" stroke="#4A3220" stroke-width="2" fill="none"/&gt;' +
+        /* cream robe */
+        '&lt;path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h32l-4.4-37.6C34.6 34.6 31 30 24 30Z" fill="#FBF3E3" stroke="#C9A96E" stroke-width="1.4"/&gt;' +
+        /* blue mantle over the left shoulder */
+        '&lt;path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h9.6l3-33.6c.3-3.6 1.8-6 3.4-7.6V30Z" fill="#3E6E9B" stroke="#2C5476" stroke-width="1.2"/&gt;' +
+        /* sash and fold lines */
+        '&lt;path d="M13.6 46.6c6.4 3 14.4 3 20.8 0" stroke="#C9A96E" stroke-width="1.6" fill="none"/&gt;' +
+        '&lt;path d="M27 52l-1.4 24M31.4 52l1 24" stroke="#E4D3AE" stroke-width="1.4" fill="none"/&gt;' +
+        /* arm reaching to the staff */
+        '&lt;path d="M33.6 40c4.6 1.6 10.4 4.4 14 8.6" stroke="#FBF3E3" stroke-width="6" fill="none"/&gt;' +
+        '&lt;circle cx="48.2" cy="49.4" r="3.6" fill="#F0CBA4"/&gt;' +
+      '&lt;/g&gt;',
+
+    crook:
+      '&lt;g fill="none" stroke-linecap="round"&gt;' +
+        '&lt;path d="M26 22v56" stroke="#8A5A2B" stroke-width="5"/&gt;' +
+        '&lt;path d="M26 22c0-8 13-8 13 0 0 6.8-10.6 8.4-12 1.8" stroke="#8A5A2B" stroke-width="5"/&gt;' +
+        '&lt;path d="M26 22v56" stroke="#C08A4A" stroke-width="1.6" opacity=".55"/&gt;' +
+      '&lt;/g&gt;',
+
+    pineapple:
+      '&lt;g stroke-linejoin="round"&gt;' +
+        '&lt;path d="M31 28c11 0 17.6 8 17.6 21.6S41 74 31 74 13.4 63.2 13.4 49.6 20 28 31 28Z" fill="#F0B429" stroke="#B77F14" stroke-width="2"/&gt;' +
+        '&lt;path d="M31 34 24 42l7 8 7-8-7-8ZM31 50l-6.2 7 6.2 7 6.2-7-6.2-7Z" fill="none" stroke="#B77F14" stroke-width="1.5"/&gt;' +
+        '&lt;path d="M31 28V8M31 11c-4.4-4.6-10-6-15.6-3.6 1.2 6 5.2 10 11 11.4M31 11c4.4-4.6 10-6 15.6-3.6-1.2 6-5.2 10-11 11.4" fill="none" stroke="#3E9BAB" stroke-width="3" stroke-linecap="round"/&gt;' +
+      '&lt;/g&gt;'
+  };
+
+  fig.innerHTML = ART[FIGURE] || ART.jesus;
+  document.documentElement.classList.add('nspc-cursor-on');
+
+  if (LIGHT &amp;&amp; glow) { glow.style.width = glow.style.height = LIGHT + 'px';
+                       glow.style.margin = (-LIGHT / 2) + 'px 0 0 ' + (-LIGHT / 2) + 'px'; }
+  else if (glow)     { glow.remove(); glow = null; }
+
+  var tx = 0, ty = 0, fx = 0, fy = 0, gx = 0, gy = 0;
+  var started = false, raf = 0, lastMote = 0;
+
+  function place(node, x, y) { node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
+
+  function loop(now) {
+    fx += (tx - fx) * 0.20;   // figure walks, slight lag
+    fy += (ty - fy) * 0.20;
+    gx += (tx - gx) * 0.11;   // light drifts slower still
+    gy += (ty - gy) * 0.11;
+    place(fig, fx, fy);
+    if (glow) place(glow, gx, gy);
+
+    if (TRAIL &amp;&amp; now - lastMote &gt; 55) {
+      lastMote = now;
+      var d = Math.hypot(tx - fx, ty - fy);
+      if (d &gt; 1.5) {
+        var s = document.createElement('span');
+        var size = 6 + Math.random() * 10;
+        s.style.width = s.style.height = size + 'px';
+        s.style.left = (fx + (Math.random() * 14 - 7)) + 'px';
+        s.style.top  = (fy + 30 + (Math.random() * 14 - 7)) + 'px';
+        mote.appendChild(s);
+        s.animate(
+          [{ opacity: .85, transform: 'translate(-50%,-50%) scale(1)' },
+           { opacity: 0,   transform: 'translate(-50%,-60%) scale(.25)' }],
+          { duration: 620 + Math.random() * 340, easing: 'ease-out' }
+        ).onfinish = function () { s.remove(); };
+      }
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('mousemove', function (e) {
+    tx = e.clientX; ty = e.clientY;
+    place(dot, tx, ty);
+    if (!started) {                       // land on the pointer, don't fly in from a corner
+      started = true;
+      fx = tx; fy = ty; gx = tx; gy = ty;
+      place(fig, fx, fy); if (glow) place(glow, gx, gy);
+      document.documentElement.classList.add('nspc-cursor-ready');
+      raf = requestAnimationFrame(loop);
+    }
+  }, { passive: true });
+
+  // leaving the window restores the ordinary pointer, so nothing is stranded
+  document.addEventListener('mouseleave', function () {
+    document.documentElement.classList.remove('nspc-cursor-ready', 'nspc-cursor-on');
+  });
+  document.addEventListener('mouseenter', function () {
+    document.documentElement.classList.add('nspc-cursor-on');
+    if (started) document.documentElement.classList.add('nspc-cursor-ready');
+  });
+})();
+&lt;/script&gt;
+</textarea>
+  <label class="tick" style="margin-top:.8rem"><input type="checkbox" data-k="step6"/><span></span></label>
+  <b style="margin-left:.6rem">Cursor decided</b>
+</div>
+
+<footer>Built from the repo at github.com/DK1541/NSPC. If a page misbehaves after editing it in
+Squarespace, re-paste from here rather than repairing it in the editor.</footer>
+</div>
+
+<script>
+const KEY = "nspc-build-progress";
+const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+const boxes = [...document.querySelectorAll("input[type=checkbox][data-k]")];
+
+function paint() {
+  const done = boxes.filter(b => b.checked).length;
+  document.getElementById("count").textContent = done + " of " + boxes.length;
+  document.getElementById("fill").style.width = (done / boxes.length * 100) + "%";
+}
+boxes.forEach(b => {
+  b.checked = !!state[b.dataset.k];
+  b.addEventListener("change", () => {
+    state[b.dataset.k] = b.checked;
+    localStorage.setItem(KEY, JSON.stringify(state));
+    paint();
+  });
+});
+document.querySelectorAll("details.page summary .tick").forEach(t =>
+  t.addEventListener("click", e => e.stopPropagation()));
+paint();
+
+document.getElementById("reset").addEventListener("click", () => {
+  localStorage.removeItem(KEY);
+  boxes.forEach(b => b.checked = false);
+  paint();
+});
+
+document.querySelectorAll("button.copy").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const ta = document.getElementById(btn.dataset.t);
+    try { await navigator.clipboard.writeText(ta.value); }
+    catch (e) { ta.select(); document.execCommand("copy"); }
+    const was = btn.textContent;
+    btn.textContent = "Copied";
+    btn.classList.add("done");
+    setTimeout(() => { btn.textContent = was; btn.classList.remove("done"); }, 1600);
+  });
+});
+</script>
