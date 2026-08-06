@@ -469,127 +469,204 @@ body{margin:0;background:#FBF8F2}
 
 </div>
 
-<!-- demo only: the cursor ships via Code Injection, not the page -->
+<!-- demo only: ships via Code Injection, not the page -->
 <!-- ===========================================================
      NSPC — shepherd cursor  (OPTIONAL)
 
-     A robed figure with a staff follows the pointer, leaving a short
-     fading trail of footsteps.
+     Replaces the system pointer with a robed figure carrying a staff
+     and a lantern-warm light that follows wherever it goes.
 
      TO USE:  Squarespace → Settings → Advanced → Code Injection →
               FOOTER, and paste this whole block.
-     TO REMOVE: delete it from Code Injection. Nothing else depends on it.
+     TO REMOVE: delete it. Nothing else depends on it.
 
-     ── HOW IT BEHAVES ──────────────────────────────────────────
-     · Off on touch screens — no pointer to follow, and it would sit
-       stranded in a corner.
-     · Off when the visitor has asked for reduced motion.
-     · Off when the window is narrower than 900px.
-     · The native pointer stays VISIBLE underneath. Hiding it breaks
-       things for anyone using a large or high-contrast system cursor,
-       so the figure trails alongside rather than replacing it.
-       To replace it instead, set HIDE_NATIVE to true below.
+     ── WHAT'S ON SCREEN ────────────────────────────────────────
+     · a small gold dot marking the exact click point
+     · the figure walking beside it
+     · a soft warm light spreading around it
+     · faint motes fading behind it
 
-     ── A NOTE WORTH READING ────────────────────────────────────
+     The dot matters: with the system pointer hidden, a 60px figure
+     gives no precise click target. The dot is the pointer; the
+     figure is company.
+
+     ── SWITCHES ────────────────────────────────────────────────
+     FIGURE  'jesus' | 'crook' | 'pineapple'
+     LIGHT   size of the glow in px, 0 turns it off
+     TRAIL   true / false
+
+     ── STILL WORTH A SECOND OPINION ────────────────────────────
      A figure of Jesus as a mouse pointer will read as charming to
-     some of the congregation and as irreverent to others. If you want
-     the effect without that risk, set FIGURE to 'crook' for a plain
-     shepherd's staff, or 'pineapple' for your own hospitality mark.
+     some of the congregation and irreverent to others. 'crook' gives
+     the shepherd's staff alone; 'pineapple' gives your own mark.
+     Both are drawn and working — it is a one-word change.
      =========================================================== -->
 
 <style>
-  #nspc-shepherd,#nspc-trail{position:fixed;top:0;left:0;pointer-events:none;
-    z-index:99999;will-change:transform}
-  #nspc-shepherd{width:46px;height:56px;margin:-6px 0 0 -8px;
-    filter:drop-shadow(0 3px 5px rgba(0,0,0,.28));transition:opacity .25s}
-  #nspc-trail span{position:fixed;width:9px;height:9px;border-radius:50%;
-    background:#C8952F;opacity:.5;pointer-events:none;z-index:99998;
-    transform:translate(-50%,-50%)}
-  @media (hover:none),(max-width:899px){#nspc-shepherd,#nspc-trail{display:none!important}}
-  @media (prefers-reduced-motion:reduce){#nspc-shepherd,#nspc-trail{display:none!important}}
+  /* the system pointer goes away everywhere, including over links */
+  html.nspc-cursor-on, html.nspc-cursor-on *, html.nspc-cursor-on *::before,
+  html.nspc-cursor-on *:hover, html.nspc-cursor-on a, html.nspc-cursor-on button,
+  html.nspc-cursor-on input, html.nspc-cursor-on textarea, html.nspc-cursor-on select{
+    cursor:none !important;
+  }
+
+  #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:99999;
+    will-change:transform;opacity:0;transition:opacity .3s ease;
+  }
+  #nspc-glow{
+    width:420px;height:420px;margin:-210px 0 0 -210px;z-index:99997;
+    background:radial-gradient(circle closest-side,
+      rgba(255,206,110,.42) 0%,
+      rgba(255,188,74,.22) 38%,
+      rgba(255,176,48,.08) 62%,
+      rgba(255,176,48,0) 100%);
+    mix-blend-mode:screen;
+  }
+  #nspc-shepherd{width:62px;height:82px;margin:-14px 0 0 6px;z-index:99998;
+    filter:drop-shadow(0 6px 10px rgba(60,40,10,.34))}
+  #nspc-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;
+    background:#FFD27A;box-shadow:0 0 0 1.5px rgba(90,60,15,.55),0 0 12px 3px rgba(255,190,80,.9)}
+  #nspc-motes span{position:fixed;border-radius:50%;pointer-events:none;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(255,214,130,.95) 0%,rgba(255,183,60,0) 70%)}
+
+  html.nspc-cursor-ready #nspc-glow,
+  html.nspc-cursor-ready #nspc-shepherd,
+  html.nspc-cursor-ready #nspc-dot{opacity:1}
+
+  @media (hover:none),(max-width:899px),(prefers-reduced-motion:reduce){
+    #nspc-glow,#nspc-shepherd,#nspc-dot,#nspc-motes{display:none!important}
+  }
 </style>
 
-<div id="nspc-trail" aria-hidden="true"></div>
-<svg id="nspc-shepherd" viewBox="0 0 46 56" aria-hidden="true" focusable="false"></svg>
+<div id="nspc-glow" aria-hidden="true"></div>
+<div id="nspc-motes" aria-hidden="true"></div>
+<svg id="nspc-shepherd" viewBox="0 0 62 82" aria-hidden="true" focusable="false"></svg>
+<div id="nspc-dot" aria-hidden="true"></div>
 
 <script>
 (function () {
-  var FIGURE      = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
-  var HIDE_NATIVE = false;     // true replaces the system pointer entirely
-  var TRAIL       = true;
+  var FIGURE = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
+  var LIGHT  = 420;       // glow diameter in px, 0 = off
+  var TRAIL  = true;
 
-  var el = document.getElementById('nspc-shepherd');
-  var trail = document.getElementById('nspc-trail');
-  if (!el) return;
+  var glow = document.getElementById('nspc-glow');
+  var fig  = document.getElementById('nspc-shepherd');
+  var dot  = document.getElementById('nspc-dot');
+  var mote = document.getElementById('nspc-motes');
+  if (!fig) return;
 
-  if (window.matchMedia('(hover:none)').matches ||
-      window.matchMedia('(prefers-reduced-motion:reduce)').matches ||
-      window.innerWidth < 900) { el.remove(); trail && trail.remove(); return; }
+  var blocked = window.matchMedia('(hover:none)').matches ||
+                window.matchMedia('(prefers-reduced-motion:reduce)').matches ||
+                window.innerWidth < 900;
+  if (blocked) { [glow,fig,dot,mote].forEach(function(n){ n && n.remove(); }); return; }
 
   var ART = {
-    // Robed figure, staff in the right hand. Silhouette, deliberately simple —
-    // detail is illegible at this size and reads as a smudge.
+    /* Robed figure with staff. Built in layers so it stays legible at 62px:
+       halo ring, hair mass, face, beard, cream robe, blue mantle, staff. */
     jesus:
-      '<g fill="none" stroke="#F0B429" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M33 8v40" />' +                      // staff
-        '<path d="M33 8c0-3.4 5-3.4 5 0s-5 3.6-5 .6" />' + // crook
-      '</g>' +
-      '<g fill="#FDF9F0" stroke="#5C4A2A" stroke-width="1.6" stroke-linejoin="round">' +
-        '<circle cx="18" cy="10" r="6" />' +           // head
-        '<path d="M18 16c-6 0-9 4-9.6 9L6 50h24l-2.4-25c-.6-5-3.6-9-9.6-9Z" />' + // robe
-        '<path d="M18 16v34" />' +                      // robe centre seam
-      '</g>' +
-      '<path d="M27 27l5-2" fill="none" stroke="#5C4A2A" stroke-width="1.6" stroke-linecap="round"/>',
+      '<g stroke-linejoin="round" stroke-linecap="round">' +
+        /* staff, behind the body */
+        '<path d="M49 20v58" stroke="#8A5A2B" stroke-width="3.4" fill="none"/>' +
+        '<path d="M49 20c0-6.4 9.6-6.4 9.6 0 0 5.4-8 6.6-9.2 1.4" stroke="#8A5A2B" stroke-width="3.4" fill="none"/>' +
+        /* halo */
+        '<circle cx="24" cy="17" r="13.5" fill="none" stroke="#FFD27A" stroke-width="2.6" opacity=".95"/>' +
+        /* hair falling to the shoulders */
+        '<path d="M24 4c-8 0-11.5 5.4-11.5 12 0 5 .8 8.4 1.6 12.6.5 2.4-1 5-1 5s3-1.4 4-4.4c.7-2.2.4-6 .4-9.6 3.6.6 9.6-.6 12.6-3.4 1.6 2.2 3.6 3 5.4 3.2 0 3.4-.3 7.6.4 9.8 1 3 4 4.4 4 4.4s-1.5-2.6-1-5c.8-4.2 1.6-7.6 1.6-12.6C41.5 9.4 32 4 24 4Z" fill="#4A3220"/>' +
+        /* face */
+        '<path d="M24 9.5c4.9 0 8.2 3.4 8.2 8.6 0 6-3.6 10.6-8.2 10.6s-8.2-4.6-8.2-10.6c0-5.2 3.3-8.6 8.2-8.6Z" fill="#F0CBA4"/>' +
+        /* eyes */
+        '<path d="M20.4 17.6h2.2M25.4 17.6h2.2" stroke="#3A2A1A" stroke-width="1.5" fill="none"/>' +
+        /* beard and moustache */
+        '<path d="M15.8 19.4c0 6.2 3.6 12.4 8.2 12.4s8.2-6.2 8.2-12.4c0 4-2.4 6-8.2 6s-8.2-2-8.2-6Z" fill="#4A3220"/>' +
+        '<path d="M21 22.4h6" stroke="#4A3220" stroke-width="2" fill="none"/>' +
+        /* cream robe */
+        '<path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h32l-4.4-37.6C34.6 34.6 31 30 24 30Z" fill="#FBF3E3" stroke="#C9A96E" stroke-width="1.4"/>' +
+        /* blue mantle over the left shoulder */
+        '<path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h9.6l3-33.6c.3-3.6 1.8-6 3.4-7.6V30Z" fill="#3E6E9B" stroke="#2C5476" stroke-width="1.2"/>' +
+        /* sash and fold lines */
+        '<path d="M13.6 46.6c6.4 3 14.4 3 20.8 0" stroke="#C9A96E" stroke-width="1.6" fill="none"/>' +
+        '<path d="M27 52l-1.4 24M31.4 52l1 24" stroke="#E4D3AE" stroke-width="1.4" fill="none"/>' +
+        /* arm reaching to the staff */
+        '<path d="M33.6 40c4.6 1.6 10.4 4.4 14 8.6" stroke="#FBF3E3" stroke-width="6" fill="none"/>' +
+        '<circle cx="48.2" cy="49.4" r="3.6" fill="#F0CBA4"/>' +
+      '</g>',
 
     crook:
-      '<g fill="none" stroke="#F0B429" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M20 12v40" />' +
-        '<path d="M20 12c0-5 8-5 8 0s-8 5.4-8 1" />' +
+      '<g fill="none" stroke-linecap="round">' +
+        '<path d="M26 22v56" stroke="#8A5A2B" stroke-width="5"/>' +
+        '<path d="M26 22c0-8 13-8 13 0 0 6.8-10.6 8.4-12 1.8" stroke="#8A5A2B" stroke-width="5"/>' +
+        '<path d="M26 22v56" stroke="#C08A4A" stroke-width="1.6" opacity=".55"/>' +
       '</g>',
 
     pineapple:
-      '<g fill="none" stroke="#F0B429" stroke-width="2.4" stroke-linejoin="round">' +
-        '<path d="M23 18c7.8 0 12.6 5.7 12.6 15.4 0 10.7-5.5 17.5-12.6 17.5S10.4 44.1 10.4 33.4C10.4 23.7 15.2 18 23 18Z"/>' +
-      '</g>' +
-      '<g fill="none" stroke="#3E9BAB" stroke-width="2.2" stroke-linecap="round">' +
-        '<path d="M23 18V4M23 6c-3-3.2-7-4.2-11-2.6.8 4.2 3.6 7 7.6 8M23 6c3-3.2 7-4.2 11-2.6-.8 4.2-3.6 7-7.6 8"/>' +
+      '<g stroke-linejoin="round">' +
+        '<path d="M31 28c11 0 17.6 8 17.6 21.6S41 74 31 74 13.4 63.2 13.4 49.6 20 28 31 28Z" fill="#F0B429" stroke="#B77F14" stroke-width="2"/>' +
+        '<path d="M31 34 24 42l7 8 7-8-7-8ZM31 50l-6.2 7 6.2 7 6.2-7-6.2-7Z" fill="none" stroke="#B77F14" stroke-width="1.5"/>' +
+        '<path d="M31 28V8M31 11c-4.4-4.6-10-6-15.6-3.6 1.2 6 5.2 10 11 11.4M31 11c4.4-4.6 10-6 15.6-3.6-1.2 6-5.2 10-11 11.4" fill="none" stroke="#3E9BAB" stroke-width="3" stroke-linecap="round"/>' +
       '</g>'
   };
 
-  el.innerHTML = ART[FIGURE] || ART.jesus;
-  if (HIDE_NATIVE) document.documentElement.style.cursor = 'none';
+  fig.innerHTML = ART[FIGURE] || ART.jesus;
+  document.documentElement.classList.add('nspc-cursor-on');
 
-  var tx = window.innerWidth / 2, ty = window.innerHeight / 2, x = tx, y = ty;
-  var last = 0, running = false;
+  if (LIGHT && glow) { glow.style.width = glow.style.height = LIGHT + 'px';
+                       glow.style.margin = (-LIGHT / 2) + 'px 0 0 ' + (-LIGHT / 2) + 'px'; }
+  else if (glow)     { glow.remove(); glow = null; }
 
-  function onMove(e) {
-    tx = e.clientX; ty = e.clientY;
-    if (!running) { running = true; requestAnimationFrame(tick); }
+  var tx = 0, ty = 0, fx = 0, fy = 0, gx = 0, gy = 0;
+  var started = false, raf = 0, lastMote = 0;
 
-    if (TRAIL && e.timeStamp - last > 90) {
-      last = e.timeStamp;
-      var dot = document.createElement('span');
-      dot.style.left = tx + 'px';
-      dot.style.top  = ty + 'px';
-      trail.appendChild(dot);
-      dot.animate(
-        [{ opacity: .5, transform: 'translate(-50%,-50%) scale(1)' },
-         { opacity: 0,  transform: 'translate(-50%,-50%) scale(.3)' }],
-        { duration: 750, easing: 'ease-out' }
-      ).onfinish = function () { dot.remove(); };
+  function place(node, x, y) { node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
+
+  function loop(now) {
+    fx += (tx - fx) * 0.20;   // figure walks, slight lag
+    fy += (ty - fy) * 0.20;
+    gx += (tx - gx) * 0.11;   // light drifts slower still
+    gy += (ty - gy) * 0.11;
+    place(fig, fx, fy);
+    if (glow) place(glow, gx, gy);
+
+    if (TRAIL && now - lastMote > 55) {
+      lastMote = now;
+      var d = Math.hypot(tx - fx, ty - fy);
+      if (d > 1.5) {
+        var s = document.createElement('span');
+        var size = 6 + Math.random() * 10;
+        s.style.width = s.style.height = size + 'px';
+        s.style.left = (fx + (Math.random() * 14 - 7)) + 'px';
+        s.style.top  = (fy + 30 + (Math.random() * 14 - 7)) + 'px';
+        mote.appendChild(s);
+        s.animate(
+          [{ opacity: .85, transform: 'translate(-50%,-50%) scale(1)' },
+           { opacity: 0,   transform: 'translate(-50%,-60%) scale(.25)' }],
+          { duration: 620 + Math.random() * 340, easing: 'ease-out' }
+        ).onfinish = function () { s.remove(); };
+      }
     }
+    raf = requestAnimationFrame(loop);
   }
 
-  function tick() {
-    x += (tx - x) * 0.18;          // lerp, so the figure walks rather than snaps
-    y += (ty - y) * 0.18;
-    el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-    if (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4) requestAnimationFrame(tick);
-    else running = false;
-  }
+  window.addEventListener('mousemove', function (e) {
+    tx = e.clientX; ty = e.clientY;
+    place(dot, tx, ty);
+    if (!started) {                       // land on the pointer, don't fly in from a corner
+      started = true;
+      fx = tx; fy = ty; gx = tx; gy = ty;
+      place(fig, fx, fy); if (glow) place(glow, gx, gy);
+      document.documentElement.classList.add('nspc-cursor-ready');
+      raf = requestAnimationFrame(loop);
+    }
+  }, { passive: true });
 
-  window.addEventListener('mousemove', onMove, { passive: true });
-  window.addEventListener('mouseleave', function () { el.style.opacity = '0'; });
-  window.addEventListener('mouseenter', function () { el.style.opacity = '1'; });
+  // leaving the window restores the ordinary pointer, so nothing is stranded
+  document.addEventListener('mouseleave', function () {
+    document.documentElement.classList.remove('nspc-cursor-ready', 'nspc-cursor-on');
+  });
+  document.addEventListener('mouseenter', function () {
+    document.documentElement.classList.add('nspc-cursor-on');
+    if (started) document.documentElement.classList.add('nspc-cursor-ready');
+  });
 })();
 </script>
