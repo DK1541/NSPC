@@ -6,7 +6,7 @@
    ========================================================================== */
 
 .nspc-header{
-  position:sticky;top:0;z-index:400;
+  position:sticky;top:0;z-index:1000;
   background:rgba(253,249,240,.94);
   backdrop-filter:saturate(1.4) blur(10px);
   border-bottom:1px solid var(--line);
@@ -34,6 +34,9 @@
 
 .nspc-sub{
   position:absolute;left:0;top:100%;min-width:230px;margin:0;padding:.4rem;
+  /* explicit z-index required: .nspc-hero uses isolation:isolate, which creates a
+     stacking context the dropdown otherwise loses to. Verified by screenshot. */
+  z-index:1001;
   background:var(--surface);border:1px solid var(--line);border-radius:6px;
   box-shadow:0 12px 28px rgba(23,21,18,.13);
   opacity:0;visibility:hidden;transform:translateY(-6px);

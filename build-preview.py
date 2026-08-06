@@ -92,6 +92,22 @@ def build(rel: str) -> pathlib.Path | None:
     cursor_file = ROOT / "pages" / "home" / "cursor.html"
     cursor = cursor_file.read_text(encoding="utf-8") if cursor_file.exists() else ""
 
+    # Site links are absolute ("/worship") because that is what Squarespace needs.
+    # In a preview opened from disk they resolve to file:///worship and 404, so
+    # rewrite them to the matching preview file. Page files are never touched.
+    here = (PAGES / rel).as_posix()
+    def relink(m: re.Match) -> str:
+        target = m.group(1).strip("/")
+        dest = "home" if target == "" else SLUGS.get(target)
+        if dest is None:
+            return m.group(0)
+        import os
+        path = os.path.relpath((PAGES / dest).as_posix(), here).replace("\\", "/")
+        return f'href="{path}/preview.html"'
+
+    doc_links = lambda t: re.sub(r'href="(/[^"#]*)"', relink, t)
+    header, footer, html = doc_links(header), doc_links(footer), doc_links(html)
+
     title = slug.replace("-", " ").title()
     out = PAGES / rel / "preview.html"
     out.write_text(
@@ -106,6 +122,11 @@ def build(rel: str) -> pathlib.Path | None:
     )
     print(f"  {out.relative_to(ROOT)}  ({out.stat().st_size/1048576:.2f} MB)")
     return out
+
+
+# folder name -> path under pages/, used to relink previews
+SLUGS = {q.parent.name: str(q.parent.relative_to(PAGES)).replace(chr(92),'/')
+         for q in PAGES.glob('**/index.html')}
 
 
 def all_pages():
