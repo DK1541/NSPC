@@ -10,22 +10,33 @@
    ========================================================================== */
 
 :root{
-  --ground:#FDF9F0;
+  /* Palette: Option 3, chosen by the team.
+     Ocean Blue #2D6F9E · Navy #173B63 · Pineapple Gold #E6B93C
+     Olive Green #7A944E · Soft Ivory #FCFBF7 · Dark Slate #30353A
+     Two golds: --gold-lift is the brand gold for fills; --gold is darkened
+     for text, because #E6B93C on ivory is about 1.9:1 and illegible. */
+  --ground:#FCFBF7;
   --surface:#FFFFFF;
-  --ink:#171512;
-  --ink-2:#3D3833;
-  --ink-soft:#6B645B;
-  --ink-faint:#9A9288;
-  --gold:#C8952F;
-  --gold-lift:#F0B429;
-  --teal:#3E9BAB;          /* nods to the Compassion Camp palette */
-  --teal-deep:#2A7181;
-  --rose:#D4653F;
-  --tint-gold:#FDF1D8;
-  --tint-teal:#E6F3F5;
-  --tint-rose:#FBEDE7;
-  --line:#E9E0CE;
-  --scrim:#100E0B;
+  --ink:#30353A;
+  --ink-2:#454C53;
+  --ink-soft:#5F676F;
+  --ink-faint:#8B939B;
+  --gold:#96731A;
+  --gold-lift:#E6B93C;
+  --blue:#2D6F9E;
+  --navy:#173B63;
+  --olive:#7A944E;
+  --olive-deep:#5C7439;
+  /* kept as aliases so existing rules and page markup keep working */
+  --teal:#2D6F9E;
+  --teal-deep:#173B63;
+  --rose:#7A944E;
+  --tint-gold:#FBF2DC;
+  --tint-teal:#E8F1F7;
+  --tint-rose:#EEF3E7;
+  --line:#E4E2D8;
+  --scrim:#12171B;
+
   --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
   --hand:'Caveat',"Segoe Script","Bradley Hand",cursive;
   --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
@@ -82,7 +93,7 @@
   font-size:.78rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
   text-decoration:none!important;transition:.18s;border:1.5px solid transparent;cursor:pointer}
 .nspc-btn.primary{background:var(--gold-lift);color:#171512!important}
-.nspc-btn.primary:hover{background:#F0C367}
+.nspc-btn.primary:hover{background:#F0C95C}
 .nspc-btn.ghost{border-color:rgba(252,249,243,.5);color:#FCF9F3!important}
 .nspc-btn.ghost:hover{background:rgba(252,249,243,.12);border-color:#FCF9F3}
 .nspc-btn.dark{background:var(--ink);color:var(--ground)!important}
@@ -130,11 +141,26 @@
   padding-bottom:2px;align-self:flex-start;margin-top:.3rem}
 .nspc-band .nspc-link{color:var(--ground)}
 
-/* boxed variant, for cards without photography */
-.nspc-card.boxed{background:var(--surface);border:1px solid var(--line);
-  padding:1.6rem;border-radius:2px;gap:.5rem}
-.nspc-band .nspc-card.boxed{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
-.nspc-card.boxed h3{margin-top:0}
+/* Cards without photography sit ON the background, not in a box — the
+   separation is typographic: a hairline rule and a handwritten heading
+   against body text. Boxes were reading as tacky. */
+.nspc-card.boxed{
+  background:none;border:0;border-radius:0;padding:0;gap:.35rem;
+  border-top:2px solid var(--gold-lift);padding-top:.9rem;
+}
+.nspc-card.boxed:nth-child(3n+2){border-top-color:var(--blue)}
+.nspc-card.boxed:nth-child(3n+3){border-top-color:var(--olive)}
+.nspc-card.boxed h3{
+  font-family:var(--hand);font-weight:700;
+  font-size:1.6rem;line-height:1.15;letter-spacing:.01em;
+  color:var(--navy);margin:0;
+}
+.nspc-card.boxed p{font-size:1rem;color:var(--ink-soft)}
+.nspc-band .nspc-card.boxed{background:none;border-top-color:var(--gold-lift)}
+.nspc-band .nspc-card.boxed:nth-child(3n+2){border-top-color:rgba(252,251,247,.5)}
+.nspc-band .nspc-card.boxed:nth-child(3n+3){border-top-color:var(--olive)}
+.nspc-band .nspc-card.boxed h3{color:var(--gold-lift)}
+.nspc-band .nspc-card.boxed p{color:rgba(252,251,247,.82)}
 
 /* ---------- people ------------------------------------------------------- */
 .nspc-people{display:grid;gap:2rem 2.5rem}
@@ -213,21 +239,15 @@
   content:"";
   position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.42em;
   background:var(--gold-lift);
-  opacity:.32;
+  opacity:.34;
   border-radius:.25em;
   z-index:-1;
 }
+/* on the navy band a translucent gold turns muddy — use a clean tint instead */
+.nspc-band h2 .mark::after{background:var(--gold-lift);opacity:.85;mix-blend-mode:screen}
 
 /* --- tinted cards, cycling ---------------------------------------------- */
-.nspc-card.boxed{border:0;box-shadow:inset 0 0 0 1px var(--line)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+1){background:var(--tint-gold)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+2){background:var(--tint-teal)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+3){background:var(--tint-rose)}
-.nspc-band .nspc-grid .nspc-card.boxed{
-  background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
-.nspc-card.boxed h3{color:var(--ink)}
-.nspc-band .nspc-card.boxed h3{color:var(--ground)}
-.nspc-band .nspc-card.boxed p{color:rgba(245,241,233,.8)}
+/* (tinted box variants removed — see the typographic treatment above) */
 
 /* --- doodle mark before each section kicker ----------------------------- */
 .nspc-kicker{display:flex;align-items:center;gap:.5rem}
@@ -259,11 +279,11 @@
 .nspc-card:hover .thumb{transform:rotate(0) scale(1.015)}
 
 /* --- warm the dark band, it was flat charcoal --------------------------- */
-.nspc-band{background:linear-gradient(160deg,#1E1A14 0%,#241D14 55%,#2A2016 100%)}
+.nspc-band{background:linear-gradient(160deg,#173B63 0%,#1B4470 55%,#123152 100%)}
 
 /* --- buttons get a little lift ------------------------------------------ */
-.nspc-btn.primary{box-shadow:0 3px 0 0 #B8871F}
-.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8871F}
+.nspc-btn.primary{box-shadow:0 3px 0 0 #B8911F}
+.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8911F}
 
 /* --- gentle reveal on scroll -------------------------------------------- */
 @supports (animation-timeline:view()){
@@ -751,15 +771,19 @@ body{margin:0;background:#FDF9F0}
      figure is company.
 
      ── SWITCHES ────────────────────────────────────────────────
-     FIGURE  'jesus' | 'crook' | 'pineapple'
+     FIGURE  'star' (default, sitewide) | 'jesus' | 'crook' | 'pineapple'
      LIGHT   size of the glow in px, 0 turns it off
      TRAIL   true / false
 
-     ── STILL WORTH A SECOND OPINION ────────────────────────────
-     A figure of Jesus as a mouse pointer will read as charming to
-     some of the congregation and irreverent to others. 'crook' gives
-     the shepherd's staff alone; 'pineapple' gives your own mark.
-     Both are drawn and working — it is a one-word change.
+     ── WHICH FIGURE ────────────────────────────────────────────
+     'star'  — the default. The star over the manger: eight points, a
+               long lower ray, gold. Chosen for sitewide use.
+     'jesus' — a robed figure with a staff, brown-skinned, as a
+               first-century Palestinian Jew would have been. Intended
+               for the children's ministry and Compassion Camp pages
+               rather than the whole site.
+     'crook' — the shepherd's staff alone.
+     'pineapple' — the hospitality mark.
      =========================================================== -->
 
 <style>
@@ -807,7 +831,7 @@ body{margin:0;background:#FDF9F0}
 
 <script>
 (function () {
-  var FIGURE = 'jesus';   // 'jesus' | 'crook' | 'pineapple'
+  var FIGURE = 'star';    // 'star' | 'jesus' | 'crook' | 'pineapple'
   var LIGHT  = 420;       // glow diameter in px, 0 = off
   var TRAIL  = true;
 
@@ -833,14 +857,14 @@ body{margin:0;background:#FDF9F0}
         /* halo */
         '<circle cx="24" cy="17" r="13.5" fill="none" stroke="#FFD27A" stroke-width="2.6" opacity=".95"/>' +
         /* hair falling to the shoulders */
-        '<path d="M24 4c-8 0-11.5 5.4-11.5 12 0 5 .8 8.4 1.6 12.6.5 2.4-1 5-1 5s3-1.4 4-4.4c.7-2.2.4-6 .4-9.6 3.6.6 9.6-.6 12.6-3.4 1.6 2.2 3.6 3 5.4 3.2 0 3.4-.3 7.6.4 9.8 1 3 4 4.4 4 4.4s-1.5-2.6-1-5c.8-4.2 1.6-7.6 1.6-12.6C41.5 9.4 32 4 24 4Z" fill="#4A3220"/>' +
+        '<path d="M24 4c-8 0-11.5 5.4-11.5 12 0 5 .8 8.4 1.6 12.6.5 2.4-1 5-1 5s3-1.4 4-4.4c.7-2.2.4-6 .4-9.6 3.6.6 9.6-.6 12.6-3.4 1.6 2.2 3.6 3 5.4 3.2 0 3.4-.3 7.6.4 9.8 1 3 4 4.4 4 4.4s-1.5-2.6-1-5c.8-4.2 1.6-7.6 1.6-12.6C41.5 9.4 32 4 24 4Z" fill="#241611"/>' +
         /* face */
-        '<path d="M24 9.5c4.9 0 8.2 3.4 8.2 8.6 0 6-3.6 10.6-8.2 10.6s-8.2-4.6-8.2-10.6c0-5.2 3.3-8.6 8.2-8.6Z" fill="#F0CBA4"/>' +
+        '<path d="M24 9.5c4.9 0 8.2 3.4 8.2 8.6 0 6-3.6 10.6-8.2 10.6s-8.2-4.6-8.2-10.6c0-5.2 3.3-8.6 8.2-8.6Z" fill="#9C6B43"/>' +
         /* eyes */
-        '<path d="M20.4 17.6h2.2M25.4 17.6h2.2" stroke="#3A2A1A" stroke-width="1.5" fill="none"/>' +
+        '<path d="M20.4 17.6h2.2M25.4 17.6h2.2" stroke="#160D08" stroke-width="1.5" fill="none"/>' +
         /* beard and moustache */
-        '<path d="M15.8 19.4c0 6.2 3.6 12.4 8.2 12.4s8.2-6.2 8.2-12.4c0 4-2.4 6-8.2 6s-8.2-2-8.2-6Z" fill="#4A3220"/>' +
-        '<path d="M21 22.4h6" stroke="#4A3220" stroke-width="2" fill="none"/>' +
+        '<path d="M15.8 19.4c0 6.2 3.6 12.4 8.2 12.4s8.2-6.2 8.2-12.4c0 4-2.4 6-8.2 6s-8.2-2-8.2-6Z" fill="#241611"/>' +
+        '<path d="M21 22.4h6" stroke="#241611" stroke-width="2" fill="none"/>' +
         /* cream robe */
         '<path d="M24 30c-7 0-10.6 4.6-11.6 10.4L8 78h32l-4.4-37.6C34.6 34.6 31 30 24 30Z" fill="#FBF3E3" stroke="#C9A96E" stroke-width="1.4"/>' +
         /* blue mantle over the left shoulder */
@@ -850,7 +874,17 @@ body{margin:0;background:#FDF9F0}
         '<path d="M27 52l-1.4 24M31.4 52l1 24" stroke="#E4D3AE" stroke-width="1.4" fill="none"/>' +
         /* arm reaching to the staff */
         '<path d="M33.6 40c4.6 1.6 10.4 4.4 14 8.6" stroke="#FBF3E3" stroke-width="6" fill="none"/>' +
-        '<circle cx="48.2" cy="49.4" r="3.6" fill="#F0CBA4"/>' +
+        '<circle cx="48.2" cy="49.4" r="3.6" fill="#9C6B43"/>' +
+      '</g>',
+
+    /* The star over the manger: eight points, a long lower ray. */
+    star:
+      '<g transform="translate(23 30)">' +
+        '<path d="M0 -26 L4.6 -7.4 L23 -12 L7.6 -0.6 L26 4 L6.4 5.4 L15 22 L0 9 ' +
+              'L-15 22 L-6.4 5.4 L-26 4 L-7.6 -0.6 L-23 -12 L-4.6 -7.4 Z" ' +
+              'fill="#E6B93C" stroke="#B8911F" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<path d="M0 8 L2.4 44 L0 50 L-2.4 44 Z" fill="#E6B93C" opacity=".85"/>' +
+        '<circle cx="0" cy="-1" r="4.4" fill="#FFF3D0"/>' +
       '</g>',
 
     crook:

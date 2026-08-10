@@ -7,22 +7,33 @@
    ========================================================================== */
 
 :root{
-  --ground:#FDF9F0;
+  /* Palette: Option 3, chosen by the team.
+     Ocean Blue #2D6F9E · Navy #173B63 · Pineapple Gold #E6B93C
+     Olive Green #7A944E · Soft Ivory #FCFBF7 · Dark Slate #30353A
+     Two golds: --gold-lift is the brand gold for fills; --gold is darkened
+     for text, because #E6B93C on ivory is about 1.9:1 and illegible. */
+  --ground:#FCFBF7;
   --surface:#FFFFFF;
-  --ink:#171512;
-  --ink-2:#3D3833;
-  --ink-soft:#6B645B;
-  --ink-faint:#9A9288;
-  --gold:#C8952F;
-  --gold-lift:#F0B429;
-  --teal:#3E9BAB;          /* nods to the Compassion Camp palette */
-  --teal-deep:#2A7181;
-  --rose:#D4653F;
-  --tint-gold:#FDF1D8;
-  --tint-teal:#E6F3F5;
-  --tint-rose:#FBEDE7;
-  --line:#E9E0CE;
-  --scrim:#100E0B;
+  --ink:#30353A;
+  --ink-2:#454C53;
+  --ink-soft:#5F676F;
+  --ink-faint:#8B939B;
+  --gold:#96731A;
+  --gold-lift:#E6B93C;
+  --blue:#2D6F9E;
+  --navy:#173B63;
+  --olive:#7A944E;
+  --olive-deep:#5C7439;
+  /* kept as aliases so existing rules and page markup keep working */
+  --teal:#2D6F9E;
+  --teal-deep:#173B63;
+  --rose:#7A944E;
+  --tint-gold:#FBF2DC;
+  --tint-teal:#E8F1F7;
+  --tint-rose:#EEF3E7;
+  --line:#E4E2D8;
+  --scrim:#12171B;
+
   --display:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
   --hand:'Caveat',"Segoe Script","Bradley Hand",cursive;
   --body:'Nunito',"Segoe UI",-apple-system,system-ui,Arial,sans-serif;
@@ -79,7 +90,7 @@
   font-size:.78rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
   text-decoration:none!important;transition:.18s;border:1.5px solid transparent;cursor:pointer}
 .nspc-btn.primary{background:var(--gold-lift);color:#171512!important}
-.nspc-btn.primary:hover{background:#F0C367}
+.nspc-btn.primary:hover{background:#F0C95C}
 .nspc-btn.ghost{border-color:rgba(252,249,243,.5);color:#FCF9F3!important}
 .nspc-btn.ghost:hover{background:rgba(252,249,243,.12);border-color:#FCF9F3}
 .nspc-btn.dark{background:var(--ink);color:var(--ground)!important}
@@ -127,11 +138,26 @@
   padding-bottom:2px;align-self:flex-start;margin-top:.3rem}
 .nspc-band .nspc-link{color:var(--ground)}
 
-/* boxed variant, for cards without photography */
-.nspc-card.boxed{background:var(--surface);border:1px solid var(--line);
-  padding:1.6rem;border-radius:2px;gap:.5rem}
-.nspc-band .nspc-card.boxed{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
-.nspc-card.boxed h3{margin-top:0}
+/* Cards without photography sit ON the background, not in a box — the
+   separation is typographic: a hairline rule and a handwritten heading
+   against body text. Boxes were reading as tacky. */
+.nspc-card.boxed{
+  background:none;border:0;border-radius:0;padding:0;gap:.35rem;
+  border-top:2px solid var(--gold-lift);padding-top:.9rem;
+}
+.nspc-card.boxed:nth-child(3n+2){border-top-color:var(--blue)}
+.nspc-card.boxed:nth-child(3n+3){border-top-color:var(--olive)}
+.nspc-card.boxed h3{
+  font-family:var(--hand);font-weight:700;
+  font-size:1.6rem;line-height:1.15;letter-spacing:.01em;
+  color:var(--navy);margin:0;
+}
+.nspc-card.boxed p{font-size:1rem;color:var(--ink-soft)}
+.nspc-band .nspc-card.boxed{background:none;border-top-color:var(--gold-lift)}
+.nspc-band .nspc-card.boxed:nth-child(3n+2){border-top-color:rgba(252,251,247,.5)}
+.nspc-band .nspc-card.boxed:nth-child(3n+3){border-top-color:var(--olive)}
+.nspc-band .nspc-card.boxed h3{color:var(--gold-lift)}
+.nspc-band .nspc-card.boxed p{color:rgba(252,251,247,.82)}
 
 /* ---------- people ------------------------------------------------------- */
 .nspc-people{display:grid;gap:2rem 2.5rem}
@@ -210,21 +236,15 @@
   content:"";
   position:absolute;left:-2%;right:-2%;bottom:-.12em;height:.42em;
   background:var(--gold-lift);
-  opacity:.32;
+  opacity:.34;
   border-radius:.25em;
   z-index:-1;
 }
+/* on the navy band a translucent gold turns muddy — use a clean tint instead */
+.nspc-band h2 .mark::after{background:var(--gold-lift);opacity:.85;mix-blend-mode:screen}
 
 /* --- tinted cards, cycling ---------------------------------------------- */
-.nspc-card.boxed{border:0;box-shadow:inset 0 0 0 1px var(--line)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+1){background:var(--tint-gold)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+2){background:var(--tint-teal)}
-.nspc-grid .nspc-card.boxed:nth-child(3n+3){background:var(--tint-rose)}
-.nspc-band .nspc-grid .nspc-card.boxed{
-  background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
-.nspc-card.boxed h3{color:var(--ink)}
-.nspc-band .nspc-card.boxed h3{color:var(--ground)}
-.nspc-band .nspc-card.boxed p{color:rgba(245,241,233,.8)}
+/* (tinted box variants removed — see the typographic treatment above) */
 
 /* --- doodle mark before each section kicker ----------------------------- */
 .nspc-kicker{display:flex;align-items:center;gap:.5rem}
@@ -256,11 +276,11 @@
 .nspc-card:hover .thumb{transform:rotate(0) scale(1.015)}
 
 /* --- warm the dark band, it was flat charcoal --------------------------- */
-.nspc-band{background:linear-gradient(160deg,#1E1A14 0%,#241D14 55%,#2A2016 100%)}
+.nspc-band{background:linear-gradient(160deg,#173B63 0%,#1B4470 55%,#123152 100%)}
 
 /* --- buttons get a little lift ------------------------------------------ */
-.nspc-btn.primary{box-shadow:0 3px 0 0 #B8871F}
-.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8871F}
+.nspc-btn.primary{box-shadow:0 3px 0 0 #B8911F}
+.nspc-btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 0 #B8911F}
 
 /* --- gentle reveal on scroll -------------------------------------------- */
 @supports (animation-timeline:view()){
