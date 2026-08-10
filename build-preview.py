@@ -108,16 +108,25 @@ def build(rel: str) -> pathlib.Path | None:
     doc_links = lambda t: re.sub(r'href="(/[^"#]*)"', relink, t)
     header, footer, html = doc_links(header), doc_links(footer), doc_links(html)
 
+    # Review bar — preview only, never goes to Squarespace.
+    rev_file = SHARED / "review-bar.html"
+    review = rev_file.read_text(encoding="utf-8") if rev_file.exists() else ""
+
     title = slug.replace("-", " ").title()
     out = PAGES / rel / "preview.html"
     out.write_text(
         f"<title>NSPC — {title}</title>\n"
+        # These are drafts with placeholder copy and stock photographs. Keep them
+        # out of search results — a half-written church page outranking the real
+        # one would be worse than no preview at all.
+        '<meta name="robots" content="noindex,nofollow,noarchive"/>\n'
         f'<script>document.documentElement.setAttribute("data-page","{slug}");</script>\n'
         f"<style>\n{css}\n{chrome}\n"
-        "body{margin:0;background:#FDF9F0}\n"
+        "body{margin:0;background:#FCFBF7}\n"
         "</style>\n"
         f"{header}\n{html}\n{footer}\n"
-        f"<!-- preview only: ships via Code Injection -->\n{cursor}\n",
+        f"<!-- preview only: ships via Code Injection -->\n{cursor}\n"
+        f"<!-- preview only: never paste into Squarespace -->\n{review}\n",
         encoding="utf-8",
     )
     print(f"  {out.relative_to(ROOT)}  ({out.stat().st_size/1048576:.2f} MB)")

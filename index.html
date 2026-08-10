@@ -2,58 +2,166 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>NSPC — Website Files</title>
+<title>North Shore Presbyterian — new website preview</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
   :root{
-    --ground:#F2F4F0; --surface:#FFFFFF; --ink:#1F312A; --ink-soft:#55665E;
-    --ink-faint:#7C8A83; --gold:#C9871F; --brick:#9C4A2F; --lake:#2F6377;
-    --line:#DCE2D9;
-    --display:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
-    --body:"Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,Arial,sans-serif;
-  }
-  @media (prefers-color-scheme:dark){
-    :root{--ground:#16211C;--surface:#1E2B25;--ink:#E9EFE9;--ink-soft:#A6B5AC;
-      --ink-faint:#7F8F86;--gold:#E3A02F;--brick:#C9714E;--lake:#77B6C9;--line:#2E3D35}
+    --ground:#FCFBF7;--surface:#FFFFFF;--ink:#30353A;--ink-soft:#5F676F;--ink-faint:#8B939B;
+    --gold:#96731A;--gold-lift:#E6B93C;--blue:#2D6F9E;--navy:#173B63;--olive:#7A944E;
+    --line:#E4E2D8;
+    --disp:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    --hand:'Caveat',"Segoe Script",cursive;
+    --body:'Nunito',"Segoe UI",system-ui,Arial,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
-    font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:860px;margin:0 auto;padding:0 clamp(1.15rem,4vw,2.5rem)}
-  header{padding:clamp(2.5rem,6vw,4rem) 0 clamp(1.5rem,3vw,2.25rem);position:relative;overflow:hidden}
-  .mark{position:absolute;right:-2%;top:-10%;width:min(260px,40vw);color:var(--gold);opacity:.1}
-  .eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;
-    color:var(--brick);margin:0 0 .9rem}
-  h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3rem);
-    line-height:1.08;letter-spacing:-.015em;margin:0;max-width:18ch;text-wrap:balance}
-  .lede{margin:1.1rem 0 0;color:var(--ink-soft);max-width:60ch;font-size:1.1875rem}
-  hr.rule{width:56px;height:3px;background:var(--gold);border:0;margin:1.5rem 0 0}
-  section{padding-block:clamp(1.75rem,3.5vw,2.75rem);border-top:1px solid var(--line)}
-  h2{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,3vw,1.9rem);
-    margin:0 0 1.2rem;letter-spacing:-.01em}
-  .files{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
-  a.file{background:var(--surface);padding:1.15rem 1.35rem;text-decoration:none;
-    color:inherit;display:block;border-left:3px solid transparent;transition:border-color .15s}
-  a.file:hover,a.file:focus-visible{border-left-color:var(--gold);outline:none}
-  a.file .name{font-family:var(--display);font-size:1.2rem;display:block;margin-bottom:.2rem}
-  a.file .desc{color:var(--ink-soft);font-size:.95rem}
-  .plain{background:var(--surface);padding:1.15rem 1.35rem;border-left:3px solid var(--line)}
-  .plain .name{font-family:var(--display);font-size:1.2rem;display:block;margin-bottom:.2rem}
-  .plain .desc{color:var(--ink-soft);font-size:.95rem}
-  ol{color:var(--ink-soft);padding-left:1.3rem}
-  ol li{margin-bottom:.5rem}
-  code{background:var(--surface);border:1px solid var(--line);border-radius:3px;
-    padding:.1rem .35rem;font-size:.9em}
-  footer{border-top:1px solid var(--line);padding:1.5rem 0 3rem;color:var(--ink-faint);font-size:.85rem}
-section{padding:1.1rem 0;border-top:1px solid var(--line)}section h2{font-size:1.5rem;margin:0 0 .4rem}section h2 a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--gold)}ul{list-style:none;padding:0;margin:.4rem 0 0;display:flex;flex-wrap:wrap;gap:.4rem .6rem}li a{display:inline-block;padding:.35rem .8rem;background:var(--surface);border:1px solid var(--line);border-radius:99px;font-size:.9rem;color:var(--ink-soft);text-decoration:none}li a:hover{border-color:var(--gold);color:var(--ink)}em{font-style:normal;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brick);font-weight:700}</style>
+       font-size:1.05rem;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 clamp(1.15rem,4vw,2.5rem)}
+
+  header.hero{background:linear-gradient(160deg,#173B63 0%,#1B4470 55%,#123152 100%);
+              color:#FCFBF7;padding:clamp(2.5rem,7vw,4.5rem) 0}
+  header.hero .kick{font-family:var(--hand);font-size:1.45rem;color:var(--gold-lift);margin:0 0 .4rem}
+  header.hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(2rem,5.5vw,3.2rem);
+                 line-height:1.06;letter-spacing:-.02em;margin:0;max-width:18ch;text-wrap:balance}
+  header.hero p{margin:1.1rem 0 0;max-width:56ch;color:rgba(252,251,247,.9);font-size:1.12rem}
+
+  .how{background:var(--surface);border-bottom:1px solid var(--line);padding:1.75rem 0}
+  .how ol{margin:0;padding-left:1.3rem;display:grid;gap:.6rem}
+  .how li{color:var(--ink-soft)}
+  .how b{color:var(--ink)}
+  .how .pill{display:inline-flex;align-items:center;gap:.4rem;background:var(--navy);
+             color:#FCFBF7;border-radius:99px;padding:.2rem .65rem;font-size:.8rem;font-weight:700}
+
+  section.sec{padding:1.4rem 0;border-top:1px solid var(--line)}
+  section.sec:first-of-type{border-top:0}
+  h2{font-family:var(--disp);font-weight:400;font-size:1.6rem;margin:0 0 .15rem;letter-spacing:-.01em}
+  h2 a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--gold-lift)}
+  h2 a:hover{color:var(--blue)}
+  .sec p.note{margin:.1rem 0 .7rem;color:var(--ink-faint);font-size:.9rem}
+  ul.kids{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.45rem}
+  ul.kids a{display:inline-block;padding:.4rem .9rem;background:var(--surface);
+            border:1px solid var(--line);border-radius:99px;font-size:.92rem;
+            color:var(--ink-soft);text-decoration:none}
+  ul.kids a:hover{border-color:var(--blue);color:var(--blue)}
+  em.flag{font-style:normal;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
+          font-weight:700;color:var(--olive);margin-left:.35rem}
+
+  footer{padding:2rem 0 4rem;color:var(--ink-soft);font-size:.95rem;
+         border-top:1px solid var(--line);margin-top:1.5rem}
+  footer p{max-width:62ch}
+</style>
 </head>
 <body>
 
-<header>
-  <svg class="mark" viewBox="0 0 24 30" fill="none" stroke="currentColor" aria-hidden="true">
-    <path stroke-width="1.5" stroke-linejoin="round" d="M12 8.2c4.1 0 6.6 3 6.6 8.1 0 5.6-2.9 9.2-6.6 9.2s-6.6-3.6-6.6-9.2c0-5.1 2.5-8.1 6.6-8.1Z"/>
-    <path stroke-width="1.3" stroke-linecap="round" d="M12 8.4V2.6M12 3.6C10.4 1.9 8.3 1.4 6.2 2.2c.4 2.2 1.9 3.7 4 4.2M12 3.6c1.6-1.7 3.7-2.2 5.8-1.4-.4 2.2-1.9 3.7-4 4.2"/>
-    <path stroke-width="1" stroke-linecap="round" opacity=".75" d="M12 10.4 8.4 14 12 17.6 15.6 14 12 10.4ZM12 17.6 8.8 20.8 12 24l3.2-3.2-3.2-3.2Z"/>
-  </svg>
-  <div class="wrap"><section><h2><a href="pages/home/preview.html">Home</a></h2></section><section><h2><a href="pages/welcome/preview.html">Welcome</a> <em>1 to write</em></h2><ul><li><a href="pages/welcome/contact/preview.html">Contact</a> <em>4 to write</em></li></ul></section><section><h2><a href="pages/covenant-family/preview.html">Covenant Family</a></h2><ul><li><a href="pages/covenant-family/history/preview.html">History</a></li><li><a href="pages/covenant-family/leadership/preview.html">Leadership</a></li><li><a href="pages/covenant-family/mission-and-values/preview.html">Mission And Values</a></li><li><a href="pages/covenant-family/neighboring-initiative/preview.html">Neighboring Initiative</a></li></ul></section><section><h2><a href="pages/ministries/preview.html">Ministries</a></h2><ul><li><a href="pages/ministries/congregational-life/preview.html">Congregational Life</a> <em>2 to write</em></li><li><a href="pages/ministries/education/preview.html">Education</a></li><li><a href="pages/ministries/garden/preview.html">Garden</a> <em>1 to write</em></li><li><a href="pages/ministries/music/preview.html">Music</a> <em>5 to write</em></li><li><a href="pages/ministries/shared-kitchen/preview.html">Shared Kitchen</a> <em>2 to write</em></li><li><a href="pages/ministries/worship/preview.html">Worship</a> <em>1 to write</em></li></ul></section><section><h2><a href="pages/community-programs/preview.html">Community Programs</a></h2><ul><li><a href="pages/community-programs/after-school/preview.html">After School</a> <em>1 to write</em></li><li><a href="pages/community-programs/compassion-camp/preview.html">Compassion Camp</a></li><li><a href="pages/community-programs/good-neighbour-exchange/preview.html">Good Neighbour Exchange</a></li></ul></section><section><h2><a href="pages/partnerships/preview.html">Partnerships</a> <em>1 to write</em></h2><ul><li><a href="pages/partnerships/community-partners/preview.html">Community Partners</a></li><li><a href="pages/partnerships/mission-partners/preview.html">Mission Partners</a></li></ul></section><section><h2><a href="pages/calendar/preview.html">Calendar</a></h2><ul><li><a href="pages/calendar/calendar-special-events/preview.html">Calendar Special Events</a> <em>1 to write</em></li><li><a href="pages/calendar/neighboring-initiative-events/preview.html">Neighboring Initiative Events</a></li></ul></section><section><h2><a href="pages/giving/preview.html">Giving</a> <em>2 to write</em></h2><ul><li><a href="pages/giving/capital-campaign/preview.html">Capital Campaign</a> <em>6 to write</em></li><li><a href="pages/giving/donations/preview.html">Donations</a> <em>2 to write</em></li></ul></section><footer>28 previews. Paste <code>pages/&lt;section&gt;/index.html</code> into Squarespace as a Code Block; <code>shared/nspc-base.css</code> goes once into Design &rarr; Custom CSS. <b>29 placeholder passages</b> still need real copy — they are marked DUMMY in the files.</footer></div></body>
+<header class="hero">
+  <div class="wrap">
+    <p class="kick">Have a look before we build it for real</p>
+    <h1>A preview of the new North Shore Presbyterian website</h1>
+    <p>Every page is here and everything works — click the menus, follow the links, try it on your
+       phone. Nothing is live yet, and nothing you do can break anything.</p>
+  </div>
+</header>
+
+<div class="how">
+  <div class="wrap">
+    <ol>
+      <li><b>Click any page below</b> to open it, then use the menu across the top to move around.</li>
+      <li>When something strikes you — good or bad — press the
+          <span class="pill">Leave feedback</span> button in the bottom-right corner, type a note,
+          and press <b>Save note</b>.</li>
+      <li>When you've finished, press <b>Copy all notes</b> on any page. That gathers everything you
+          wrote across every page. <b>Paste it into an email</b> and send it back.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="sec">
+    <h2><a href="pages/home/preview.html">Home</a></h2>
+    <p class="note">The front page — start here.</p>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/welcome/preview.html">Welcome</a></h2>
+    <p class="note">For someone thinking about a first visit.</p>
+    <ul class="kids"><li><a href="pages/welcome/contact/preview.html">Contact</a></li></ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/covenant-family/preview.html">Covenant Family</a></h2>
+    <p class="note">Who we are, who leads, and a hundred years of history.</p>
+    <ul class="kids">
+      <li><a href="pages/covenant-family/mission-and-values/preview.html">Mission &amp; Values</a></li>
+      <li><a href="pages/covenant-family/neighboring-initiative/preview.html">Neighboring Initiative</a></li>
+      <li><a href="pages/covenant-family/leadership/preview.html">Leadership</a></li>
+      <li><a href="pages/covenant-family/history/preview.html">History</a></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/ministries/preview.html">Ministries</a></h2>
+    <p class="note">Worship, education, garden, music, kitchen, congregational life.</p>
+    <ul class="kids">
+      <li><a href="pages/ministries/worship/preview.html">Worship</a></li>
+      <li><a href="pages/ministries/education/preview.html">Education</a></li>
+      <li><a href="pages/ministries/garden/preview.html">Garden</a></li>
+      <li><a href="pages/ministries/congregational-life/preview.html">Congregational Life</a><em class="flag">needs your words</em></li>
+      <li><a href="pages/ministries/music/preview.html">Music</a><em class="flag">needs your words</em></li>
+      <li><a href="pages/ministries/shared-kitchen/preview.html">Shared Kitchen</a></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/community-programs/preview.html">Community Programs</a></h2>
+    <p class="note">Camp, after school, and the free store.</p>
+    <ul class="kids">
+      <li><a href="pages/community-programs/compassion-camp/preview.html">Compassion Camp</a></li>
+      <li><a href="pages/community-programs/after-school/preview.html">Kindness World Explorers</a></li>
+      <li><a href="pages/community-programs/good-neighbour-exchange/preview.html">Good Neighbour Exchange</a></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/partnerships/preview.html">Partnerships</a></h2>
+    <p class="note">The organisations we work alongside.</p>
+    <ul class="kids">
+      <li><a href="pages/partnerships/mission-partners/preview.html">Mission Partners</a></li>
+      <li><a href="pages/partnerships/community-partners/preview.html">Community Partners</a></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/calendar/preview.html">Calendar</a></h2>
+    <p class="note">The weekly rhythm and the year's big days.</p>
+    <ul class="kids">
+      <li><a href="pages/calendar/calendar-special-events/preview.html">Calendar &amp; Special Events</a></li>
+      <li><a href="pages/calendar/neighboring-initiative-events/preview.html">Neighboring Initiative Events</a></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2><a href="pages/giving/preview.html">Giving</a></h2>
+    <p class="note">How to contribute.</p>
+    <ul class="kids">
+      <li><a href="pages/giving/donations/preview.html">Donations</a></li>
+      <li><a href="pages/giving/capital-campaign/preview.html">Capital Campaign</a><em class="flag">needs your words</em></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p><b>Two things worth knowing while you look.</b></p>
+    <p>The <b>photographs are stand-ins.</b> We have only one real photograph of the congregation —
+       the one on the front page — so every other picture is a placeholder from a free photo library.
+       They show where photographs go, not which photographs. Getting real ones taken would change
+       this site more than anything else on the list.</p>
+    <p>A few pages are marked <em class="flag">needs your words</em>. Those are waiting on information
+       nobody has written down anywhere yet, so please ignore the wording there and instead tell us
+       what ought to be on them.</p>
+  </footer>
+</div>
+
+</body>
 </html>

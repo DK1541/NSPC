@@ -1,4 +1,5 @@
 <title>NSPC — Garden</title>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
 <script>document.documentElement.setAttribute("data-page","garden");</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
@@ -537,7 +538,7 @@
 /* keep nav items on one line */
 .nspc-nav > li > a{white-space:nowrap}
 
-body{margin:0;background:#FDF9F0}
+body{margin:0;background:#FCFBF7}
 </style>
 <!-- ===========================================================
      NSPC — site header
@@ -958,6 +959,142 @@ body{margin:0;background:#FDF9F0}
     document.documentElement.classList.add('nspc-cursor-on');
     if (started) document.documentElement.classList.add('nspc-cursor-ready');
   });
+})();
+</script>
+
+<!-- preview only: never paste into Squarespace -->
+<!-- ===========================================================
+     NSPC — review bar
+     Injected into every preview by build-preview.py. Never goes to
+     Squarespace; it exists only so reviewers can leave notes.
+
+     Notes are stored in the reviewer's own browser (localStorage).
+     Nothing is sent anywhere. "Copy all notes" puts every note from
+     every page on the clipboard, ready to paste into an email.
+     =========================================================== -->
+<style>
+  #nspc-rev,#nspc-rev *{box-sizing:border-box;font-family:'Nunito',"Segoe UI",system-ui,sans-serif}
+  #nspc-rev{position:fixed;right:18px;bottom:18px;z-index:99990}
+  #nspc-rev .tab{
+    display:flex;align-items:center;gap:.5rem;
+    background:#173B63;color:#FCFBF7;border:0;border-radius:99px;
+    padding:.7rem 1.15rem;font-size:.82rem;font-weight:700;cursor:pointer;
+    box-shadow:0 6px 20px rgba(23,59,99,.34);
+  }
+  #nspc-rev .tab .dot{
+    background:#E6B93C;color:#173B63;border-radius:99px;
+    min-width:20px;padding:0 .35rem;font-size:.72rem;line-height:20px;text-align:center;
+  }
+  #nspc-rev .tab .dot[hidden]{display:none}
+  #nspc-rev .panel{
+    display:none;position:absolute;right:0;bottom:calc(100% + 10px);
+    width:min(370px,calc(100vw - 36px));
+    background:#fff;border:1px solid #E4E2D8;border-radius:12px;
+    box-shadow:0 18px 44px rgba(23,59,99,.22);overflow:hidden;
+  }
+  #nspc-rev.open .panel{display:block}
+  #nspc-rev .head{padding:.85rem 1rem;background:#FCFBF7;border-bottom:1px solid #E4E2D8}
+  #nspc-rev .head b{display:block;font-size:.95rem;color:#30353A}
+  #nspc-rev .head span{font-size:.76rem;color:#8B939B}
+  #nspc-rev .body{padding:1rem}
+  #nspc-rev textarea{
+    width:100%;height:120px;resize:vertical;padding:.7rem;font-size:.9rem;
+    border:1.5px solid #E4E2D8;border-radius:8px;color:#30353A;background:#fff;
+  }
+  #nspc-rev textarea:focus{outline:2px solid #2D6F9E;outline-offset:1px;border-color:#2D6F9E}
+  #nspc-rev .acts{display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap}
+  #nspc-rev button.act{
+    border:0;border-radius:99px;padding:.55rem 1.05rem;font-size:.78rem;
+    font-weight:700;cursor:pointer;background:#E6B93C;color:#30353A;
+  }
+  #nspc-rev button.ghost{background:none;border:1.5px solid #E4E2D8;color:#5F676F}
+  #nspc-rev .saved{font-size:.76rem;color:#5C7439;margin-top:.5rem;min-height:1.1em}
+  #nspc-rev .foot{
+    padding:.7rem 1rem;border-top:1px solid #E4E2D8;background:#FCFBF7;
+    font-size:.74rem;color:#8B939B;line-height:1.45;
+  }
+  @media print{#nspc-rev{display:none}}
+</style>
+
+<div id="nspc-rev">
+  <div class="panel" role="dialog" aria-label="Leave a note on this page">
+    <div class="head">
+      <b>Notes on this page</b>
+      <span id="nspc-rev-page"></span>
+    </div>
+    <div class="body">
+      <textarea id="nspc-rev-text" placeholder="What works, what doesn't, anything factually wrong…"></textarea>
+      <div class="acts">
+        <button class="act" id="nspc-rev-save" type="button">Save note</button>
+        <button class="act ghost" id="nspc-rev-all" type="button">Copy all notes</button>
+      </div>
+      <p class="saved" id="nspc-rev-msg"></p>
+    </div>
+    <div class="foot">
+      Notes stay in this browser — nothing is sent anywhere. When you're done,
+      press <b>Copy all notes</b> and paste them into an email.
+    </div>
+  </div>
+  <button class="tab" type="button" id="nspc-rev-tab" aria-expanded="false">
+    Leave feedback <span class="dot" id="nspc-rev-count" hidden>0</span>
+  </button>
+</div>
+
+<script>
+(function () {
+  var KEY = "nspc-review-notes";
+  var page = document.documentElement.getAttribute("data-page") || "page";
+  var title = (document.title || page).replace(/^NSPC —\s*/, "");
+
+  var root = document.getElementById("nspc-rev");
+  var tab = document.getElementById("nspc-rev-tab");
+  var text = document.getElementById("nspc-rev-text");
+  var msg = document.getElementById("nspc-rev-msg");
+  var count = document.getElementById("nspc-rev-count");
+  document.getElementById("nspc-rev-page").textContent = title;
+
+  function read() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+  function write(o) { localStorage.setItem(KEY, JSON.stringify(o)); }
+
+  function paint() {
+    var all = read();
+    var n = Object.keys(all).length;
+    count.hidden = n === 0;
+    count.textContent = n;
+    text.value = (all[page] && all[page].note) || "";
+  }
+
+  tab.addEventListener("click", function () {
+    var open = root.classList.toggle("open");
+    tab.setAttribute("aria-expanded", String(open));
+    if (open) text.focus();
+  });
+
+  document.getElementById("nspc-rev-save").addEventListener("click", function () {
+    var all = read();
+    var v = text.value.trim();
+    if (v) all[page] = { title: title, note: v };
+    else delete all[page];
+    write(all);
+    paint();
+    msg.textContent = v ? "Saved." : "Note removed.";
+    setTimeout(function () { msg.textContent = ""; }, 2200);
+  });
+
+  document.getElementById("nspc-rev-all").addEventListener("click", async function () {
+    var all = read();
+    var keys = Object.keys(all);
+    if (!keys.length) { msg.textContent = "No notes yet."; return; }
+    var out = "NSPC website review\n\n" + keys.map(function (k) {
+      return "— " + all[k].title + " —\n" + all[k].note;
+    }).join("\n\n");
+    try { await navigator.clipboard.writeText(out); }
+    catch (e) { text.value = out; text.select(); document.execCommand("copy"); paint(); }
+    msg.textContent = keys.length + " note" + (keys.length > 1 ? "s" : "") + " copied.";
+    setTimeout(function () { msg.textContent = ""; }, 2600);
+  });
+
+  paint();
 })();
 </script>
 
