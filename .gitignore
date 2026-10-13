@@ -3,3 +3,9 @@ assets/
 ~$*
 *.tmp
 NSPC-design-direction-*.pdf
+
+# dropped in by hand at the repo root; the same content now lives in NSPC1/.
+# Anchored with a leading slash so NSPC1/shared_kitchen_page.html stays tracked.
+/shared-kitchen-site.zip
+/shared_kitchen_page.html
+/NSPC_SharedKitchen_HANDOFF.md

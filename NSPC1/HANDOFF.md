@@ -3,7 +3,7 @@
 **Client:** North Shore Presbyterian Church (NSPC), Shorewood WI
 **Page:** the "Shared Kitchen" ministry landing page
 **Live target:** `https://www.northshorepres.org/shared-kitchen` (Squarespace)
-**Status:** built, reviewed through Rodger (RJ) 7.10.26 round. Latest build must still be re-pasted into Squarespace + republished (the live page was lagging an older version).
+**Status:** built, reviewed through Rodger (RJ) 7.10.26 round. The live page was verified current on 2026-10-13 — its `<style>` block and body markup matched this build exactly. Seven `!important` colour overrides have been added since (§6), so one more re-paste is owed.
 
 > This doc is the single source of truth for continuing the page in VS Code / Claude Code. Everything here is NSPC only.
 
@@ -17,10 +17,17 @@ There are two shipping forms of the exact same page:
 
 | File | What it is | Use |
 |---|---|---|
-| `index.html` (this repo) | References images from `images/` | GitHub / GitHub Pages hosting, local editing |
-| `shared_kitchen_page.html` (standalone) | Same markup, **images inlined as base64** | Paste into a Squarespace **Code Block** |
+| `index.html` (this repo) | References images from `images/`; carries a Pages-only `noindex` | GitHub Pages hosting, local editing |
+| `shared_kitchen_page.html` (standalone) | Same markup, **images inlined as base64**, `noindex` stripped | Paste into a Squarespace **Code Block** |
 
-When you change `index.html`, regenerate the standalone by inlining the images (see §7).
+When you change `index.html`, regenerate the standalone with `python build-standalone.py` (see §7).
+Never hand-edit `shared_kitchen_page.html` — it is generated.
+
+**The `noindex` line.** `index.html` carries `<meta name="robots" content="noindex,nofollow"><!-- PAGES-ONLY -->`
+so the GitHub Pages copy cannot compete in search with the real page at
+`northshorepres.org/shared-kitchen`. `build-standalone.py` strips that line, so it never
+reaches Squarespace. If you move the meta tag, keep the `<!-- PAGES-ONLY -->` marker on it —
+the build fails loudly if it cannot find exactly one.
 
 ---
 
@@ -29,10 +36,14 @@ When you change `index.html`, regenerate the standalone by inlining the images (
 It's a static page — no build step.
 
 ```bash
-# from the repo root
+# from this folder
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
+
+It is also published, for review, at **https://dk1541.github.io/NSPC/NSPC1/** — a copy of the
+live page, not the live page itself. The church's own site refresh previews live one level up at
+https://dk1541.github.io/NSPC/ and are an unrelated piece of work in a different design system.
 
 Edit `index.html` directly. Everything (CSS + one small JS snippet) is inline in that one file.
 
@@ -55,6 +66,8 @@ The page is built to nest inside Squarespace: it has **no header of its own** (r
 ```
 shared-kitchen-site/
 ├── index.html              # the page (CSS + JS inline)
+├── build-standalone.py     # regenerates the Squarespace paste file
+├── shared_kitchen_page.html  # GENERATED — do not hand-edit
 ├── images/
 │   ├── nspc-logo.png       # pineapple logo (footer)
 │   ├── hero.jpg            # hero bg — hands kneading bread dough
@@ -114,29 +127,28 @@ The single biggest source of bugs on this page: **Squarespace's theme (especiall
 
 **If you add any new colored text or heading, add a matching `!important` line to that override block**, or Squarespace may recolor/re-font it in dark mode. Always test the *published* Squarespace page in phone dark mode, not just local preview (local has no host theme).
 
+**Audited 2026-10-13.** Sixteen of the page's twenty-three coloured selectors had a colour
+override; seven did not. All seven now do. The two that mattered were light text sitting on the
+navy bands — `.cta h2 span` (the gold-cream "make a difference.") and `.socials a` — either of
+which would have gone dark-on-dark and vanished. `.venue h2 span` had its line but its twin
+`.cta h2 span` did not, which is exactly how this bug recurs: a selector gets copied, its
+override does not. To re-run the audit, compare the selectors carrying `color:` in the main
+stylesheet against those carrying `color:` in the override block; a `font-family` line for a
+selector does **not** protect its colour.
+
 ---
 
 ## 7. Regenerate the standalone (base64) file after edits
 
 The Squarespace file must have images inlined. After editing `index.html`:
 
-```python
-import base64, re
-html = open('index.html').read()
-imgs = {
-  'images/hero.jpg':'images/hero.jpg', 'images/congregation.jpg':'images/congregation.jpg',
-  'images/kitchen-bake.jpg':'images/kitchen-bake.jpg', 'images/kitchen-team.jpg':'images/kitchen-team.jpg',
-  'images/kitchen-pots.jpg':'images/kitchen-pots.jpg', 'images/handshake.jpg':'images/handshake.jpg',
-}
-for path in imgs:
-    mime = 'image/png' if path.endswith('.png') else 'image/jpeg'
-    b64 = base64.b64encode(open(path,'rb').read()).decode()
-    html = html.replace(f'src="{path}"', f'src="data:{mime};base64,{b64}"')
-# logo (png)
-b64 = base64.b64encode(open('images/nspc-logo.png','rb').read()).decode()
-html = html.replace('src="images/nspc-logo.png"', f'src="data:image/png;base64,{b64}"')
-open('shared_kitchen_page.html','w').write(html)
+```bash
+python build-standalone.py
 ```
+
+It walks `images/` rather than a hard-coded list, so a new photograph needs no change here, and
+it refuses to write the file if an image reference survives or if the `PAGES-ONLY` line is
+missing. Then paste `shared_kitchen_page.html` into the Squarespace Code Block (§3).
 
 ---
 
@@ -199,8 +211,13 @@ Git log, newest first, with the reasoning:
 
 ## 11. Open / pending items
 
-- [ ] **Re-paste + republish** the latest `shared_kitchen_page.html` into the Squarespace Code Block — the live `/shared-kitchen` page was still showing an older version (this is why the headline/fonts looked wrong on the phone).
-- [ ] After republishing, **test the live page in phone dark mode** (local preview can't catch the Squarespace theme override).
+- [x] ~~Re-paste + republish the latest build~~ — done before 2026-10-13. Verified by fetching the
+      live page: its `<style>` block and full body markup matched this build byte for byte.
+- [ ] **Re-paste + republish again** to pick up the seven colour overrides added in §6. The diff
+      against the previously published file is exactly those seven lines and nothing else.
+- [ ] After republishing, **test the live page in phone dark mode** (local preview can't catch the
+      Squarespace theme override). The two to look at are the gold-cream "make a difference." in
+      the CTA band and the social links beneath it.
 - [ ] Decide whether the footer should be trimmed if the Squarespace global footer already repeats the church's contact info (would otherwise show twice).
 - [ ] Optional: a QR code to `/shared-kitchen` already exists (`shared-kitchen-qr.*`) if it's wanted on any printed piece.
 - [ ] Confirm giving should stay 100% on the Shared Kitchen campaign (`C-16EHE`) vs the general giving home.
