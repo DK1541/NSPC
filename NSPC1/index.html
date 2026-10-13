@@ -106,6 +106,9 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .give p{font-size:17px;margin-bottom:16px;color:var(--text-body)}
 .give p:last-of-type{margin-bottom:28px}
 .give .btn{font-size:15px;padding:14px 32px}
+.give-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:4px}
+.btn-secondary{display:inline-block;background:transparent;color:var(--coral);border:2px solid var(--coral);font-family:'Poppins';font-weight:600;font-size:15px;letter-spacing:.02em;padding:12px 30px;border-radius:999px;text-decoration:none;transition:background .15s ease,color .15s ease}
+.btn-secondary:hover{background:var(--coral);color:#fff}
 @media (max-width:520px){ .give-panel{padding:38px 24px} }
 
 /* ---------- QUOTE ---------- */
@@ -179,6 +182,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .cta h2 span{color:var(--heading-on-dark)!important}
 .btn{color:#fff!important}
 .btn-outline{color:var(--text-heading)!important}
+.btn-secondary{color:var(--coral)!important}
 .socials a{color:var(--text-on-dark)!important}
 .shot figcaption{color:var(--text-heading)!important}
 .photo-duo figcaption{color:var(--text-body)!important}
@@ -186,7 +190,7 @@ h1,h2,h3,.eyebrow{font-family:'Poppins',sans-serif}
 .foot .motto{color:var(--text-body)!important}
 .foot .motto em{color:var(--coral)!important}
 body,.hero .sub,.venue-lead,p,li,cite,.tick li,.foot .contact,.foot .motto{font-family:'Mulish',sans-serif!important}
-h1,h2,h3,.eyebrow,.btn,.btn-outline,.venue-item span,.shot figcaption,.photo-duo figcaption,.socials a,.foot .tagline,.foot .name,.quote blockquote{font-family:'Poppins',sans-serif!important}
+h1,h2,h3,.eyebrow,.btn,.btn-outline,.btn-secondary,.venue-item span,.shot figcaption,.photo-duo figcaption,.socials a,.foot .tagline,.foot .name,.quote blockquote{font-family:'Poppins',sans-serif!important}
 </style>
 </head>
 <body>
@@ -275,7 +279,12 @@ h1,h2,h3,.eyebrow,.btn,.btn-outline,.venue-item span,.shot figcaption,.photo-duo
       <h2>Making Our Mission Possible</h2>
       <p>The North Shore Presbyterian Church invites all to contribute financially to our Shared Kitchen project to foster a strong community. Such a thorough transformation of the kitchen represents a significant investment for the church.</p>
       <p>It truly takes a village, and we appreciate your consideration.</p>
-      <a class="btn" href="https://secure.myvanco.com/L-ZMZZ/campaign/C-16EHE">Contribute Today</a>
+      <!-- "Learn More" links to the external donation flyer (The Table Is Set, $170K campaign).
+           Replace REPLACE-WITH-FLYER-URL with the uploaded flyer PDF URL (upload it in Squarespace, copy its file link). -->
+      <div class="give-actions">
+        <a class="btn-secondary" href="REPLACE-WITH-FLYER-URL" target="_blank" rel="noopener">Learn More</a>
+        <a class="btn" href="https://secure.myvanco.com/L-ZMZZ/campaign/C-16EHE">Contribute Today</a>
+      </div>
     </div>
   </div>
 </section>
